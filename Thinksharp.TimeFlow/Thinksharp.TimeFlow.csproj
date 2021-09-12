@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.9.0</Version>
+    <Authors>Jan-Niklas Schäfer</Authors>
+    <Company>Thinksharp</Company>
+    <Description>Simpel extendable library for working with time series.</Description>
+    <Copyright>MIT</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/JanDotNet/Thinksharp.TimeFlow</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/JanDotNet/Thinksharp.TimeFlow</RepositoryUrl>
+    <PackageTags>TimeSeries</PackageTags>
+    <PackageReleaseNotes>0.9.0 Initial Version</PackageReleaseNotes>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

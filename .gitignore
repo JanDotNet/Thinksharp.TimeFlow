@@ -1,0 +1,17 @@
+# git ignore file
+*.suo
+*.user
+*.TMP
+_ReSharper.*
+bin
+obj
+
+.vs/*
+**/.fake/*
+doc/*
+**/packages/*
+**/TestResults/*
+**/SqlTranslation/*
+**/.vscode/*
+**/.antlr/*
+*.nupkg
