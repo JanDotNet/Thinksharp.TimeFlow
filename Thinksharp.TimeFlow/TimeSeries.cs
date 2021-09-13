@@ -112,7 +112,7 @@
     /// </returns>
     public TimeSeries JoinLeft(TimeSeries dateTimeSeries, JoinOperation op)
     {
-      return this.JoinFull(dateTimeSeries, op.Apply);
+      return this.JoinLeft(dateTimeSeries, op.Apply);
     }
 
     /// <summary>

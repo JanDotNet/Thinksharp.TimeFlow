@@ -167,6 +167,25 @@
     }
 
     [TestMethod]
+    public void TestJoinLeft_left_withJoinOperator()
+    {
+      var ts1 = TimeSeries.Factory.FromValue(1,
+          new DateTime(2021, 01, 01), // start
+          new DateTime(2021, 01, 05), // end
+          Frequency.Days);
+
+      var ts2 = TimeSeries.Factory.FromValue(2,
+          new DateTime(2021, 01, 03), // start
+          new DateTime(2021, 01, 07), // end
+          Frequency.Days);
+
+      // Use pre defined JoinOperation to ignore nulls
+      var ts3 = ts1.JoinLeft(ts2, JoinOperation.Add);             // 1, 1, 3, 3, 3
+
+      CollectionAssert.AreEqual(new decimal?[] { 1M, 1M, 3M, 3M, 3M }, ts3.Values.ToArray());
+    }
+
+      [TestMethod]
     public void TestJoinFull_right_within_left()
     {
       var start = new DateTimeOffset(new DateTime(2021, 01, 01));
