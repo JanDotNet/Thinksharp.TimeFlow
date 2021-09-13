@@ -16,7 +16,7 @@ A collection of named time series with the same frequency can be combined to one
 
 Time series can be created using the available methods of the static ** TimeSeries.Factory** property.
 
-** FromValue** creates a time series with a defined value for each time point:
+**FromValue** creates a time series with a defined value for each time point:
 
 ```csharp
 var ts1 = TimeSeries.Factory.FromValue(10,
@@ -33,7 +33,7 @@ var ts1 = TimeSeries.Factory.FromValue(10,
 // 2021-01-05 00:00:00  +01:00     10
 ```
 
-**FromGenerator * *creates a time series with a value created as function of the time point:
+**FromGenerator** creates a time series with a value created as function of the time point:
 
 ```csharp
 var ts1 = TimeSeries.Factory.FromGenerator(
