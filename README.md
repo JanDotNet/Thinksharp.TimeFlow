@@ -2,11 +2,11 @@
 
 ## Introduction
 
-TimeFlow is a lightweight extendable library for working with time series with support for time zones and daylight saving. The core of the library is the **TimeSeries** type, which holds a list of time point / value pairs. Time points are represented as **DateTimeOffset**s and the time span between two time points (called frequency) is always identical for the whole time series.The values are represented as **nullable decimal * *s.
+TimeFlow is a lightweight extendable library for working with time series with support for time zones and daylight saving. The core of the library is the **TimeSeries** type, which holds a list of time point / value pairs. Time points are represented as **DateTimeOffset**s and the time span between two time points (called frequency) is always identical for the whole time series.The values are represented as **nullable decimal**s.
 
 The first and the last time point of a TimeSeries are exposed by the * *Start * *and * *End * *properties.The interval between the time points is defined via the * *Frequency * *property.
 
-TimeSeries objects are * *immutable * *.There are some methods for transforming TimeSeries, like **ReSample * *, **Slice * *or * *Apply * *.Each of these methods return a new immutable object.
+TimeSeries objects are **immutable**.There are some methods for transforming TimeSeries, like **ReSample**, **Slice** or **Apply**.Each of these methods return a new immutable object.
 
 A collection of named time series with the same frequency can be combined to one **TimeFrame**.
 
@@ -14,7 +14,7 @@ A collection of named time series with the same frequency can be combined to one
 
 ### Creating Time Series
 
-Time series can be created using the available methods of the static ** TimeSeries.Factory** property.
+Time series can be created using the available methods of the static **TimeSeries.Factory** property.
 
 **FromValue** creates a time series with a defined value for each time point:
 
@@ -125,7 +125,7 @@ var ts2 = ts1.Slice(0, 2); // 1, 2
 var ts3 = ts1.Slice(new DateTime(2021, 01, 02), new DateTime(2021, 01, 04)); // 2, 3, 4
 ```
 
-Time Series can be resampled which means that the frequency of the time series changes. Frequency may be expressed in milliseconds, seconds, minutes, hours, days, month or years.
+Time Series can be resampled which means that the frequency of the time series changes. Frequency may be expressed in periods of milliseconds, seconds, minutes, hours, days, month or years. It is also possible to use e.g QuarterHours (15 minutes) and QuarterYears (3 month).
 
 ```csharp
 var ts1 = TimeSeries.Factory.FromValue(1,
