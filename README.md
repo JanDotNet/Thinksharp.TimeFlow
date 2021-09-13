@@ -2,13 +2,13 @@
 
 ## Introduction
 
-TimeFlow is a lightweight extendable library for working with time series. The core of the library is the **TimeSeries** type, which holds a list of time point / value pairs. Time points are represented as **DateTimeOffset**s and values as **nullable decimal**s.
+TimeFlow is a lightweight extendable library for working with time series with support for time zones and daylight saving. The core of the library is the **TimeSeries** type, which holds a list of time point / value pairs. Time points are represented as **DateTimeOffset**s and the time span between two time points (called frequency) is always identical for the whole time series. The values are represented as **nullable decimal**s.
 
-The first and the last time point of a TimeSeries are exposed by the **Start** and **End** properties. The interval between the time points is defined via the **Frequency**.
+The first and the last time point of a TimeSeries are exposed by the **Start** and **End** properties. The interval between the time points is defined via the **Frequency** property.
 
 TimeSeries objects are **immutable**. There are some methods for transforming TimeSeries, like **ReSample**, **Slice** or **Apply**. Each of these methods return a new immutable object.
 
-The **TimeFrame** holds a collection of named time series with same  frequency. 
+A collection of named time series with the same frequency can be combined to one **TimeFrame**.
 
 ## Usage
 
@@ -71,4 +71,57 @@ TimeSeries can be combined using default operators or with more options via spec
     var ts5 = ts1 / ts2; // 1, 1, 1, 1, 1
 
     // apply a function to each value
-    var ts6 = ts1 * 13; // 130, 130, 130, 130, 130   
+    var ts6 = ts1 * 13; // 130, 130, 130, 130, 130 
+    
+There are also methods for combining time series which may be used for advanced usage:
+
+    var ts1 = TimeSeries.Factory.FromValue(1,
+        new DateTime(2021, 01, 01), // start
+        new DateTime(2021, 01, 05), // end
+        Frequency.Days); // 1, 1, 1, 1, 1
+        
+    var ts2 = TimeSeries.Factory.FromValue(2,
+        new DateTime(2021, 01, 03), // start
+        new DateTime(2021, 01, 07), // end
+        Frequency.Days); // 2, 2, 2, 2, 2
+        
+    var ts3 = ts1.Apply(value => value * 2); // 2, 2, 2, 2, 2 (equivalent to ts1 * 2)
+    
+    // join left produces a time series with the same time pints as the left time series.
+    var ts4 = ts1.JoinLeft(ts2, (left, right) => left + right); // 1, 1, 3, 3, 3 
+    
+    // join full combines both time series
+    var ts4 = ts1.JoinFull(ts2, (left, right) => left + right); // 1, 1, 3, 3, 3, 2, 2  (equvalent to ts1 + ts2)
+    
+    
+Time series can be sliced: 
+
+    var ts1 = TimeSeries.Factory.FromValue(
+        new DateTime(2021, 01, 01), // start
+        new DateTime(2021, 01, 05), // end
+        Frequency.Days,
+        tp => tp.Day); // 1, 2, 3, 4, 5
+
+    // sliceing by index / count
+    var ts2 = ts1.Slice(0, 2); // 1, 2
+    
+    // slicing by time range
+    var ts3 = ts1.Slice(new DateTime(2021, 01, 02), new DateTime(2021, 01, 04)); // 2, 3, 4
+    
+Time Series can be resampled which means that the frequency of the time series changes. Frequency may be expressed in milliseconds, seconds, minutes, hours, days, month or years.
+
+
+    var ts1 = TimeSeries.Factory.FromValue(1,
+        new DateTime(2021, 01, 01), // start
+        new DateTime(2021, 01, 05), // end
+        Frequency.Days); // 1, 1, 1, 1, 1
+
+    // down sampling
+    var ts2 = ts1.ReSample(Frequency.Month, AggregationType.Sum); // 2021-01-01 00:00   5
+    var ts2 = ts1.ReSample(Frequency.Month, AggregationType.Mean);
+    
+    // down sampling
+    var ts3 = ts1.Slice(new DateTime(2021, 01, 02), new DateTime(2021, 01, 04)); // 2, 3, 4
+    
+    
+    
