@@ -18,6 +18,7 @@ Time series can be created using the available methods of the static **TimeSerie
 
 **FromValue** creates a time series with a defined value for each time point:
 
+```csharp
     var ts1 = TimeSeries.Factory.FromValue(10, 
         new DateTime(2021, 01, 01), // start
         new DateTime(2021, 01, 05), // end
@@ -30,6 +31,7 @@ Time series can be created using the available methods of the static **TimeSerie
     // 2021-01-03 00:00:00  +01:00     10
     // 2021-01-04 00:00:00  +01:00     10
     // 2021-01-05 00:00:00  +01:00     10
+```
 
 **FromGenerator** creates a time series with a value created as function of the time point:
 
