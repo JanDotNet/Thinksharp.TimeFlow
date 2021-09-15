@@ -12,8 +12,8 @@ namespace Thinksharp.TimeFlow
     {
       var frame = new TimeFrame();
 
-      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), new DateTime(2021, 01, 31), Frequency.Days);
-      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 01, 01), new DateTime(2021, 01, 31), Frequency.Days);
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), new DateTime(2021, 01, 31), Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 01, 01), new DateTime(2021, 01, 31), Period.Day);
 
       frame.Add("TS1", ts1);
       frame.Add("TS2", ts2);
@@ -21,7 +21,7 @@ namespace Thinksharp.TimeFlow
       Assert.AreEqual(2, frame.Count);
       Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 01, 01)), frame.Start);
       Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 01, 31)), frame.End);
-      Assert.AreEqual(Frequency.Days, frame.Frequency);
+      Assert.AreEqual(Period.Day, frame.Frequency);
     }
 
     [TestMethod]
@@ -29,8 +29,8 @@ namespace Thinksharp.TimeFlow
     {
       var frame = new TimeFrame();
 
-      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), new DateTime(2021, 01, 31), Frequency.Days);
-      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2020, 01, 01), new DateTime(2021, 01, 31), Frequency.Days);
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), new DateTime(2021, 01, 31), Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2020, 01, 01), new DateTime(2021, 01, 31), Period.Day);
 
       frame.Add("TS1", ts1);
       frame.Add("TS2", ts2);
@@ -38,14 +38,14 @@ namespace Thinksharp.TimeFlow
       Assert.AreEqual(2, frame.Count);
       Assert.AreEqual(new DateTimeOffset(new DateTime(2020, 01, 01)), frame.Start);
       Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 01, 31)), frame.End);
-      Assert.AreEqual(Frequency.Days, frame.Frequency);
+      Assert.AreEqual(Period.Day, frame.Frequency);
 
       frame.Remove("TS2");
 
       Assert.AreEqual(1, frame.Count);
       Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 01, 01)), frame.Start);
       Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 01, 31)), frame.End);
-      Assert.AreEqual(Frequency.Days, frame.Frequency);
+      Assert.AreEqual(Period.Day, frame.Frequency);
     }
 
     [TestMethod]
@@ -53,8 +53,8 @@ namespace Thinksharp.TimeFlow
     {
       var frame = new TimeFrame();
 
-      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), new DateTime(2021, 01, 31), Frequency.Days);
-      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 01, 01), new DateTime(2021, 03, 31), Frequency.Days);
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), new DateTime(2021, 01, 31), Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 01, 01), new DateTime(2021, 03, 31), Period.Day);
 
       frame.Add("TS1", ts1);
       frame.Add("TS2", ts2);
@@ -62,14 +62,14 @@ namespace Thinksharp.TimeFlow
       Assert.AreEqual(2, frame.Count);
       Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 01, 01)), frame.Start);
       Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 03, 31)), frame.End);
-      Assert.AreEqual(Frequency.Days, frame.Frequency);
+      Assert.AreEqual(Period.Day, frame.Frequency);
 
       frame.Remove("TS2");
 
       Assert.AreEqual(1, frame.Count);
       Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 01, 01)), frame.Start);
       Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 01, 31)), frame.End);
-      Assert.AreEqual(Frequency.Days, frame.Frequency);
+      Assert.AreEqual(Period.Day, frame.Frequency);
     }
 
     [TestMethod]
@@ -77,8 +77,8 @@ namespace Thinksharp.TimeFlow
     {
       var frame = new TimeFrame();
 
-      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), new DateTime(2021, 01, 31), Frequency.Days);
-      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 01, 01), new DateTime(2021, 03, 31), Frequency.Months);
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), new DateTime(2021, 01, 31), Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 01, 01), new DateTime(2021, 03, 31), Period.Month);
 
       frame.Add("TS1", ts1);
       Assert.ThrowsException<InvalidOperationException>(() => frame.Add("TS2", ts2));
@@ -89,7 +89,7 @@ namespace Thinksharp.TimeFlow
     {
       var frame = new TimeFrame();
 
-      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), new DateTime(2021, 01, 31), Frequency.Days);
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), new DateTime(2021, 01, 31), Period.Day);
 
       frame.Add("TS1", ts1);
       frame.Remove("TS1");
@@ -103,8 +103,8 @@ namespace Thinksharp.TimeFlow
     {
       var frame = new TimeFrame();
 
-      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), new DateTime(2021, 03, 31), Frequency.Days);
-      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 02, 01), new DateTime(2021, 04, 30), Frequency.Days);
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), new DateTime(2021, 03, 31), Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 02, 01), new DateTime(2021, 04, 30), Period.Day);
 
       frame["TS1"] = ts1;
       frame["TS2"] = ts2;
@@ -120,8 +120,8 @@ namespace Thinksharp.TimeFlow
     {
       var frame = new TimeFrame();
 
-      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), new DateTime(2021, 03, 31), Frequency.Days);
-      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 02, 01), new DateTime(2021, 04, 30), Frequency.Days);
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), new DateTime(2021, 03, 31), Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 02, 01), new DateTime(2021, 04, 30), Period.Day);
 
       frame.Add("TS1", ts1);
       frame.Add("TS2", ts2);

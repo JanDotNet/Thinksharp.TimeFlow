@@ -26,7 +26,7 @@ namespace Thinksharp.TimeFlow
     public int Count => this.timeSeries.Count;
     public DateTimeOffset Start { get; private set; } = DateTimeOffset.MaxValue;
     public DateTimeOffset End { get; private set; } = DateTimeOffset.MinValue;
-    public Frequency Frequency { get; private set; }
+    public Period Frequency { get; private set; }
 
     public IEnumerable<DateTimeOffset> IterateTimePoints()
     {
@@ -35,7 +35,7 @@ namespace Thinksharp.TimeFlow
       while(current < this.End)
       {
         yield return current;
-        current = this.Frequency.AddFreq(current);
+        current = this.Frequency.AddPeriod(current);
       }
     }
 
@@ -48,11 +48,11 @@ namespace Thinksharp.TimeFlow
 
       if (this.timeSeries.Count == 0)
       {
-        this.Frequency = timeSeries.Freq;
+        this.Frequency = timeSeries.Frequency;
       }
-      else if (timeSeries.Freq != this.Frequency)
+      else if (timeSeries.Frequency != this.Frequency)
       {
-        throw new InvalidOperationException($"Time series frequency ('{timeSeries.Freq}' must be equal the frequency of the frame ('{this.Frequency}').");
+        throw new InvalidOperationException($"Time series frequency ('{timeSeries.Frequency}' must be equal the frequency of the frame ('{this.Frequency}').");
       }
 
       var pair = new NameTimeSeriesPair(name, timeSeries);

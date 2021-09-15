@@ -7,16 +7,25 @@
 
   public class TimeSeries : IndexedSeries<DateTimeOffset, decimal?>
   {
-    internal TimeSeries(IEnumerable<IndexedSeriesItem<DateTimeOffset, decimal?>> sortedSeries, Frequency freq, TimeZoneInfo timeZone)
+    internal TimeSeries(IEnumerable<IndexedSeriesItem<DateTimeOffset, decimal?>> sortedSeries, Period freq, TimeZoneInfo timeZone)
       : base(sortedSeries)
     {
-      this.Freq = freq;
+      this.Frequency = freq;
       this.TimeZone = timeZone;
     }
 
     public static ITimeSeriesFactory Factory { get; } = new TimeSeriesFactory();
     public static ITimeSeriesSettings Settings { get; } = new TimeSeriesSettings();
 
+    /// <summary>
+    /// Creates a <see cref="TimeFrame"/> with one time series.
+    /// </summary>
+    /// <param name="name">
+    ///   The name of the time series.
+    /// </param>
+    /// <returns>
+    ///   A <see cref="TimeFrame"/> with one time series.
+    /// </returns>
     public TimeFrame ToFrame(string name)
     {
       var frame = new TimeFrame();
@@ -30,38 +39,38 @@
     public TimeZoneInfo TimeZone { get; }
 
     /// <summary>
-    ///   Gets the frequency of this time series..
+    ///   Gets the frequency of this time series.
     /// </summary>
-    public Frequency Freq { get; }
+    public Period Frequency { get; }
 
     /// <summary>
-    ///   Returns a new date time series where all values are mapped using the specified mapping function.
+    ///   Returns a new time series where all values are mapped using the specified mapping function.
     /// </summary>
-    /// <param name="map">
-    ///   The mapping function to use for mapping values.
+    /// <param name="func">
+    ///   The mapping function to use.
     /// </param>
     /// <returns>
-    ///   Returns a new date time series where all values are mapped using the specified mapping function.
+    ///   A new date time series where all values are mapped using the specified mapping function.
     /// </returns>
     public TimeSeries Apply(Func<decimal?, decimal?> func)
     {
-      return new TimeSeries(this.sortedValues.Select(x => new IndexedSeriesItem<DateTimeOffset, decimal?>(x.Key, func(x.Value))), this.Freq, this.TimeZone);
+      return new TimeSeries(this.sortedValues.Select(x => new IndexedSeriesItem<DateTimeOffset, decimal?>(x.Key, func(x.Value))), this.Frequency, this.TimeZone);
     }
 
     /// <summary>
     ///   Returns a new date time series where all values are mapped using the specified mapping function whereas null values
     ///   remain as null values.
     /// </summary>
-    /// <param name="map">
+    /// <param name="func">
     ///   The mapping function to use for mapping non-nullable values.
     /// </param>
     /// <returns>
-    ///   Returns a new date time series where all values are mapped using the specified mapping function whereas null values
+    ///   A new date time series where all values are mapped using the specified mapping function whereas null values
     ///   remain as null values.
     /// </returns>
     public TimeSeries ApplyValues(Func<decimal, decimal> func)
     {
-      return new TimeSeries(this.sortedValues.Select(x => new IndexedSeriesItem<DateTimeOffset, decimal?>(x.Key, x.Value.HasValue ? (decimal?)func(x.Value.Value) : null)), this.Freq, this.TimeZone);
+      return new TimeSeries(this.sortedValues.Select(x => new IndexedSeriesItem<DateTimeOffset, decimal?>(x.Key, x.Value.HasValue ? (decimal?)func(x.Value.Value) : null)), this.Frequency, this.TimeZone);
     }
 
     /// <summary>
@@ -80,7 +89,7 @@
     /// </returns>
     public TimeSeries JoinLeft(TimeSeries dateTimeSeries, Func<decimal?, decimal?, decimal?> agg)
     {
-      if (dateTimeSeries.Freq != this.Freq)
+      if (dateTimeSeries.Frequency != this.Frequency)
       {
         throw new InvalidOperationException("Unable to join time series with different frequencies.");
       }
@@ -94,7 +103,7 @@
         result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(sortedValue.Key, agg(leftValue, rightValue)));
       }
 
-      return new TimeSeries(result, this.Freq, this.TimeZone);
+      return new TimeSeries(result, this.Frequency, this.TimeZone);
     }
 
     /// <summary>
@@ -131,7 +140,7 @@
     /// </returns>
     public TimeSeries JoinFull(TimeSeries dateTimeSeries, Func<decimal?, decimal?, decimal?> agg)
     {
-      if (dateTimeSeries.Freq != this.Freq)
+      if (dateTimeSeries.Frequency != this.Frequency)
       {
         throw new InvalidOperationException("Unable to join time series with different frequencies.");
       }
@@ -144,7 +153,7 @@
       var ts = TimeSeries.Factory.FromValue(null,
         DateHelper.Min(this.Start, dateTimeSeries.Start),
         DateHelper.Max(this.End, dateTimeSeries.End),
-        this.Freq,
+        this.Frequency,
         this.TimeZone);
 
       return ts.JoinLeft(this, (l, r) => r).JoinLeft(dateTimeSeries, agg);
@@ -170,7 +179,7 @@
     /// </returns>
     public TimeSeries JoinFull(TimeSeries ts1, TimeSeries ts2, Func<decimal?, decimal?, decimal?, decimal?> agg)
     {
-      if (ts1.Freq != this.Freq || ts2.Freq != this.Freq)
+      if (ts1.Frequency != this.Frequency || ts2.Frequency != this.Frequency)
       {
         throw new InvalidOperationException("Unable to join time series with different frequencies.");
       }
@@ -187,10 +196,10 @@
 
         result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(current, agg(v1, v2, v3)));
 
-        current = this.Freq.AddFreq(current, this.TimeZone);
+        current = this.Frequency.AddPeriod(current, this.TimeZone);
       }
 
-      return new TimeSeries(result, this.Freq, this.TimeZone);
+      return new TimeSeries(result, this.Frequency, this.TimeZone);
     }
 
     /// <summary>
@@ -216,7 +225,7 @@
     /// </returns>
     public TimeSeries JoinFull(TimeSeries ts1, TimeSeries ts2, TimeSeries ts3, Func<decimal?, decimal?, decimal?, decimal?, decimal?> agg)
     {
-      if (ts1.Freq != this.Freq || ts2.Freq != this.Freq || ts3.Freq != this.Freq)
+      if (ts1.Frequency != this.Frequency || ts2.Frequency != this.Frequency || ts3.Frequency != this.Frequency)
       {
         throw new InvalidOperationException("Unable to join time series with different frequencies.");
       }
@@ -234,10 +243,10 @@
 
         result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(current, agg(v1, v2, v3, v4)));
 
-        current = this.Freq.AddFreq(current, this.TimeZone);
+        current = this.Frequency.AddPeriod(current, this.TimeZone);
       }
 
-      return new TimeSeries(result, this.Freq, this.TimeZone);
+      return new TimeSeries(result, this.Frequency, this.TimeZone);
     }
 
     /// <summary>
@@ -270,54 +279,54 @@
     /// <returns>
     ///   A new time series with the new frequency.
     /// </returns>
-    public TimeSeries ReSample(Frequency frequency, AggregationType aggregationType)
+    public TimeSeries ReSample(Period frequency, AggregationType aggregationType)
     {
       var aggregator = aggregationType == AggregationType.Sum
         ? new Func<IEnumerable<decimal>, decimal>(x => x.Sum())
         : x => x.Average();
 
-      if (frequency == this.Freq)
+      if (frequency == this.Frequency)
       {
         return this;
       }
 
       // down-sampling
-      if (this.Freq < frequency)
+      if (this.Frequency < frequency)
       {
-        if (frequency == Frequency.Hours)
+        if (frequency == Period.Hour)
         {
           return this.DownSample(x => new DateTimeOffset(x.Year, x.Month, x.Day, x.Hour, 0, 0, x.Offset), aggregator, frequency);
         }
         
-        if (frequency == Frequency.Days)
+        if (frequency == Period.Day)
         {
           return this.DownSample(x => x.Date, aggregator, frequency);
         }
-        if (frequency == Frequency.Months)
+        if (frequency == Period.Month)
         {
           return this.DownSample(x => new DateTime(x.Year, x.Month, 1), aggregator, frequency);
         }
-        if (frequency == Frequency.QuarterYears)
+        if (frequency == Period.QuarterYear)
         {
           return this.DownSample(x => x.Year * 10000 + x.GetQuarterYear(), aggregator, frequency);
         }
-        if (frequency == Frequency.Years)
+        if (frequency == Period.Year)
         {
           return this.DownSample(x => x.Year, aggregator, frequency);
         }
       }
 
       // up-sampling
-      if (this.Freq > frequency)
+      if (this.Frequency > frequency)
       {
         return this.UpSample(aggregationType, frequency);
       }
 
       // not yet supported
-      throw new InvalidOperationException($"Re-sample from '{this.Freq}' to '{frequency}' is not supported yet.");
+      throw new InvalidOperationException($"Re-sample from '{this.Frequency}' to '{frequency}' is not supported yet.");
     }
 
-    private TimeSeries UpSample(AggregationType agg, Frequency frequency)
+    private TimeSeries UpSample(AggregationType agg, Period frequency)
     {
       // just upsample values
       if (agg == AggregationType.Mean)
@@ -326,11 +335,11 @@
         foreach (var timepoint in this.sortedValues)
         {
           var current = timepoint.Key;
-          var end = this.Freq.AddFreq(current, this.TimeZone);
+          var end = this.Frequency.AddPeriod(current, this.TimeZone);
           while (current < end)
           {
             result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(current, timepoint.Value));
-            current = frequency.AddFreq(current, this.TimeZone);
+            current = frequency.AddPeriod(current, this.TimeZone);
           }
         }
         return new TimeSeries(result, frequency, this.TimeZone);
@@ -342,11 +351,11 @@
         foreach (var timepoint in this.sortedValues)
         {
           var current = timepoint.Key;
-          var end = this.Freq.AddFreq(current, this.TimeZone);
+          var end = this.Frequency.AddPeriod(current, this.TimeZone);
           var timeSpanSource = end - current;
           while (current < end)
           {
-            var next = frequency.AddFreq(current, this.TimeZone);
+            var next = frequency.AddPeriod(current, this.TimeZone);
             var timeSpanTarget = next - current;
             var part = timeSpanSource.Ticks / (decimal)timeSpanTarget.Ticks;
             result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(current, timepoint.Value / part));
@@ -362,7 +371,7 @@
     private TimeSeries DownSample<TGRoup>(
       Func<DateTimeOffset, TGRoup> keySelector,
       Func<IEnumerable<decimal>, decimal> aggregator,
-      Frequency frequency)
+      Period frequency)
     {
       var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
       var groupedByDay = this.sortedValues.GroupBy(x => keySelector(x.Key)).OrderBy(x => x.Key);
@@ -391,7 +400,7 @@
     /// </returns>
     public TimeSeries Slice(DateTime date)
     {
-      return new TimeSeries(this.sortedValues.Where(p => p.Key.Date == date), this.Freq, this.TimeZone);
+      return new TimeSeries(this.sortedValues.Where(p => p.Key.Date == date), this.Frequency, this.TimeZone);
     }
 
     /// <summary>
@@ -409,7 +418,7 @@
     /// </returns>
     public TimeSeries Slice(DateTimeOffset timestampFrom, DateTimeOffset timestampTo)
     {
-      return new TimeSeries(this.sortedValues.Where(p => p.Key >= timestampFrom && p.Key <= timestampTo), this.Freq, this.TimeZone);
+      return new TimeSeries(this.sortedValues.Where(p => p.Key >= timestampFrom && p.Key <= timestampTo), this.Frequency, this.TimeZone);
     }
 
     /// <summary>
@@ -426,7 +435,7 @@
     /// </returns>
     public TimeSeries Slice(int startIndex, int count)
     {
-      return new TimeSeries(this.sortedValues.Skip(startIndex).Take(count), this.Freq, this.TimeZone);
+      return new TimeSeries(this.sortedValues.Skip(startIndex).Take(count), this.Frequency, this.TimeZone);
     }
 
     /// <summary>
@@ -498,7 +507,7 @@
       var other = obj as TimeSeries;
 
       if (other is null ||
-          this.Freq != other.Freq ||
+          this.Frequency != other.Frequency ||
           this.Count != other.Count ||
           this.Start != other.Start ||
           this.End != other.End)
@@ -526,7 +535,7 @@
       {
         var hashcode = 1430287;
         hashcode = (hashcode * 7302013) ^ this.Count.GetHashCode();
-        hashcode = (hashcode * 7302013) ^ this.Freq.Value.GetHashCode();
+        hashcode = (hashcode * 7302013) ^ this.Frequency.Value.GetHashCode();
         hashcode = (hashcode * 7302013) ^ this.Start.GetHashCode();
         hashcode = (hashcode * 7302013) ^ this.End.GetHashCode();
         return hashcode;

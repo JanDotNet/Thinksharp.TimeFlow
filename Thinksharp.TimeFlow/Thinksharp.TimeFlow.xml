@@ -1,0 +1,396 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Thinksharp.TimeFlow</name>
+    </assembly>
+    <members>
+        <member name="P:Thinksharp.TimeFlow.JoinOperation.AddNullResultsInNull">
+            <summary>
+              Adds the right to the left value. Null values results in null.
+            </summary>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.JoinOperation.Add">
+            <summary>
+              Adds the right to the left value. Null values will be replaced with 0.
+            </summary>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.JoinOperation.SubtractNullResultsInNull">
+            <summary>
+              Subtracts the left from the right value. Null values results in null (null - 1 => null).
+            </summary>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.JoinOperation.Subtract">
+            <summary>
+              Subtracts the left from the right value. Null values will be replaced with 0 (null - 1 => -1).
+            </summary>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.JoinOperation.MultiplyNullResultsInNull">
+            <summary>
+              Subtracts the left from the right value. Null values results in null (null * 1 => null).
+            </summary>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.JoinOperation.Multiply">
+            <summary>
+              Subtracts the left from the right value. Null values will be replaced with 0 (null * 1 => 0).
+            </summary>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.JoinOperation.DivideNullResultsInNull">
+            <summary>
+              Subtracts the left from the right value. Null values results in null (null / 1 => null).
+            </summary>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.JoinOperation.Divide">
+            <summary>
+              Subtracts the left from the right value. Null values will be replaced with 0 (null / r => 0; 1 / null => null).
+            </summary>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.JoinOperation.TakeRight">
+            <summary>
+              Takes always the right value.
+            </summary>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.TimeSeries.TimeZone">
+            <summary>
+              Gets the time zone object of this time series.
+            </summary>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.TimeSeries.Frequency">
+            <summary>
+              Gets the frequency of this time series..
+            </summary>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.Apply(System.Func{System.Nullable{System.Decimal},System.Nullable{System.Decimal}})">
+            <summary>
+              Returns a new date time series where all values are mapped using the specified mapping function.
+            </summary>
+            <param name="func">
+              The mapping function to use for mapping values.
+            </param>
+            <returns>
+              Returns a new date time series where all values are mapped using the specified mapping function.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.ApplyValues(System.Func{System.Decimal,System.Decimal})">
+            <summary>
+              Returns a new date time series where all values are mapped using the specified mapping function whereas null values
+              remain as null values.
+            </summary>
+            <param name="func">
+              The mapping function to use for mapping non-nullable values.
+            </param>
+            <returns>
+              Returns a new date time series where all values are mapped using the specified mapping function whereas null values
+              remain as null values.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.JoinLeft(Thinksharp.TimeFlow.TimeSeries,System.Func{System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal}})">
+            <summary>
+              Joins the specified time series to the this time series using the specified aggregation function to combine the
+              values.
+            </summary>
+            <param name="dateTimeSeries">
+              The time series to join.
+            </param>
+            <param name="agg">
+              The aggregation function to combine values from 2 equal time points.
+              The first value of the aggregation function is from this time series, the second value from the passed one.
+            </param>
+            <returns>
+              A new time series with the same time points as this one but with values produced by the join.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.JoinLeft(Thinksharp.TimeFlow.TimeSeries,Thinksharp.TimeFlow.JoinOperation)">
+            <summary>
+              Joins the specified time series to the this time series using the specified aggregation function to combine the
+              values.
+            </summary>
+            <param name="dateTimeSeries">
+              The time series to join.
+            </param>
+            <param name="op">
+              The join operation to use.
+            </param>
+            <returns>
+              A new time series with the same time points as this one but with values produced by the join.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.JoinFull(Thinksharp.TimeFlow.TimeSeries,System.Func{System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal}})">
+            <summary>
+              Joins the specified time series to the this time series using the specified aggregation function to combine the
+              values.
+            </summary>
+            <param name="dateTimeSeries">
+              The time series to join.
+            </param>
+            <param name="agg">
+              The aggregation function to combine values from 2 equal time points.
+              The first value of the aggregation function is from this time series, the second value from the passed one.
+            </param>
+            <returns>
+              A new time series with the same time points as this one but with values produced by the join.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.JoinFull(Thinksharp.TimeFlow.TimeSeries,Thinksharp.TimeFlow.TimeSeries,System.Func{System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal}})">
+            <summary>
+              Joins the specified time series to the this time series using the specified aggregation function to combine the
+              values.
+            </summary>
+            <param name="ts1">
+              The first time series to join.
+            </param>
+            <param name="ts2">
+              The second time series to join.
+            </param>
+            <param name="agg">
+              The aggregation function to combine values from 3 equal time points.
+              The first value of the aggregation function is from this time series, the second value from ts1 and the third from
+              ts2.
+            </param>
+            <returns>
+              A new time series with the same time points as this one but with values produced by the join.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.JoinFull(Thinksharp.TimeFlow.TimeSeries,Thinksharp.TimeFlow.TimeSeries,Thinksharp.TimeFlow.TimeSeries,System.Func{System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal}})">
+            <summary>
+              Joins the specified time series to the this time series using the specified aggregation function to combine the
+              values.
+            </summary>
+            <param name="ts1">
+              The first time series to join.
+            </param>
+            <param name="ts2">
+              The second time series to join.
+            </param>
+            <param name="ts3">
+              The third time series to join.
+            </param>
+            <param name="agg">
+              The aggregation function to combine values from 4 equal time points.
+              The first value of the aggregation function is from this time series, the second value from ts1 and the third from
+              ts2 and the fourth from ts3.
+            </param>
+            <returns>
+              A new time series with the same time points as this one but with values produced by the join.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.JoinFull(Thinksharp.TimeFlow.TimeSeries,Thinksharp.TimeFlow.JoinOperation)">
+            <summary>
+              Joins the specified time series to the this time series using the specified aggregation function to combine the
+              values.
+            </summary>
+            <param name="dateTimeSeries">
+              The time series to join.
+            </param>
+            <param name="op">
+              The join operation to use.
+            </param>
+            <returns>
+              A new time series with the same time points as this one but with values produced by the join.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.ReSample(Thinksharp.TimeFlow.Period,Thinksharp.TimeFlow.AggregationType)">
+            <summary>
+              Creates a new time series with changed frequency.
+            </summary>
+            <param name="frequency">
+              The new frequency.
+            </param>
+            <param name="aggregationType">
+              The aggregation type to use for up/down sampling
+            </param>
+            <returns>
+              A new time series with the new frequency.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.Slice(System.DateTime)">
+            <summary>
+              Creates a new time series that contains only time points for the specified day.
+              If the day is not part of this time series, an empty day will be returned.
+            </summary>
+            <param name="date">
+              The date to get the new time series for.
+            </param>
+            <returns>
+              A new time series that contains only time points for the specified day.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.Slice(System.DateTimeOffset,System.DateTimeOffset)">
+            <summary>
+              Creates a new time series that contains only time points for the specified time range.
+              Time points within the time range that are not part of the time series are not generated.
+            </summary>
+            <param name="timestampFrom">
+              The including start time.
+            </param>
+            <param name="timestampTo">
+              The including end time.
+            </param>
+            <returns>
+              A new time series that contains only time points for the specified range.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.Slice(System.Int32,System.Int32)">
+            <summary>
+              Creates a new time series that contains only time points for the specified range.
+            </summary>
+            <param name="startIndex">
+              The zero based start index.
+            </param>
+            <param name="count">
+              The number of time points to get.
+            </param>
+            <returns>
+              A new time series that contains only time points for the specified range.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.Trim(System.Boolean,System.Boolean,System.Nullable{System.Decimal}[])">
+            <summary>
+              Creates a new time series where leading and trailing time points with specified values are dropped.
+            </summary>
+            <param name="valuesToTrim">
+              The value to trim.
+            </param>
+            <returns>
+              A new time series where leading and trailing time points with specified values are dropped.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeriesFactoryExtensions.FromValue(Thinksharp.TimeFlow.ITimeSeriesFactory,System.Nullable{System.Decimal},System.DateTime,System.Int32,Thinksharp.TimeFlow.Period,System.TimeZoneInfo)">
+            <summary>
+              Creates a new time series with N constant values.
+            </summary>
+            <param name="value">
+              The constant value to use.
+            </param>
+            <param name="startDate">
+              The first time point of the time series.
+            </param>
+            <param name="count">
+              The number of time points to generate.
+            </param>
+            <param name="freq">
+              The frequency to use for generation.
+            </param>
+            <param name="timeZone">
+              The time zone to use. (Default: 'W. Europe Standard Time')
+            </param>
+            <returns>
+              A new time series with N constant values.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeriesFactoryExtensions.FromValue(Thinksharp.TimeFlow.ITimeSeriesFactory,System.Nullable{System.Decimal},System.DateTimeOffset,System.Int32,Thinksharp.TimeFlow.Period,System.TimeZoneInfo)">
+            <summary>
+              Creates a new time series with N constant values.
+            </summary>
+            <param name="value">
+              The constant value to use.
+            </param>
+            <param name="startDate">
+              The first time point of the time series.
+            </param>
+            <param name="count">
+              The number of time points to generate.
+            </param>
+            <param name="freq">
+              The frequency to use for generation.
+            </param>
+            <param name="timeZone">
+              The time zone to use. (Default: 'W. Europe Standard Time')
+            </param>
+            <returns>
+              A new time series with N constant values.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeriesFactoryExtensions.FromValue(Thinksharp.TimeFlow.ITimeSeriesFactory,System.Nullable{System.Decimal},System.DateTime,System.DateTime,Thinksharp.TimeFlow.Period,System.TimeZoneInfo)">
+            <summary>
+              Creates a new time series with constant values between a specified time range.
+            </summary>
+            <param name="value">
+              The constant value to use.
+            </param>
+            <param name="startDate">
+              The first time point of the time series.
+            </param>
+            <param name="end">
+              The last time point of the time series.
+            </param>
+            <param name="freq">
+              The frequency to use for generation.
+            </param>
+            <param name="timeZone">
+              The time zone to use. (Default: 'W. Europe Standard Time')
+            </param>
+            <returns>
+              A new time series with N constant values.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeriesFactoryExtensions.FromValue(Thinksharp.TimeFlow.ITimeSeriesFactory,System.Nullable{System.Decimal},System.DateTimeOffset,System.DateTimeOffset,Thinksharp.TimeFlow.Period,System.TimeZoneInfo)">
+            <summary>
+              Creates a new time series with constant values between a specified time range.
+            </summary>
+            <param name="value">
+              The constant value to use.
+            </param>
+            <param name="startDate">
+              The first time point of the time series.
+            </param>
+            <param name="end">
+              The last time point of the time series.
+            </param>
+            <param name="freq">
+              The frequency to use for generation.
+            </param>
+            <param name="timeZone">
+              The time zone to use. (Default: 'W. Europe Standard Time')
+            </param>
+            <returns>
+              A new time series with N constant values.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeriesFactoryExtensions.FromGenerator(Thinksharp.TimeFlow.ITimeSeriesFactory,System.DateTime,System.DateTime,Thinksharp.TimeFlow.Period,System.Func{System.DateTimeOffset,System.Nullable{System.Decimal}},System.TimeZoneInfo)">
+            <summary>
+              Creates a new time series with generated values.
+            </summary>
+            <param name="firstTimePoint">
+              The first time point of the time series.
+            </param>
+            <param name="lastTimePoint">
+              The last time point of the time series.
+            </param>
+            <param name="freq">
+              The frequency to use for generation.
+            </param>
+            <param name="generator">
+              Generator to generate the values based on the time point.
+            </param>
+            <param name="timeZone">
+              The time zone to use. (Default: 'W. Europe Standard Time')
+            </param>
+            <returns>
+              A new time series with the generated values.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeriesFactoryExtensions.FromGenerator(Thinksharp.TimeFlow.ITimeSeriesFactory,System.DateTimeOffset,System.DateTimeOffset,Thinksharp.TimeFlow.Period,System.Func{System.DateTimeOffset,System.Nullable{System.Decimal}},System.TimeZoneInfo)">
+            <summary>
+              Creates a new time series with generated values.
+            </summary>
+            <param name="firstTimePoint">
+              The first time point of the time series.
+            </param>
+            <param name="lastTimePoint">
+              The last time point of the time series.
+            </param>
+            <param name="freq">
+              The frequency to use for generation.
+            </param>
+            <param name="generator">
+              Generator to generate the values based on the time point.
+            </param>
+            <param name="timeZone">
+              The time zone to use. (Default: 'W. Europe Standard Time')
+            </param>
+            <returns>
+              A new time series with the generated values.
+            </returns>
+        </member>
+    </members>
+</doc>

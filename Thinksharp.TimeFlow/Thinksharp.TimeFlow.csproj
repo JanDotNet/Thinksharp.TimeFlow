@@ -2,17 +2,30 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.9.0</Version>
+    <Version>0.10.0</Version>
     <Authors>Jan-Niklas Schäfer</Authors>
-    <Company>Thinksharp</Company>
-    <Description>Simpel extendable library for working with time series.</Description>
+    <Company>ThinkSharp</Company>
+    <Description>TimeFlow is a lightweight extendable library for working with time series with support for time zones and daylight saving.</Description>
     <Copyright>MIT</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/JanDotNet/Thinksharp.TimeFlow</PackageProjectUrl>
     <RepositoryUrl>https://github.com/JanDotNet/Thinksharp.TimeFlow</RepositoryUrl>
     <PackageTags>TimeSeries</PackageTags>
-    <PackageReleaseNotes>0.9.0 Initial Version</PackageReleaseNotes>
+    <PackageReleaseNotes>0.9.0 Initial Version
+0.10.0 Changed type Frequency to Period</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Product>ThinkSharp.TimeFlow</Product>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\Users\Tachy\Projects\ThinkSharp\Thinksharp.TimeFlow\Thinksharp.TimeFlow\Thinksharp.TimeFlow.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>C:\Users\Tachy\Projects\ThinkSharp\Thinksharp.TimeFlow\Thinksharp.TimeFlow\Thinksharp.TimeFlow.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

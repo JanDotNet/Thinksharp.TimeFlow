@@ -13,7 +13,7 @@
     {
       var start = new DateTimeOffset(new DateTime(2021, 01, 01));
       var end = new DateTimeOffset(new DateTime(2021, 1, 1, 23, 45, 0));
-      var ts = TimeSeries.Factory.FromValue(1, start, 96, Frequency.QuarterHours);
+      var ts = TimeSeries.Factory.FromValue(1, start, 96, Period.QuarterHour);
       
       Assert.AreEqual(96, ts.Count);
       Assert.AreEqual(start, ts.Start);
@@ -26,7 +26,7 @@
     {
       var start = new DateTimeOffset(new DateTime(2021, 01, 01));
       var end = new DateTimeOffset(new DateTime(2021, 1, 1, 23, 45, 0));
-      var ts = TimeSeries.Factory.FromValue(1, start, end, Frequency.QuarterHours);
+      var ts = TimeSeries.Factory.FromValue(1, start, end, Period.QuarterHour);
 
       Assert.AreEqual(96, ts.Count);
       Assert.AreEqual(start, ts.Start);
@@ -39,7 +39,7 @@
     {
       var start = new DateTimeOffset(new DateTime(2021, 03, 28));
       var end = new DateTimeOffset(new DateTime(2021, 03, 28, 23, 45, 0));
-      var ts = TimeSeries.Factory.FromValue(1, start, end, Frequency.QuarterHours);
+      var ts = TimeSeries.Factory.FromValue(1, start, end, Period.QuarterHour);
 
       Assert.AreEqual(92, ts.Count);
       Assert.AreEqual(start, ts.Start);
@@ -52,7 +52,7 @@
     {
       var start = new DateTimeOffset(new DateTime(2021, 10, 31));
       var end = new DateTimeOffset(new DateTime(2021, 10, 31, 23, 45, 0));
-      var ts = TimeSeries.Factory.FromValue(1, start, end, Frequency.QuarterHours);
+      var ts = TimeSeries.Factory.FromValue(1, start, end, Period.QuarterHour);
 
       Assert.AreEqual(100, ts.Count);
       Assert.AreEqual(start, ts.Start);
@@ -65,7 +65,7 @@
     {
       var start = new DateTimeOffset(new DateTime(2021, 01, 01));
       var end = new DateTimeOffset(new DateTime(2021, 1, 1, 23, 45, 0));
-      var ts = TimeSeries.Factory.FromValue(null, start, 96, Frequency.QuarterHours);
+      var ts = TimeSeries.Factory.FromValue(null, start, 96, Period.QuarterHour);
 
       Assert.AreEqual(96, ts.Count);
       Assert.AreEqual(start, ts.Start);
@@ -78,7 +78,7 @@
     {
       var start = new DateTimeOffset(new DateTime(2021, 01, 01));
       var end = new DateTimeOffset(new DateTime(2021, 1, 1, 23, 45, 0));
-      var ts = TimeSeries.Factory.FromValue(2, start, 96, Frequency.QuarterHours);
+      var ts = TimeSeries.Factory.FromValue(2, start, 96, Period.QuarterHour);
 
       Assert.AreEqual(96, ts.Count);
       Assert.IsTrue(ts.All(x => x.Value == 2));
@@ -95,11 +95,11 @@
     {
       var start = new DateTimeOffset(new DateTime(2021, 01, 01));
       var end = new DateTimeOffset(new DateTime(2021, 1, 31, 23, 45, 0));
-      var left = TimeSeries.Factory.FromValue(2, start, end, Frequency.QuarterHours);
+      var left = TimeSeries.Factory.FromValue(2, start, end, Period.QuarterHour);
 
       var start2 = new DateTimeOffset(new DateTime(2021, 01, 10));
       var end2 = new DateTimeOffset(new DateTime(2021, 01, 12, 23, 45, 0));
-      var right = TimeSeries.Factory.FromValue(2, start2, end2, Frequency.QuarterHours);
+      var right = TimeSeries.Factory.FromValue(2, start2, end2, Period.QuarterHour);
 
       var joined = left.JoinLeft(right, (x, y) => (x ?? 0) + (y ?? 0));
 
@@ -121,11 +121,11 @@
     {
       var start = new DateTimeOffset(new DateTime(2021, 01, 01));
       var end = new DateTimeOffset(new DateTime(2021, 1, 31, 23, 45, 0));
-      var left = TimeSeries.Factory.FromValue(2, start, end, Frequency.QuarterHours);
+      var left = TimeSeries.Factory.FromValue(2, start, end, Period.QuarterHour);
 
       var start2 = new DateTimeOffset(new DateTime(2021, 01, 10));
       var end2 = new DateTimeOffset(new DateTime(2021, 01, 12, 23, 45, 0));
-      var right = TimeSeries.Factory.FromValue(2, start2, end2, Frequency.QuarterHours);
+      var right = TimeSeries.Factory.FromValue(2, start2, end2, Period.QuarterHour);
 
       var joined = left.JoinLeft(right, JoinOperation.Add);
 
@@ -147,11 +147,11 @@
     {
       var start = new DateTimeOffset(new DateTime(2021, 01, 10));
       var end = new DateTimeOffset(new DateTime(2021, 01, 12, 23, 45, 0));
-      var left = TimeSeries.Factory.FromValue(2, start, end, Frequency.QuarterHours);
+      var left = TimeSeries.Factory.FromValue(2, start, end, Period.QuarterHour);
 
       var start2 = new DateTimeOffset(new DateTime(2021, 01, 01));
       var end2 = new DateTimeOffset(new DateTime(2021, 1, 31, 23, 45, 0));
-      var right = TimeSeries.Factory.FromValue(2, start2, end2, Frequency.QuarterHours);
+      var right = TimeSeries.Factory.FromValue(2, start2, end2, Period.QuarterHour);
 
       var joined = left.JoinLeft(right, (x, y) => (x ?? 0) + (y ?? 0));
 
@@ -172,12 +172,12 @@
       var ts1 = TimeSeries.Factory.FromValue(1,
           new DateTime(2021, 01, 01), // start
           new DateTime(2021, 01, 05), // end
-          Frequency.Days);
+          Period.Day);
 
       var ts2 = TimeSeries.Factory.FromValue(2,
           new DateTime(2021, 01, 03), // start
           new DateTime(2021, 01, 07), // end
-          Frequency.Days);
+          Period.Day);
 
       // Use pre defined JoinOperation to ignore nulls
       var ts3 = ts1.JoinLeft(ts2, JoinOperation.Add);             // 1, 1, 3, 3, 3
@@ -190,11 +190,11 @@
     {
       var start = new DateTimeOffset(new DateTime(2021, 01, 01));
       var end = new DateTimeOffset(new DateTime(2021, 1, 31, 23, 45, 0));
-      var left = TimeSeries.Factory.FromValue(2, start, end, Frequency.QuarterHours);
+      var left = TimeSeries.Factory.FromValue(2, start, end, Period.QuarterHour);
 
       var start2 = new DateTimeOffset(new DateTime(2021, 01, 10));
       var end2 = new DateTimeOffset(new DateTime(2021, 01, 12, 23, 45, 0));
-      var right = TimeSeries.Factory.FromValue(2, start2, end2, Frequency.QuarterHours);
+      var right = TimeSeries.Factory.FromValue(2, start2, end2, Period.QuarterHour);
 
       var joined = left.JoinFull(right, (x, y) => (x ?? 0) + (y ?? 0));
 
@@ -216,11 +216,11 @@
     {
       var start = new DateTimeOffset(new DateTime(2021, 01, 10));
       var end = new DateTimeOffset(new DateTime(2021, 01, 12, 23, 45, 0));
-      var left = TimeSeries.Factory.FromValue(2, start, end, Frequency.QuarterHours);
+      var left = TimeSeries.Factory.FromValue(2, start, end, Period.QuarterHour);
 
       var start2 = new DateTimeOffset(new DateTime(2021, 01, 01));
       var end2 = new DateTimeOffset(new DateTime(2021, 1, 31, 23, 45, 0));
-      var right = TimeSeries.Factory.FromValue(2, start2, end2, Frequency.QuarterHours);
+      var right = TimeSeries.Factory.FromValue(2, start2, end2, Period.QuarterHour);
 
       var joined = left.JoinFull(right, (x, y) => (x ?? 0) + (y ?? 0));
 
@@ -242,11 +242,11 @@
     {
       var start = new DateTimeOffset(new DateTime(2021, 01, 10));
       var end = new DateTimeOffset(new DateTime(2021, 01, 12, 23, 45, 0));
-      var left = TimeSeries.Factory.FromValue(2, start, end, Frequency.QuarterHours);
+      var left = TimeSeries.Factory.FromValue(2, start, end, Period.QuarterHour);
 
       var start2 = new DateTimeOffset(new DateTime(2021, 01, 01));
       var end2 = new DateTimeOffset(new DateTime(2021, 1, 31, 23, 45, 0));
-      var right = TimeSeries.Factory.FromValue(2, start2, end2, Frequency.QuarterHours);
+      var right = TimeSeries.Factory.FromValue(2, start2, end2, Period.QuarterHour);
 
       var joined = left.JoinFull(right, JoinOperation.Add);
 
@@ -268,11 +268,11 @@
     {
       var start = new DateTimeOffset(new DateTime(2021, 01, 10));
       var end = new DateTimeOffset(new DateTime(2021, 01, 12, 23, 45, 0));
-      var left = TimeSeries.Factory.FromValue(2, start, end, Frequency.QuarterHours);
+      var left = TimeSeries.Factory.FromValue(2, start, end, Period.QuarterHour);
 
       var start2 = new DateTimeOffset(new DateTime(2020, 12, 30));
       var end2 = new DateTimeOffset(new DateTime(2021, 1, 02, 23, 45, 0));
-      var right = TimeSeries.Factory.FromValue(5, start2, end2, Frequency.QuarterHours);
+      var right = TimeSeries.Factory.FromValue(5, start2, end2, Period.QuarterHour);
 
       decimal? Agg(decimal? l, decimal? r) => l == null && r == null ? (decimal?) null : (l ?? 0) + (r ?? 0);
       var joined = left.JoinFull(right, Agg);
@@ -297,16 +297,16 @@
       var end = new DateTimeOffset(new DateTime(2021, 1, 1, 23, 0, 0));
 
       // Value: 1
-      var ts = TimeSeries.Factory.FromValue(1M, start, 96, Frequency.QuarterHours);
+      var ts = TimeSeries.Factory.FromValue(1M, start, 96, Period.QuarterHour);
 
-      var ts_rs = ts.ReSample(Frequency.Hours, AggregationType.Sum);
+      var ts_rs = ts.ReSample(Period.Hour, AggregationType.Sum);
 
       Assert.AreEqual(ts_rs.Count, 24);
       Assert.AreEqual(start, ts_rs.Start);
       Assert.AreEqual(end, ts_rs.End);
       Assert.IsTrue(ts_rs.All(x => x.Value == 4M));
 
-      ts_rs = ts.ReSample(Frequency.Hours, AggregationType.Mean);
+      ts_rs = ts.ReSample(Period.Hour, AggregationType.Mean);
 
       Assert.AreEqual(ts_rs.Count, 24);
       Assert.AreEqual(start, ts_rs.Start);
@@ -314,16 +314,16 @@
       Assert.IsTrue(ts_rs.All(x => x.Value == 1M));
 
       // Value: null
-      ts = TimeSeries.Factory.FromValue(null, start, 96, Frequency.QuarterHours);
+      ts = TimeSeries.Factory.FromValue(null, start, 96, Period.QuarterHour);
 
-      ts_rs = ts.ReSample(Frequency.Hours, AggregationType.Sum);
+      ts_rs = ts.ReSample(Period.Hour, AggregationType.Sum);
 
       Assert.AreEqual(ts_rs.Count, 24);
       Assert.AreEqual(start, ts_rs.Start);
       Assert.AreEqual(end, ts_rs.End);
       Assert.IsTrue(ts_rs.All(x => x.Value == null));
 
-      ts_rs = ts.ReSample(Frequency.Hours, AggregationType.Mean);
+      ts_rs = ts.ReSample(Period.Hour, AggregationType.Mean);
 
       Assert.AreEqual(ts_rs.Count, 24);
       Assert.AreEqual(start, ts_rs.Start);
@@ -338,16 +338,16 @@
       var end = new DateTimeOffset(new DateTime(2021, 1, 1, 0, 0, 0));
 
       // Value: 1
-      var ts = TimeSeries.Factory.FromValue(1M, start, 96, Frequency.QuarterHours);
+      var ts = TimeSeries.Factory.FromValue(1M, start, 96, Period.QuarterHour);
 
-      var ts_rs = ts.ReSample(Frequency.Days, AggregationType.Sum);
+      var ts_rs = ts.ReSample(Period.Day, AggregationType.Sum);
 
       Assert.AreEqual(ts_rs.Count, 1);
       Assert.AreEqual(start, ts_rs.Start);
       Assert.AreEqual(end, ts_rs.End);
       Assert.IsTrue(ts_rs.All(x => x.Value == 96M));
 
-      ts_rs = ts.ReSample(Frequency.Days, AggregationType.Mean);
+      ts_rs = ts.ReSample(Period.Day, AggregationType.Mean);
 
       Assert.AreEqual(ts_rs.Count, 1);
       Assert.AreEqual(start, ts_rs.Start);
@@ -355,16 +355,16 @@
       Assert.IsTrue(ts_rs.All(x => x.Value == 1M));
 
       // Value: null
-      ts = TimeSeries.Factory.FromValue(null, start, 96, Frequency.QuarterHours);
+      ts = TimeSeries.Factory.FromValue(null, start, 96, Period.QuarterHour);
 
-      ts_rs = ts.ReSample(Frequency.Days, AggregationType.Sum);
+      ts_rs = ts.ReSample(Period.Day, AggregationType.Sum);
 
       Assert.AreEqual(ts_rs.Count, 1);
       Assert.AreEqual(start, ts_rs.Start);
       Assert.AreEqual(end, ts_rs.End);
       Assert.IsTrue(ts_rs.All(x => x.Value == null));
 
-      ts_rs = ts.ReSample(Frequency.Days, AggregationType.Mean);
+      ts_rs = ts.ReSample(Period.Day, AggregationType.Mean);
 
       Assert.AreEqual(ts_rs.Count, 1);
       Assert.AreEqual(start, ts_rs.Start);
@@ -379,16 +379,16 @@
       var end = new DateTimeOffset(new DateTime(2021, 1, 3, 0, 0, 0));
 
       // Value: 1
-      var ts = TimeSeries.Factory.FromValue(1M, start, 96 * 3, Frequency.QuarterHours);
+      var ts = TimeSeries.Factory.FromValue(1M, start, 96 * 3, Period.QuarterHour);
 
-      var ts_rs = ts.ReSample(Frequency.Days, AggregationType.Sum);
+      var ts_rs = ts.ReSample(Period.Day, AggregationType.Sum);
 
       Assert.AreEqual(ts_rs.Count, 3);
       Assert.AreEqual(start, ts_rs.Start);
       Assert.AreEqual(end, ts_rs.End);
       Assert.IsTrue(ts_rs.All(x => x.Value == 96M));
 
-      ts_rs = ts.ReSample(Frequency.Days, AggregationType.Mean);
+      ts_rs = ts.ReSample(Period.Day, AggregationType.Mean);
 
       Assert.AreEqual(ts_rs.Count, 3);
       Assert.AreEqual(start, ts_rs.Start);
@@ -396,16 +396,16 @@
       Assert.IsTrue(ts_rs.All(x => x.Value == 1M));
 
       // Value: null
-      ts = TimeSeries.Factory.FromValue(null, start, 96 * 3, Frequency.QuarterHours);
+      ts = TimeSeries.Factory.FromValue(null, start, 96 * 3, Period.QuarterHour);
 
-      ts_rs = ts.ReSample(Frequency.Days, AggregationType.Sum);
+      ts_rs = ts.ReSample(Period.Day, AggregationType.Sum);
 
       Assert.AreEqual(ts_rs.Count, 3);
       Assert.AreEqual(start, ts_rs.Start);
       Assert.AreEqual(end, ts_rs.End);
       Assert.IsTrue(ts_rs.All(x => x.Value == null));
 
-      ts_rs = ts.ReSample(Frequency.Days, AggregationType.Mean);
+      ts_rs = ts.ReSample(Period.Day, AggregationType.Mean);
 
       Assert.AreEqual(ts_rs.Count, 3);
       Assert.AreEqual(start, ts_rs.Start);
@@ -417,11 +417,11 @@
     public void TestDownSample_15min_to_month()
     {
       var start = new DateTimeOffset(new DateTime(2021, 03, 01));
-      var end = new DateTimeOffset(new DateTime(2021, 04, 01)) - Frequency.QuarterHours;
+      var end = new DateTimeOffset(new DateTime(2021, 04, 01)) - Period.QuarterHour;
 
-      var ts = TimeSeries.Factory.FromValue(1M, start, end, Frequency.QuarterHours);
-      var ts_month_mean = ts.ReSample(Frequency.Months, AggregationType.Mean);
-      var ts_month_sum = ts.ReSample(Frequency.Months, AggregationType.Sum);
+      var ts = TimeSeries.Factory.FromValue(1M, start, end, Period.QuarterHour);
+      var ts_month_mean = ts.ReSample(Period.Month, AggregationType.Mean);
+      var ts_month_sum = ts.ReSample(Period.Month, AggregationType.Sum);
 
       Assert.AreEqual(1, ts_month_mean.Count);
       Assert.AreEqual(1, ts_month_sum.Count);
@@ -436,10 +436,10 @@
       var start = new DateTimeOffset(new DateTime(2021, 01, 01));
       var end = new DateTimeOffset(new DateTime(2021, 12, 31, 23, 45, 00));
 
-      var ts_year = TimeSeries.Factory.FromValue(365, start, end, Frequency.Years);
+      var ts_year = TimeSeries.Factory.FromValue(365, start, end, Period.Year);
 
-      var ts_quarter_sum = ts_year.ReSample(Frequency.QuarterYears, AggregationType.Sum);
-      var ts_quarter_mean = ts_year.ReSample(Frequency.QuarterYears, AggregationType.Mean);
+      var ts_quarter_sum = ts_year.ReSample(Period.QuarterYear, AggregationType.Sum);
+      var ts_quarter_mean = ts_year.ReSample(Period.QuarterYear, AggregationType.Mean);
 
       Assert.AreEqual(4, ts_quarter_mean.Count);
       Assert.AreEqual(4, ts_quarter_sum.Count);
@@ -463,10 +463,10 @@
       var start = new DateTimeOffset(new DateTime(2021, 01, 01));
       var end = new DateTimeOffset(new DateTime(2021, 12, 31, 23, 45, 00));
 
-      var ts_year = TimeSeries.Factory.FromValue(365, start, end, Frequency.Years);
+      var ts_year = TimeSeries.Factory.FromValue(365, start, end, Period.Year);
 
-      var ts_quarter_sum = ts_year.ReSample(Frequency.Months, AggregationType.Sum);
-      var ts_quarter_mean = ts_year.ReSample(Frequency.Months, AggregationType.Mean);
+      var ts_quarter_sum = ts_year.ReSample(Period.Month, AggregationType.Sum);
+      var ts_quarter_mean = ts_year.ReSample(Period.Month, AggregationType.Mean);
 
       Assert.AreEqual(12, ts_quarter_mean.Count);
       Assert.AreEqual(12, ts_quarter_sum.Count);
@@ -496,10 +496,10 @@
       var start = new DateTimeOffset(new DateTime(2021, 01, 01));
       var end = new DateTimeOffset(new DateTime(2021, 12, 31, 23, 45, 00));
 
-      var ts_year = TimeSeries.Factory.FromValue(365, start, end, Frequency.Years);
+      var ts_year = TimeSeries.Factory.FromValue(365, start, end, Period.Year);
 
-      var ts_quarter_sum = ts_year.ReSample(Frequency.Days, AggregationType.Sum);
-      var ts_quarter_mean = ts_year.ReSample(Frequency.Days, AggregationType.Mean);
+      var ts_quarter_sum = ts_year.ReSample(Period.Day, AggregationType.Sum);
+      var ts_quarter_mean = ts_year.ReSample(Period.Day, AggregationType.Mean);
 
       Assert.AreEqual(365, ts_quarter_mean.Count);
       Assert.AreEqual(365, ts_quarter_sum.Count);
@@ -529,10 +529,10 @@
       var start = new DateTimeOffset(new DateTime(2021, 01, 01));
       var end = new DateTimeOffset(new DateTime(2021, 12, 31, 23, 45, 00));
 
-      var ts_year = TimeSeries.Factory.FromValue(365, start, end, Frequency.Years);
+      var ts_year = TimeSeries.Factory.FromValue(365, start, end, Period.Year);
 
-      var ts_quarter_sum = ts_year.ReSample(Frequency.Hours, AggregationType.Sum);
-      var ts_quarter_mean = ts_year.ReSample(Frequency.Hours, AggregationType.Mean);
+      var ts_quarter_sum = ts_year.ReSample(Period.Hour, AggregationType.Sum);
+      var ts_quarter_mean = ts_year.ReSample(Period.Hour, AggregationType.Mean);
 
       Assert.AreEqual(365 * 24, ts_quarter_mean.Count);
       Assert.AreEqual(365 * 24, ts_quarter_sum.Count);
@@ -547,10 +547,10 @@
       var start = new DateTimeOffset(new DateTime(2021, 01, 01));
       var end = new DateTimeOffset(new DateTime(2021, 12, 31, 23, 45, 00));
 
-      var ts_year = TimeSeries.Factory.FromValue(365, start, end, Frequency.Years);
+      var ts_year = TimeSeries.Factory.FromValue(365, start, end, Period.Year);
 
-      var ts_quarter_sum = ts_year.ReSample(Frequency.QuarterHours, AggregationType.Sum);
-      var ts_quarter_mean = ts_year.ReSample(Frequency.QuarterHours, AggregationType.Mean);
+      var ts_quarter_sum = ts_year.ReSample(Period.QuarterHour, AggregationType.Sum);
+      var ts_quarter_mean = ts_year.ReSample(Period.QuarterHour, AggregationType.Mean);
 
       Assert.AreEqual(365 * 96, ts_quarter_mean.Count);
       Assert.AreEqual(365 * 96, ts_quarter_sum.Count);
@@ -562,8 +562,8 @@
     [TestMethod]
     public void TestTrim()
     {
-      var ts1 = TimeSeries.Factory.FromValue(null, new DateTimeOffset(new DateTime(2021, 01, 01)), 48, Frequency.Hours);
-      var ts2 = TimeSeries.Factory.FromValue(1, new DateTimeOffset(new DateTime(2021, 01, 01, 2, 0, 0)), 44, Frequency.Hours);
+      var ts1 = TimeSeries.Factory.FromValue(null, new DateTimeOffset(new DateTime(2021, 01, 01)), 48, Period.Hour);
+      var ts2 = TimeSeries.Factory.FromValue(1, new DateTimeOffset(new DateTime(2021, 01, 01, 2, 0, 0)), 44, Period.Hour);
 
       var ts = ts1.JoinLeft(ts2, (l, r) => r);
 
@@ -595,7 +595,7 @@
       Assert.AreEqual(1M, tsTrimRight[tsTrimRight.Count - 1].Value);
 
       // trim only 0 values
-      var tsZeros = TimeSeries.Factory.FromValue(0, new DateTimeOffset(new DateTime(2021, 01, 01)), 48, Frequency.Hours);
+      var tsZeros = TimeSeries.Factory.FromValue(0, new DateTimeOffset(new DateTime(2021, 01, 01)), 48, Period.Hour);
 
       var tsTrimZeros = tsZeros.Trim(valuesToTrim: new decimal?[] {0M});
       Assert.AreEqual(0, tsTrimZeros.Count);
@@ -604,8 +604,8 @@
     [TestMethod]
     public void Test_Operator_Equals()
     {
-      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 10, Frequency.Days);
-      var ts2 = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 10, Frequency.Days);
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 10, Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 10, Period.Day);
 
       Assert.IsTrue(ts1 == ts2);
       Assert.IsFalse(ts1 != ts2);
@@ -614,7 +614,7 @@
     [TestMethod]
     public void Test_Operator_Equals_Null()
     {
-      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 10, Frequency.Days);
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 10, Period.Day);
 
       Assert.IsTrue(ts1 != null);
       Assert.IsTrue(null != ts1);
@@ -626,8 +626,8 @@
     [TestMethod]
     public void Test_Operator_Add()
     {
-      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 10, Frequency.Days);
-      var ts_expected = TimeSeries.Factory.FromValue(2, new DateTime(2001, 01, 01), 10, Frequency.Days);
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 10, Period.Day);
+      var ts_expected = TimeSeries.Factory.FromValue(2, new DateTime(2001, 01, 01), 10, Period.Day);
       var ts_actual = ts1 + ts1;
 
       Assert.AreEqual(ts_expected, ts_actual);
@@ -642,9 +642,9 @@
     [TestMethod]
     public void Test_Operator_AddEmpty()
     {
-      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 10, Frequency.Days);
-      var ts_expected = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 10, Frequency.Days);
-      var ts_actual = ts1 + TimeSeries.Factory.Empty(Frequency.Days);
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 10, Period.Day);
+      var ts_expected = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 10, Period.Day);
+      var ts_actual = ts1 + TimeSeries.Factory.Empty(Period.Day);
 
       Assert.IsTrue(ts_expected == ts_actual);
       Assert.IsFalse(ts_expected != ts_actual);
@@ -653,18 +653,18 @@
     [TestMethod]
     public void Test_Operator_AddTwoEmpty()
     {
-      var ts_actual = TimeSeries.Factory.Empty(Frequency.Days) + TimeSeries.Factory.Empty(Frequency.Days);
+      var ts_actual = TimeSeries.Factory.Empty(Period.Day) + TimeSeries.Factory.Empty(Period.Day);
 
-      Assert.IsTrue(ts_actual == TimeSeries.Factory.Empty(Frequency.Days));
+      Assert.IsTrue(ts_actual == TimeSeries.Factory.Empty(Period.Day));
     }
 
     [TestMethod]
     public void Test_Operator_Subtract()
     {
-      var ts1 = TimeSeries.Factory.FromValue(2, new DateTime(2001, 01, 01), 5, Frequency.Days);
-      var ts2 = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 10, Frequency.Days);
-      var ts_expected = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 5, Frequency.Days) +
-                        TimeSeries.Factory.FromValue(-1, new DateTime(2001, 01, 06), 5, Frequency.Days);
+      var ts1 = TimeSeries.Factory.FromValue(2, new DateTime(2001, 01, 01), 5, Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 10, Period.Day);
+      var ts_expected = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 5, Period.Day) +
+                        TimeSeries.Factory.FromValue(-1, new DateTime(2001, 01, 06), 5, Period.Day);
       var ts_actual = ts1 - ts2;
 
       Assert.IsTrue(ts_expected == ts_actual);
@@ -674,10 +674,10 @@
     [TestMethod]
     public void Test_Operator_Multiply()
     {
-      var ts1 = TimeSeries.Factory.FromValue(2, new DateTime(2001, 01, 01), 5, Frequency.Days);
-      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2001, 01, 01), 10, Frequency.Days);
-      var ts_expected = TimeSeries.Factory.FromValue(4, new DateTime(2001, 01, 01), 5, Frequency.Days) +
-                        TimeSeries.Factory.FromValue(0, new DateTime(2001, 01, 06), 5, Frequency.Days);
+      var ts1 = TimeSeries.Factory.FromValue(2, new DateTime(2001, 01, 01), 5, Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2001, 01, 01), 10, Period.Day);
+      var ts_expected = TimeSeries.Factory.FromValue(4, new DateTime(2001, 01, 01), 5, Period.Day) +
+                        TimeSeries.Factory.FromValue(0, new DateTime(2001, 01, 06), 5, Period.Day);
       var ts_actual = ts1 * ts2;
 
       Assert.IsTrue(ts_expected == ts_actual);
@@ -687,10 +687,10 @@
     [TestMethod]
     public void Test_Operator_Divide()
     {
-      var ts1 = TimeSeries.Factory.FromValue(2, new DateTime(2001, 01, 01), 5, Frequency.Days);
-      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2001, 01, 01), 10, Frequency.Days);
-      var ts_expected = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 5, Frequency.Days)
-                        + TimeSeries.Factory.FromValue(0, new DateTime(2001, 01, 06), 5, Frequency.Days);
+      var ts1 = TimeSeries.Factory.FromValue(2, new DateTime(2001, 01, 01), 5, Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2001, 01, 01), 10, Period.Day);
+      var ts_expected = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 5, Period.Day)
+                        + TimeSeries.Factory.FromValue(0, new DateTime(2001, 01, 06), 5, Period.Day);
       var ts_actual = ts1 / ts2;
 
       Assert.IsTrue(ts_expected == ts_actual);
@@ -700,20 +700,20 @@
     [TestMethod]
     public void Test_Operator_Numbers()
     {
-      var ts1 = TimeSeries.Factory.FromValue(2, new DateTime(2001, 01, 01), 5, Frequency.Days);
-      var ts_expected = TimeSeries.Factory.FromValue(4, new DateTime(2001, 01, 01), 5, Frequency.Days);
+      var ts1 = TimeSeries.Factory.FromValue(2, new DateTime(2001, 01, 01), 5, Period.Day);
+      var ts_expected = TimeSeries.Factory.FromValue(4, new DateTime(2001, 01, 01), 5, Period.Day);
       var ts_actual = ts1 * 2;
 
       Assert.IsTrue(ts_expected == ts_actual);
 
-      ts1 = TimeSeries.Factory.FromValue(2, new DateTime(2001, 01, 01), 5, Frequency.Days);
-      ts_expected = TimeSeries.Factory.FromValue(4, new DateTime(2001, 01, 01), 5, Frequency.Days);
+      ts1 = TimeSeries.Factory.FromValue(2, new DateTime(2001, 01, 01), 5, Period.Day);
+      ts_expected = TimeSeries.Factory.FromValue(4, new DateTime(2001, 01, 01), 5, Period.Day);
       ts_actual = ts1 + 2;
 
       Assert.IsTrue(ts_expected == ts_actual);
 
-      ts1 = TimeSeries.Factory.FromValue(4, new DateTime(2001, 01, 01), 5, Frequency.Days);
-      ts_expected = TimeSeries.Factory.FromValue(2, new DateTime(2001, 01, 01), 5, Frequency.Days);
+      ts1 = TimeSeries.Factory.FromValue(4, new DateTime(2001, 01, 01), 5, Period.Day);
+      ts_expected = TimeSeries.Factory.FromValue(2, new DateTime(2001, 01, 01), 5, Period.Day);
       ts_actual = ts1 - 2;
 
       Assert.IsTrue(ts_expected == ts_actual);
@@ -722,11 +722,11 @@
     [TestMethod]
     public void Test_Join_2()
     {
-      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), 10, Frequency.Days);
-      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 01, 01), 10, Frequency.Days);
-      var ts3 = TimeSeries.Factory.FromValue(3, new DateTime(2021, 01, 01), 10, Frequency.Days);
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), 10, Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 01, 01), 10, Period.Day);
+      var ts3 = TimeSeries.Factory.FromValue(3, new DateTime(2021, 01, 01), 10, Period.Day);
 
-      var ts_expected = TimeSeries.Factory.FromValue(6, new DateTime(2021, 01, 01), 10, Frequency.Days);
+      var ts_expected = TimeSeries.Factory.FromValue(6, new DateTime(2021, 01, 01), 10, Period.Day);
       var ts_actual = ts1.JoinFull(ts2, ts3, (x1, x2, x3) => x1 + x2 + x3);
 
       Assert.IsTrue(ts_actual == ts_expected);
@@ -735,12 +735,12 @@
     [TestMethod]
     public void Test_Join_3()
     {
-      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), 10, Frequency.Days);
-      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 01, 01), 10, Frequency.Days);
-      var ts3 = TimeSeries.Factory.FromValue(3, new DateTime(2021, 01, 01), 10, Frequency.Days);
-      var ts4 = TimeSeries.Factory.FromValue(4, new DateTime(2021, 01, 01), 10, Frequency.Days);
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), 10, Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 01, 01), 10, Period.Day);
+      var ts3 = TimeSeries.Factory.FromValue(3, new DateTime(2021, 01, 01), 10, Period.Day);
+      var ts4 = TimeSeries.Factory.FromValue(4, new DateTime(2021, 01, 01), 10, Period.Day);
 
-      var ts_expected = TimeSeries.Factory.FromValue(10, new DateTime(2021, 01, 01), 10, Frequency.Days);
+      var ts_expected = TimeSeries.Factory.FromValue(10, new DateTime(2021, 01, 01), 10, Period.Day);
       var ts_actual = ts1.JoinFull(ts2, ts3, ts4, (x1, x2, x3, x4) => x1 + x2 + x3 + x4);
 
       Assert.IsTrue(ts_actual == ts_expected);
@@ -749,7 +749,7 @@
     [TestMethod]
     public void Test_Function()
     {
-      var ts = TimeSeries.Factory.FromGenerator(new DateTime(2021, 01, 01), new DateTime(2021, 01, 05), Frequency.Days, x => x.Day);
+      var ts = TimeSeries.Factory.FromGenerator(new DateTime(2021, 01, 01), new DateTime(2021, 01, 05), Period.Day, x => x.Day);
 
       Assert.AreEqual(5M, ts.Count);
       Assert.AreEqual(1M, ts[new DateTime(2021, 01, 01)]);
@@ -762,7 +762,7 @@
     [TestMethod]
     public void Test_ToTsv()
     {
-      var ts = TimeSeries.Factory.FromGenerator(new DateTime(2021, 01, 01), new DateTime(2021, 01, 05), Frequency.Days, x => x.Day);
+      var ts = TimeSeries.Factory.FromGenerator(new DateTime(2021, 01, 01), new DateTime(2021, 01, 05), Period.Day, x => x.Day);
 
       var expected =
         @"01.01.2021 00:00:00 +01:00	1

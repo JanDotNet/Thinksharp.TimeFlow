@@ -12,7 +12,7 @@ namespace Thinksharp.TimeFlow
 
   public static class TimeSeriesFactoryExtensions
   {
-    public static TimeSeries Empty(this ITimeSeriesFactory facotry, Frequency freq, TimeZoneInfo timeZone = null)
+    public static TimeSeries Empty(this ITimeSeriesFactory facotry, Period freq, TimeZoneInfo timeZone = null)
     {
       return new TimeSeries(Enumerable.Empty<IndexedSeriesItem<DateTimeOffset, decimal?>>(), freq, timeZone);
     }
@@ -38,7 +38,7 @@ namespace Thinksharp.TimeFlow
     /// <returns>
     ///   A new time series with N constant values.
     /// </returns>
-    public static TimeSeries FromValue(this ITimeSeriesFactory factory, decimal? value, DateTime startDate, int count, Frequency freq, TimeZoneInfo timeZone = null)
+    public static TimeSeries FromValue(this ITimeSeriesFactory factory, decimal? value, DateTime startDate, int count, Period freq, TimeZoneInfo timeZone = null)
     {
       return factory.FromValue(value, new DateTimeOffset(startDate), count, freq, timeZone);
     }
@@ -64,7 +64,7 @@ namespace Thinksharp.TimeFlow
     /// <returns>
     ///   A new time series with N constant values.
     /// </returns>
-    public static TimeSeries FromValue(this ITimeSeriesFactory factory, decimal? value, DateTimeOffset startDate, int count, Frequency freq, TimeZoneInfo timeZone = null)
+    public static TimeSeries FromValue(this ITimeSeriesFactory factory, decimal? value, DateTimeOffset startDate, int count, Period freq, TimeZoneInfo timeZone = null)
     {
       if (count <= 0)
       {
@@ -78,7 +78,7 @@ namespace Thinksharp.TimeFlow
       for (var i = 0; i < count; i++)
       {
         result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(date, value));
-        date = freq.AddFreq(date, timeZone);
+        date = freq.AddPeriod(date, timeZone);
       }
 
       return new TimeSeries(result, freq, timeZone);
@@ -105,7 +105,7 @@ namespace Thinksharp.TimeFlow
     /// <returns>
     ///   A new time series with N constant values.
     /// </returns>
-    public static TimeSeries FromValue(this ITimeSeriesFactory factory, decimal? value, DateTime startDate, DateTime end, Frequency freq, TimeZoneInfo timeZone = null)
+    public static TimeSeries FromValue(this ITimeSeriesFactory factory, decimal? value, DateTime startDate, DateTime end, Period freq, TimeZoneInfo timeZone = null)
     {
       return factory.FromValue(value, new DateTimeOffset(startDate), new DateTimeOffset(end), freq, timeZone);
     }
@@ -131,7 +131,7 @@ namespace Thinksharp.TimeFlow
     /// <returns>
     ///   A new time series with N constant values.
     /// </returns>
-    public static TimeSeries FromValue(this ITimeSeriesFactory factory, decimal? value, DateTimeOffset startDate, DateTimeOffset end, Frequency freq, TimeZoneInfo timeZone = null)
+    public static TimeSeries FromValue(this ITimeSeriesFactory factory, decimal? value, DateTimeOffset startDate, DateTimeOffset end, Period freq, TimeZoneInfo timeZone = null)
     {
       timeZone = timeZone ?? DateHelper.GetDefaultTimeZone();
 
@@ -140,7 +140,7 @@ namespace Thinksharp.TimeFlow
       while (date <= end)
       {
         result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(date, value));
-        date = freq.AddFreq(date, timeZone);
+        date = freq.AddPeriod(date, timeZone);
       }
 
       return new TimeSeries(result, freq, timeZone);
@@ -167,7 +167,7 @@ namespace Thinksharp.TimeFlow
     /// <returns>
     ///   A new time series with the generated values.
     /// </returns>
-    public static TimeSeries FromGenerator(this ITimeSeriesFactory factory, DateTime firstTimePoint, DateTime lastTimePoint, Frequency freq, Func<DateTimeOffset, decimal?> generator, TimeZoneInfo timeZone = null)
+    public static TimeSeries FromGenerator(this ITimeSeriesFactory factory, DateTime firstTimePoint, DateTime lastTimePoint, Period freq, Func<DateTimeOffset, decimal?> generator, TimeZoneInfo timeZone = null)
       => factory.FromGenerator(new DateTimeOffset(firstTimePoint), new DateTimeOffset(lastTimePoint), freq, generator, timeZone);
 
     /// <summary>
@@ -191,7 +191,7 @@ namespace Thinksharp.TimeFlow
     /// <returns>
     ///   A new time series with the generated values.
     /// </returns>
-    public static TimeSeries FromGenerator(this ITimeSeriesFactory factory, DateTimeOffset firstTimePoint, DateTimeOffset lastTimePoint, Frequency freq, Func<DateTimeOffset, decimal?> generator, TimeZoneInfo timeZone = null)
+    public static TimeSeries FromGenerator(this ITimeSeriesFactory factory, DateTimeOffset firstTimePoint, DateTimeOffset lastTimePoint, Period freq, Func<DateTimeOffset, decimal?> generator, TimeZoneInfo timeZone = null)
     {
       timeZone = timeZone ?? DateHelper.GetDefaultTimeZone();
 
@@ -207,7 +207,7 @@ namespace Thinksharp.TimeFlow
       {
         timePoints.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(currentTimePoint, generator(currentTimePoint)));
 
-        currentTimePoint = freq.AddFreq(currentTimePoint, timeZone);
+        currentTimePoint = freq.AddPeriod(currentTimePoint, timeZone);
       }
 
       return new TimeSeries(timePoints, freq, timeZone);
