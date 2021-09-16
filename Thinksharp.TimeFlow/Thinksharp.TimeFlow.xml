@@ -49,6 +49,17 @@
               Takes always the right value.
             </summary>
         </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.ToFrame(System.String)">
+            <summary>
+            Creates a <see cref="T:Thinksharp.TimeFlow.TimeFrame"/> with one time series.
+            </summary>
+            <param name="name">
+              The name of the time series.
+            </param>
+            <returns>
+              A <see cref="T:Thinksharp.TimeFlow.TimeFrame"/> with one time series.
+            </returns>
+        </member>
         <member name="P:Thinksharp.TimeFlow.TimeSeries.TimeZone">
             <summary>
               Gets the time zone object of this time series.
@@ -56,18 +67,18 @@
         </member>
         <member name="P:Thinksharp.TimeFlow.TimeSeries.Frequency">
             <summary>
-              Gets the frequency of this time series..
+              Gets the frequency of this time series.
             </summary>
         </member>
         <member name="M:Thinksharp.TimeFlow.TimeSeries.Apply(System.Func{System.Nullable{System.Decimal},System.Nullable{System.Decimal}})">
             <summary>
-              Returns a new date time series where all values are mapped using the specified mapping function.
+              Returns a new time series where all values are mapped using the specified mapping function.
             </summary>
             <param name="func">
-              The mapping function to use for mapping values.
+              The mapping function to use.
             </param>
             <returns>
-              Returns a new date time series where all values are mapped using the specified mapping function.
+              A new date time series where all values are mapped using the specified mapping function.
             </returns>
         </member>
         <member name="M:Thinksharp.TimeFlow.TimeSeries.ApplyValues(System.Func{System.Decimal,System.Decimal})">
@@ -79,7 +90,7 @@
               The mapping function to use for mapping non-nullable values.
             </param>
             <returns>
-              Returns a new date time series where all values are mapped using the specified mapping function whereas null values
+              A new date time series where all values are mapped using the specified mapping function whereas null values
               remain as null values.
             </returns>
         </member>

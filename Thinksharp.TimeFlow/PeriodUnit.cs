@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Thinksharp.TimeFlow
 { 
@@ -14,7 +15,7 @@ namespace Thinksharp.TimeFlow
         return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc, timeZone.Id);
       }
 
-      public override string ToString() => "Milliseconds";
+      public override string Name => "ms";
     }
     private class PeriodUnitSecond : PeriodUnit
     {
@@ -26,7 +27,7 @@ namespace Thinksharp.TimeFlow
         return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc, timeZone.Id);
       }
 
-      public override string ToString() => "Seconds";
+      public override string Name => "s";
     }
     private class PeriodUnitMinute : PeriodUnit
     {
@@ -38,7 +39,7 @@ namespace Thinksharp.TimeFlow
         return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc, timeZone.Id);
       }
 
-      public override string ToString() => "Minutes";
+      public override string Name => "min";
     }
     private class PeriodUnitHour : PeriodUnit
     {
@@ -50,7 +51,7 @@ namespace Thinksharp.TimeFlow
         return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc, timeZone.Id);
       }
 
-      public override string ToString() => "Hours";
+      public override string Name => "h";
     }
     private class PeriodUnitDay : PeriodUnit
     {
@@ -64,7 +65,7 @@ namespace Thinksharp.TimeFlow
         return localTime + offsetDiff;
       }
 
-      public override string ToString() => "Days";
+      public override string Name => "d";
     }
     private class PeriodUnitMonth : PeriodUnit
     {
@@ -76,7 +77,7 @@ namespace Thinksharp.TimeFlow
         return new DateTimeOffset(date.DateTime, timeZone.GetUtcOffset(date.DateTime));
       }
 
-      public override string ToString() => "Months";
+      public override string Name => "mth";
     }
     private class PeriodUnitYear : PeriodUnit
     {
@@ -88,7 +89,7 @@ namespace Thinksharp.TimeFlow
         return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc, timeZone.Id);
       }
 
-      public override string ToString() => "Years";
+      public override string Name => "yr";
     }
     public static PeriodUnit Millisecond { get; } = new PeriodUnitMillisecond();
     public static PeriodUnit Second { get; } = new PeriodUnitSecond();
@@ -97,7 +98,29 @@ namespace Thinksharp.TimeFlow
     public static PeriodUnit Day { get; } = new PeriodUnitDay();
     public static PeriodUnit Month { get; } = new PeriodUnitMonth();
     public static PeriodUnit Year { get; } = new PeriodUnitYear();
+    private static PeriodUnit[] AllUnits { get; } = new[]
+    {
+      Millisecond,
+      Second,
+      Minute,
+      Hour,
+      Day,
+      Month,
+      Year
+    };
+    internal static PeriodUnit Parse(string unitString)
+    {
+      var unit = AllUnits.FirstOrDefault(u => u.Name.Equals(unitString, StringComparison.InvariantCultureIgnoreCase));
+
+      if (unit == null)
+      {
+        throw new FormatException($"'{unitString}' is not a valid period unit.");
+      }
+
+      return unit;
+    }
     public abstract DateTimeOffset AddPeriod(DateTimeOffset dt, int value, TimeZoneInfo timeZone = null);
+    public abstract string Name { get; }
     public override bool Equals(object other) => this.GetType() == other.GetType();
     public override int GetHashCode() => this.GetType().GetHashCode();
     public static bool operator ==(PeriodUnit left, PeriodUnit right)

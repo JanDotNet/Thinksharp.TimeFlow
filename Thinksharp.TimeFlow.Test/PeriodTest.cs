@@ -249,5 +249,19 @@ namespace Thinksharp.TimeFlow
 
       Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 01, 01)), dn);
     }
+
+    [TestMethod]
+    public void TestParse()
+    {
+      var actual = Period.Parse("4 h");
+      var expected = new Period(4, PeriodUnit.Hour);
+      Assert.AreEqual(expected, actual);
+
+      actual = Period.Parse("55 yr");
+      expected = new Period(55, PeriodUnit.Year);
+      Assert.AreEqual(expected, actual);
+
+      Assert.ThrowsException<FormatException>(() => Period.Parse("TEST"));
+    }
   }
 }

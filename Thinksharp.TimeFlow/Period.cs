@@ -1,6 +1,7 @@
 ﻿namespace Thinksharp.TimeFlow
 {
   using System;
+  using System.Text.RegularExpressions;
 
   public class Period : IComparable<Period>
   {
@@ -17,7 +18,6 @@
 
     public int Value { get; }
     public PeriodUnit Unit { get; }
-
     public static Period Milliseconds { get; } = new Period(1, PeriodUnit.Millisecond);
     public static Period Seconds { get; } = new Period(1, PeriodUnit.Second);
     public static Period Minutes { get; } = new Period(1, PeriodUnit.Minute);
@@ -26,11 +26,9 @@
     public static Period Day { get; } = new Period(1, PeriodUnit.Day);
     public static Period Month { get; } = new Period(1, PeriodUnit.Month);
     public static Period QuarterYear { get; } = new Period(3, PeriodUnit.Month);
-    public static Period Year { get; } = new Period(1, PeriodUnit.Year);    
-
-    public DateTimeOffset AddPeriod(DateTimeOffset dt, TimeZoneInfo timeZone = null)
-      => this.Unit.AddPeriod(dt, this.Value, timeZone);
-    
+    public static Period Year { get; } = new Period(1, PeriodUnit.Year);
+    public DateTimeOffset AddPeriod(DateTimeOffset dt, TimeZoneInfo timeZone = null) 
+      => this.Unit.AddPeriod(dt, this.Value, timeZone);    
     public DateTimeOffset SubtractPeriod(DateTimeOffset dt, TimeZoneInfo timeZone = null)
       => this.Unit.AddPeriod(dt, -this.Value, timeZone);
     
@@ -66,6 +64,28 @@
     public override string ToString()
     {
       return $"{this.Value} {this.Unit}";
+    }
+
+    private static Regex periodRegex = new Regex(@"^\s*(?<value>[0-9]+)\s*(?<unit>(ms|s|min|h|d|mth|yr))\s*$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    public static Period Parse(string periodString)
+    {
+      if (periodString == null)
+      {
+        throw new ArgumentNullException(nameof(periodString));
+      }
+
+      var match = periodRegex.Match(periodString);
+
+      if (!match.Success)
+      {
+        throw new FormatException($"'{periodString}' is not a valid period.");
+      }
+
+      var value = int.Parse(match.Groups["value"].Value);
+      var unit = match.Groups["unit"].Value;
+
+      return new Period(value, PeriodUnit.Parse(unit));
     }
 
     public override bool Equals(object obj)
