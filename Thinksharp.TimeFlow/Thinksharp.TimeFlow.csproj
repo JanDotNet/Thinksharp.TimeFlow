@@ -12,7 +12,8 @@
     <RepositoryUrl>https://github.com/JanDotNet/Thinksharp.TimeFlow</RepositoryUrl>
     <PackageTags>TimeSeries</PackageTags>
     <PackageReleaseNotes>0.9.0 Initial Version
-0.10.0 Changed type Frequency to Period</PackageReleaseNotes>
+0.10.0 Changed type Frequency to Period
+0.11.0 Added support for period serialization</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>

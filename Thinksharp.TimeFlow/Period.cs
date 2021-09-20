@@ -1,6 +1,7 @@
 ﻿namespace Thinksharp.TimeFlow
 {
   using System;
+  using System.Text;
   using System.Text.RegularExpressions;
 
   public class Period : IComparable<Period>
@@ -27,11 +28,11 @@
     public static Period Month { get; } = new Period(1, PeriodUnit.Month);
     public static Period QuarterYear { get; } = new Period(3, PeriodUnit.Month);
     public static Period Year { get; } = new Period(1, PeriodUnit.Year);
-    public DateTimeOffset AddPeriod(DateTimeOffset dt, TimeZoneInfo timeZone = null) 
-      => this.Unit.AddPeriod(dt, this.Value, timeZone);    
+    public DateTimeOffset AddPeriod(DateTimeOffset dt, TimeZoneInfo timeZone = null)
+      => this.Unit.AddPeriod(dt, this.Value, timeZone);
     public DateTimeOffset SubtractPeriod(DateTimeOffset dt, TimeZoneInfo timeZone = null)
       => this.Unit.AddPeriod(dt, -this.Value, timeZone);
-    
+
     public static DateTimeOffset operator +(DateTimeOffset dt, Period period) => period.AddPeriod(dt);
     public static DateTimeOffset operator +(Period period, DateTimeOffset dt) => period.AddPeriod(dt);
     public static DateTimeOffset operator -(DateTimeOffset dt, Period period) => period.SubtractPeriod(dt);
@@ -66,7 +67,7 @@
       return $"{this.Value} {this.Unit}";
     }
 
-    private static Regex periodRegex = new Regex(@"^\s*(?<value>[0-9]+)\s*(?<unit>(ms|s|min|h|d|mth|yr))\s*$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static Regex periodRegex = new Regex(@"^\s*(?<value>[0-9]+)?\s*(?<unit>(ms|s|min|h|d|mth|yr))\s*$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     public static Period Parse(string periodString)
     {
@@ -75,17 +76,35 @@
         throw new ArgumentNullException(nameof(periodString));
       }
 
+      if (Period.TryParse(periodString, out var period))
+      {
+        return period;
+      }
+
+      throw new FormatException($"'{periodString}' is not a valid period.");
+    }
+
+    public static bool TryParse(string periodString, out Period period)
+    {
+      period = null;
+      if (periodString == null)
+      {
+        return false;
+      }
+
       var match = periodRegex.Match(periodString);
 
       if (!match.Success)
       {
-        throw new FormatException($"'{periodString}' is not a valid period.");
+        return false;
       }
 
-      var value = int.Parse(match.Groups["value"].Value);
+      var valueStr = match.Groups["value"].Value;
+      var value = string.IsNullOrEmpty(valueStr) ? 1 : int.Parse(valueStr);
       var unit = match.Groups["unit"].Value;
 
-      return new Period(value, PeriodUnit.Parse(unit));
+      period = new Period(value, PeriodUnit.Parse(unit));
+      return true;
     }
 
     public override bool Equals(object obj)

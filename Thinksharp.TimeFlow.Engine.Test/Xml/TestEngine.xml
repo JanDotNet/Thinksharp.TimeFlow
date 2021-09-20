@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TimeSeriesTransformation>
+	<Actions>
+		<Action1 Att="01" />
+		<Action1 Att="02" />
+	</Actions>
+</TimeSeriesTransformation>

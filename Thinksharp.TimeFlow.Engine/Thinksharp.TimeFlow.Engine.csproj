@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FleeFixed" Version="1.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Thinksharp.TimeFlow\Thinksharp.TimeFlow.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+      <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+        <_Parameter1>$(AssemblyName).Test</_Parameter1>
+      </AssemblyAttribute>
+  </ItemGroup>
+
+</Project>

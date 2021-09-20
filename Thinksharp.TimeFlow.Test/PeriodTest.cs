@@ -204,7 +204,7 @@ namespace Thinksharp.TimeFlow
 
       Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 11, 01)), dn);
     }
-    
+
     [TestMethod]
     public void AddFreq_QuarterYears_20210101()
     {
@@ -255,6 +255,10 @@ namespace Thinksharp.TimeFlow
     {
       var actual = Period.Parse("4 h");
       var expected = new Period(4, PeriodUnit.Hour);
+      Assert.AreEqual(expected, actual);
+
+      actual = Period.Parse("h");
+      expected = new Period(1, PeriodUnit.Hour);
       Assert.AreEqual(expected, actual);
 
       actual = Period.Parse("55 yr");

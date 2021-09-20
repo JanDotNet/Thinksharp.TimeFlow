@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Thinksharp.TimeFlow
 {
@@ -22,6 +23,19 @@ namespace Thinksharp.TimeFlow
       public string Name { get; }
       public TimeSeries TimeSeries { get; }
     }
+
+    public TimeFrame()
+    { }
+
+    private TimeFrame(IEnumerable<NameTimeSeriesPair> timeSeries, Period frequency)
+    {
+      this.timeSeries = timeSeries.ToList();
+      this.timeSeriesDictionary = timeSeries.ToDictionary(x => x.Name, x => x.TimeSeries);
+      this.Frequency = frequency;
+
+      this.RecalculateStartEnd();
+    }
+
     public string Name { get; set; }
     public int Count => this.timeSeries.Count;
     public DateTimeOffset Start { get; private set; } = DateTimeOffset.MaxValue;
@@ -59,14 +73,7 @@ namespace Thinksharp.TimeFlow
       this.timeSeries.Add(pair);
       this.timeSeriesDictionary.Add(name, timeSeries);
 
-      if (timeSeries.Start < this.Start)
-      {
-        this.Start = timeSeries.Start;
-      }
-      if (timeSeries.End > this.End)
-      {
-        this.End = timeSeries.End;
-      }
+      this.RecalculateStartEnd();
     }
     public void Remove(string name)
     {
@@ -77,15 +84,46 @@ namespace Thinksharp.TimeFlow
         this.timeSeriesDictionary.Remove(existingTimeSeriesPair.Name);
         this.timeSeries.Remove(existingTimeSeriesPair);
 
-        if (this.Start == existingTimeSeriesPair.TimeSeries.Start)
-        {
-          this.Start = this.timeSeries.Select(p => p.TimeSeries.Start).DefaultIfEmpty(DateTimeOffset.MaxValue).Min();
-        }
-        if (this.End == existingTimeSeriesPair.TimeSeries.End)
-        {
-          this.End = this.timeSeries.Select(p => p.TimeSeries.End).DefaultIfEmpty(DateTimeOffset.MinValue).Max();
-        }
+        this.RecalculateStartEnd();
       }
+    }
+
+    public void ReSample(Period period, AggregationType aggregationType)
+    {
+      if (this.Frequency == period)
+      {
+        return;
+      }
+
+      this.Frequency = period;
+      foreach (var ts in this.timeSeries)
+      {
+        this[ts.Name] = ts.TimeSeries.ReSample(period, aggregationType);
+      }
+    }
+
+    public void ReSample(Period period, Dictionary<string, AggregationType> aggragationTypes)
+    {
+      if (this.Frequency == period)
+      {
+        return;
+      }
+
+      this.Frequency = period;
+      foreach (var ts in this.timeSeries)
+      {
+        if (!aggragationTypes.TryGetValue(ts.Name, out var aggregationType))
+        {
+          throw new InvalidOperationException($"Unable to resample time series '{ts.Name}' because the aggregation type is not specified.");
+        }
+        this[ts.Name] = ts.TimeSeries.ReSample(period, aggregationType);
+      }
+    }
+
+    private void RecalculateStartEnd()
+    {
+      this.Start = this.timeSeries.Select(p => p.TimeSeries.Start).DefaultIfEmpty(DateTimeOffset.MaxValue).Min();
+      this.End = this.timeSeries.Select(p => p.TimeSeries.End).DefaultIfEmpty(DateTimeOffset.MinValue).Max();
     }
 
     public IEnumerator<KeyValuePair<string, TimeSeries>> GetEnumerator()
@@ -95,6 +133,15 @@ namespace Thinksharp.TimeFlow
 
     IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
+    public TimeFrame this[string[] names]
+    {
+      get
+      {
+        var filteredTimeSeries = this.timeSeries.Where(x => names.Contains(x.Name));
+
+        return new TimeFrame(filteredTimeSeries, this.Frequency);
+      }
+    }
     public TimeSeries this[string name]
     {
       get

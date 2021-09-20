@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thinksharp.TimeFlow.Excel",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thinksharp.TimeFlow.Test", "Thinksharp.TimeFlow.Test\Thinksharp.TimeFlow.Test.csproj", "{646BDE24-F546-4026-BF2B-2550BFED6319}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thinksharp.TimeFlow.Engine", "Thinksharp.TimeFlow.Engine\Thinksharp.TimeFlow.Engine.csproj", "{4264D34C-E171-4968-89FE-76C87229299C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thinksharp.TimeFlow.Engine.Test", "Thinksharp.TimeFlow.Engine.Test\Thinksharp.TimeFlow.Engine.Test.csproj", "{D22D1273-058D-46EE-8616-8472A779F50F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{646BDE24-F546-4026-BF2B-2550BFED6319}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{646BDE24-F546-4026-BF2B-2550BFED6319}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{646BDE24-F546-4026-BF2B-2550BFED6319}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4264D34C-E171-4968-89FE-76C87229299C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4264D34C-E171-4968-89FE-76C87229299C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4264D34C-E171-4968-89FE-76C87229299C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4264D34C-E171-4968-89FE-76C87229299C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D22D1273-058D-46EE-8616-8472A779F50F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D22D1273-058D-46EE-8616-8472A779F50F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D22D1273-058D-46EE-8616-8472A779F50F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D22D1273-058D-46EE-8616-8472A779F50F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
