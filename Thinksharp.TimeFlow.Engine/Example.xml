@@ -2,17 +2,16 @@
 <TimeSeriesTransformation>
 	<Parameters>
 		<Paramater Name="AssetId" Type="int" DefaultValue="5" />
+    <Paramater Name="Factor" Type="int" DefaultValue="1" />
 		<Paramater Name="ZemdaServer" Type="string" DefaultValue="DefaultServer" />
 		<Paramater Name="HadesServer" Type="string" DefaultValue="DefaultServer" />
 	</Parameters>
 	<Actions>
-		<Action Name="ReadCsv"			NewTimeSeries="dax" FileName="Input.csv" Separator=";" />
 		<Action Name="LoadFromZemda"	NewTimeSeries="price_spot_qh"	ProductId="133" DateFrom="2021-01-01" DateTo="2021-12-31" />
 		<Action Name="LoadFromHades"	NewTimeSeries="mwh_ppa_qh"		AssetId="$AsssetId" PropertyId="11" DateFrom="2021-01-01" DateTo="2021-12-31" />
-		<Action Name="Calculate"		NewTimeSeries="cf_ppa_qh"		Formula="ppa_fahrplan * epex_spot" />
+		<Action Name="Calculate"		NewTimeSeries="cf_ppa_qh"		Formula="ppa_fahrplan * epex_spot * Factor" />
 		<Action Name="Resample"			NewTimeSeries="cf_ppa_h"		SourceTimeSeries="cf_ppa_qh" Period="h" />
-		<Action Name="Rename"			NewTimeSeries="cf_ppa_h"		SourceTimeSeries="cf_ppa_qh" />
 		<Action Name="Slice"			NewTimeSeries="cf_ppa_qh"		SourceTimeSeries="cf_ppa_qh" DateFrom="" DateTo="" />
-		<Action Name="WriteCsv"			FileName="export.csv" Separator="\t" />
+    <Action Name="WriteToZemda" SourceTimeSeries="cf_ppa_qh"	ProductId="133" TradingDay="$Date.Today" />
 	</Actions>
 </TimeSeriesTransformation>

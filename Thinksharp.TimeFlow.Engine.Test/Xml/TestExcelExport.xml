@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TimeSeriesTransformation>
+	<Actions>
+		<TimeSeriesFromValue Name="TS1" Value="1" From="2021-01-01" To="2021-12-31" Period="d" />
+		<TimeSeriesFromValue Name="TS2" Value="2" From="2021-01-01" To="2021-12-31" Period="d" />
+    <Calculate Name="TS3" Formula="TS1 + TS2" />
+    <WriteToExcel ExcelFile="c:\temp\TestExport_Horitzontal.xlsx" Orientation="Horizontal" Sheet="Sheet" />
+    <WriteToExcel ExcelFile="c:\temp\TestExport_Vertical.xlsx" Orientation="Vertical" Sheet="Sheet" />
+	</Actions>
+</TimeSeriesTransformation>

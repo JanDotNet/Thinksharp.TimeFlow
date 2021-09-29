@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.12.0</Version>
+    <Authors>Jan-Niklas Schäfer</Authors>
+    <Company>ThinkSharp</Company>
+    <Product>ThinkSharp.TimeFlow.Excel</Product>
   </PropertyGroup>
 
   <ItemGroup>
@@ -9,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Thinksharp.TimeFlow.Engine\Thinksharp.TimeFlow.Engine.csproj" />
     <ProjectReference Include="..\Thinksharp.TimeFlow\Thinksharp.TimeFlow.csproj" />
   </ItemGroup>
 

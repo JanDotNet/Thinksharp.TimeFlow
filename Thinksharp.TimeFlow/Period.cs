@@ -1,10 +1,9 @@
 ﻿namespace Thinksharp.TimeFlow
 {
   using System;
-  using System.Text;
   using System.Text.RegularExpressions;
 
-  public class Period : IComparable<Period>
+  public class Period
   {
     public Period(int value, PeriodUnit period)
     {
@@ -37,30 +36,12 @@
     public static DateTimeOffset operator +(Period period, DateTimeOffset dt) => period.AddPeriod(dt);
     public static DateTimeOffset operator -(DateTimeOffset dt, Period period) => period.SubtractPeriod(dt);
 
-    public static bool operator ==(Period left, Period right)
-    {
-      var isLeftNull = ReferenceEquals(left, null);
-      var isRightNull = ReferenceEquals(right, null);
-      if (isLeftNull && isRightNull)
-      {
-        return true;
-      }
-
-      if (isLeftNull || isRightNull)
-      {
-        return false;
-      }
-
-      return left.Equals(right);
-    }
-    public static bool operator !=(Period left, Period right)
-    {
-      return !(left == right);
-    }
-    public static bool operator >(Period left, Period right) => left?.CompareTo(right) > 0;
-    public static bool operator <(Period left, Period right) => left?.CompareTo(right) < 0;
-    public static bool operator >=(Period left, Period right) => left?.CompareTo(right) >= 0;
-    public static bool operator <=(Period left, Period right) => left?.CompareTo(right) <= 0;
+    public static bool operator ==(Period left, Period right) => Compare(left, right, true, false, (l, r) => l.Equals(r));
+    public static bool operator !=(Period left, Period right) => Compare(left, right, false, true, (l, r) => !l.Equals(r));
+    public static bool operator >(Period left, Period right) => Compare(left, right, false, false, (l, r) => l > r);
+    public static bool operator <(Period left, Period right) => Compare(left, right, false, false, (l, r) => l < r);
+    public static bool operator >=(Period left, Period right) => Compare(left, right, true, false, (l, r) => l >= r);
+    public static bool operator <=(Period left, Period right) => Compare(left, right, true, false, (l, r) => l <= r);
 
     public override string ToString()
     {
@@ -132,17 +113,37 @@
       }
     }
 
-    public int CompareTo(Period other)
+    //public int CompareTo(Period other)
+    //{
+    //  if (other == null)
+    //  {
+    //    return -1;
+    //  }
+
+    //  var thisInterval = this.AddPeriod(DateTimeOffset.MinValue);
+    //  var otherInterval = other.AddPeriod(DateTimeOffset.MinValue);
+
+    //  return thisInterval.CompareTo(otherInterval);
+    //}
+
+    private static bool Compare(Period left, Period right, bool bothNull, bool oneNull, Func<DateTimeOffset, DateTimeOffset, bool> noneNullFunc)
     {
-      if (other == null)
+      var isLeftNull = ReferenceEquals(left, null);
+      var isRightNull = ReferenceEquals(right, null);
+      if (isLeftNull && isRightNull)
       {
-        return 1;
+        return bothNull;
       }
 
-      var thisInterval = this.AddPeriod(DateTimeOffset.MinValue);
-      var otherInterval = other.AddPeriod(DateTimeOffset.MinValue);
+      if (isLeftNull || isRightNull)
+      {
+        return oneNull;
+      }
 
-      return thisInterval.CompareTo(otherInterval);
+      var leftInterval = left.AddPeriod(DateTimeOffset.MinValue);
+      var rightInterval = right.AddPeriod(DateTimeOffset.MinValue);
+
+      return noneNullFunc(leftInterval, rightInterval);
     }
   }
 }

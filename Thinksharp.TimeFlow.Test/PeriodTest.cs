@@ -7,6 +7,12 @@ namespace Thinksharp.TimeFlow
   public class PeriodTest
   {
     [TestMethod]
+    public void TestCreationWithNegativeValue()
+    {
+      Assert.ThrowsException<ArgumentException>(() => new Period(-1, PeriodUnit.Day));      
+    }
+
+    [TestMethod]
     public void Operators_eq()
     {
       Assert.IsTrue(Period.Day == Period.Day);
@@ -14,6 +20,10 @@ namespace Thinksharp.TimeFlow
       Assert.IsTrue(Period.QuarterHour == Period.QuarterHour);
       Assert.IsFalse(Period.Day == Period.Hour);
       Assert.IsFalse(Period.Day == Period.QuarterHour);
+
+      Assert.IsTrue((Period)null == (Period)null);
+      Assert.IsFalse((Period)null == (Period)Period.Day);
+      Assert.IsFalse((Period)Period.Day == (Period)null);
     }
 
     [TestMethod]
@@ -24,6 +34,10 @@ namespace Thinksharp.TimeFlow
       Assert.IsFalse(Period.Day != Period.Day);
       Assert.IsFalse(Period.Hour != Period.Hour);
       Assert.IsFalse(Period.QuarterHour != Period.QuarterHour);
+
+      Assert.IsFalse((Period)null != (Period)null);
+      Assert.IsTrue((Period)null != (Period)Period.Day);
+      Assert.IsTrue((Period)Period.Day != (Period)null);
     }
 
     [TestMethod]
@@ -35,6 +49,10 @@ namespace Thinksharp.TimeFlow
       Assert.IsFalse(Period.Day > Period.Month);
       Assert.IsFalse(Period.Day > Period.QuarterYear);
       Assert.IsFalse(Period.Day > Period.Year);
+
+      Assert.IsFalse((Period)null > (Period)null);
+      Assert.IsFalse((Period)null > (Period)Period.Day);
+      Assert.IsFalse((Period)Period.Day > (Period)null);
     }
 
     [TestMethod]
@@ -46,6 +64,10 @@ namespace Thinksharp.TimeFlow
       Assert.IsFalse(Period.Day >= Period.Month);
       Assert.IsFalse(Period.Day >= Period.QuarterYear);
       Assert.IsFalse(Period.Day >= Period.Year);
+
+      Assert.IsTrue((Period)null >= (Period)null);
+      Assert.IsFalse((Period)null >= (Period)Period.Day);
+      Assert.IsFalse((Period)Period.Day >= (Period)null);
     }
 
     [TestMethod]
@@ -57,6 +79,10 @@ namespace Thinksharp.TimeFlow
       Assert.IsTrue(Period.Day < Period.Month);
       Assert.IsTrue(Period.Day < Period.QuarterYear);
       Assert.IsTrue(Period.Day < Period.Year);
+
+      Assert.IsFalse((Period)null < (Period)null);
+      Assert.IsFalse((Period)null < (Period)Period.Day);
+      Assert.IsFalse((Period)Period.Day < (Period)null);
     }
 
     [TestMethod]
@@ -68,6 +94,10 @@ namespace Thinksharp.TimeFlow
       Assert.IsTrue(Period.Day <= Period.Month);
       Assert.IsTrue(Period.Day <= Period.QuarterYear);
       Assert.IsTrue(Period.Day <= Period.Year);
+
+      Assert.IsTrue((Period)null <= (Period)null);
+      Assert.IsFalse((Period)null <= (Period)Period.Day);
+      Assert.IsFalse((Period)Period.Day <= (Period)null);
     }
 
     [TestMethod]

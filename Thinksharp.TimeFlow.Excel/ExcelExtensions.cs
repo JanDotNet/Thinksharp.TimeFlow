@@ -24,7 +24,7 @@ namespace Thinksharp.TimeFlow
         }
         
 
-        foreach (var timePoint in frame.IterateTimePoints())
+        foreach (var timePoint in frame.EnumerateTimePoints())
         {
           // header
           worksheet.Cell(row, 1).Value = timePoint;

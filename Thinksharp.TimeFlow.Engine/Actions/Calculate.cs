@@ -27,7 +27,6 @@ namespace Thinksharp.TimeFlow.Engine.Actions
         expressionContext.Variables[ts.Key] = 1M;
       }
 
-      // Use the variables in the expression
       var evaluator = expressionContext.CompileGeneric<decimal>(this.Formula);
       var usedVariables = evaluator.Info.GetReferencedVariables();
 

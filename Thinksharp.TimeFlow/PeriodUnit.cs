@@ -15,6 +15,8 @@ namespace Thinksharp.TimeFlow
         return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc, timeZone.Id);
       }
 
+      internal override TimeSpan PeriodUnitInterval { get; } = TimeSpan.FromMilliseconds(1);
+
       public override string Name => "ms";
     }
     private class PeriodUnitSecond : PeriodUnit
@@ -26,6 +28,8 @@ namespace Thinksharp.TimeFlow
         var utc = dt.ToUniversalTime().AddSeconds(value);
         return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc, timeZone.Id);
       }
+
+      internal override TimeSpan PeriodUnitInterval { get; } = TimeSpan.FromSeconds(1);
 
       public override string Name => "s";
     }
@@ -39,6 +43,8 @@ namespace Thinksharp.TimeFlow
         return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc, timeZone.Id);
       }
 
+      internal override TimeSpan PeriodUnitInterval { get; } = TimeSpan.FromMinutes(1);
+
       public override string Name => "min";
     }
     private class PeriodUnitHour : PeriodUnit
@@ -50,6 +56,8 @@ namespace Thinksharp.TimeFlow
         var utc = dt.ToUniversalTime().AddHours(value);
         return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc, timeZone.Id);
       }
+
+      internal override TimeSpan PeriodUnitInterval { get; } = TimeSpan.FromHours(1);
 
       public override string Name => "h";
     }
@@ -65,6 +73,8 @@ namespace Thinksharp.TimeFlow
         return localTime + offsetDiff;
       }
 
+      internal override TimeSpan PeriodUnitInterval { get; } = TimeSpan.FromDays(1);
+
       public override string Name => "d";
     }
     private class PeriodUnitMonth : PeriodUnit
@@ -77,6 +87,8 @@ namespace Thinksharp.TimeFlow
         return new DateTimeOffset(date.DateTime, timeZone.GetUtcOffset(date.DateTime));
       }
 
+      internal override TimeSpan PeriodUnitInterval { get; } = TimeSpan.FromDays(30);
+
       public override string Name => "mth";
     }
     private class PeriodUnitYear : PeriodUnit
@@ -88,6 +100,8 @@ namespace Thinksharp.TimeFlow
         var utc = dt.ToUniversalTime().AddYears(value);
         return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc, timeZone.Id);
       }
+
+      internal override TimeSpan PeriodUnitInterval { get; } = TimeSpan.FromDays(365);
 
       public override string Name => "yr";
     }
@@ -120,28 +134,66 @@ namespace Thinksharp.TimeFlow
       return unit;
     }
     public abstract DateTimeOffset AddPeriod(DateTimeOffset dt, int value, TimeZoneInfo timeZone = null);
+    internal abstract TimeSpan PeriodUnitInterval { get; }
     public abstract string Name { get; }
+
+    public override string ToString() => Name;
     public override bool Equals(object other) => this.GetType() == other.GetType();
     public override int GetHashCode() => this.GetType().GetHashCode();
     public static bool operator ==(PeriodUnit left, PeriodUnit right)
+      => Compare(left, right,
+          bothNull: true,
+          oneNull: false,
+          noneNullFunc: (l, r) => l.Equals(r));
+
+    public static bool operator !=(PeriodUnit left, PeriodUnit right)
+      => Compare(left, right,
+          bothNull: false,
+          oneNull: true,
+          noneNullFunc: (l, r) => !l.Equals(r));
+
+    public static bool operator <=(PeriodUnit left, PeriodUnit right)
+      => Compare(left, right,
+          bothNull: true,
+          oneNull: false,
+          noneNullFunc: (l, r) => l.PeriodUnitInterval <= r.PeriodUnitInterval);
+
+    public static bool operator >=(PeriodUnit left, PeriodUnit right)
+      => Compare(left, right,
+          bothNull: true,
+          oneNull: false,
+          noneNullFunc: (l, r) => l.PeriodUnitInterval >= r.PeriodUnitInterval);
+
+    public static bool operator <(PeriodUnit left, PeriodUnit right) 
+      => Compare(left, right,
+        bothNull: false,
+        oneNull: false,
+        noneNullFunc: (l, r) => l.PeriodUnitInterval < r.PeriodUnitInterval);
+
+    public static bool operator >(PeriodUnit left, PeriodUnit right)
+      => Compare(left, right, 
+        bothNull: false, 
+        oneNull: false,
+        noneNullFunc: (l, r) => l.PeriodUnitInterval > r.PeriodUnitInterval);
+
+    private static bool Compare(PeriodUnit left, PeriodUnit right,
+      bool bothNull,
+      bool oneNull,
+      Func<PeriodUnit, PeriodUnit, bool> noneNullFunc)
     {
       var isLeftNull = ReferenceEquals(left, null);
       var isRightNull = ReferenceEquals(right, null);
       if (isLeftNull && isRightNull)
       {
-        return true;
+        return bothNull;
       }
 
       if (isLeftNull || isRightNull)
       {
-        return false;
+        return oneNull;
       }
 
-      return left.Equals(right);
-    }
-    public static bool operator !=(PeriodUnit left, PeriodUnit right)
-    {
-      return !(left == right);
+      return noneNullFunc(left, right);
     }
   }
 }

@@ -33,7 +33,7 @@ namespace Thinksharp.TimeFlow.Engine.Actions
           continue;
         }
 
-        var strFromXml = element.Attribute(property.Name)?.Value;
+        var strFromXml = element.Attribute(property.Name)?.Value ?? "";
 
         // try set value from parameter
         if (strFromXml.StartsWith("$"))

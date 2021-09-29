@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Thinksharp.TimeFlow
 {
@@ -42,7 +41,7 @@ namespace Thinksharp.TimeFlow
     public DateTimeOffset End { get; private set; } = DateTimeOffset.MinValue;
     public Period Frequency { get; private set; }
 
-    public IEnumerable<DateTimeOffset> IterateTimePoints()
+    public IEnumerable<DateTimeOffset> EnumerateTimePoints()
     {
       var current = this.Start;
 
@@ -133,7 +132,7 @@ namespace Thinksharp.TimeFlow
 
     IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-    public TimeFrame this[string[] names]
+    public TimeFrame this[params string[] names]
     {
       get
       {

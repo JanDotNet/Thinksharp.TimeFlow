@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Thinksharp.TimeFlow.Engine.Actions;
+using Thinksharp.TimeFlow.Excel.Actions;
 using static Thinksharp.TimeFlow.Engine.Test.TestActions.UnitTest1;
 
 namespace Thinksharp.TimeFlow.Engine.Test
@@ -69,6 +70,20 @@ namespace Thinksharp.TimeFlow.Engine.Test
       Assert.IsTrue(ts1 == ctx.Frame["TS1"]);
       Assert.IsTrue(ts2 == ctx.Frame["TS2"]);
       Assert.IsTrue(ts3 == ctx.Frame["TS3"]);
+    }
+
+    [TestMethod]
+    public async Task TestExcelExport()
+    {
+      var engine = new TimeFlowEngine();
+
+      var xml = File.ReadAllText($"Xml\\{TestContext.TestName}.xml");
+
+      engine.RegisterAction<TimeSeriesFromValue>();
+      engine.RegisterAction<Calculate>();
+      engine.RegisterAction<WriteToExcel>();
+
+      var ctx = await engine.ExecuteAsync(xml, new Dictionary<string, string>());
     }
   }
 }

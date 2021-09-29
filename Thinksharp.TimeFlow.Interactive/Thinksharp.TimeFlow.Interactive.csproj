@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>Thinksharp.TimeFlow</RootNamespace>
+    <Version>0.14.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Jan-Niklas Schäfer</Authors>
+    <Company>ThinkSharp</Company>
+    <Product>ThinkSharp.TimeFlow.Interactive</Product>
+    <Description>Formatting extensions for TimeSeries and TimeFrames</Description>
+    <Copyright>MIT</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/JanDotNet/Thinksharp.TimeFlow</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/JanDotNet/Thinksharp.TimeFlow</RepositoryUrl>
+    <PackageTags>TimeSeries</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Html.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.DotNet.Interactive" Version="1.0.0-beta.21309.3" />
+    <PackageReference Include="Microsoft.DotNet.Interactive.Formatting" Version="1.0.0-beta.21309.3" />
+    <PackageReference Include="XPlot.Plotly" Version="4.0.3" />
+    <PackageReference Include="XPlot.Plotly.Interactive" Version="4.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Thinksharp.TimeFlow\Thinksharp.TimeFlow.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(OutputPath)/ThinkSharp.TimeFlow.Interactive.dll" Pack="true" PackagePath="interactive-extensions/dotnet" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

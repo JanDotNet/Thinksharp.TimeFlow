@@ -39,6 +39,16 @@
     public TimeZoneInfo TimeZone { get; }
 
     /// <summary>
+    /// Gets the value of the time series.
+    /// </summary>
+    public IEnumerable<decimal?> Values => this.sortedValues.Select(x => x.Value);
+
+    /// <summary>
+    /// Gets the time points of the time series.
+    /// </summary>
+    public IEnumerable<DateTimeOffset> TimePoints => this.sortedValues.Select(x => x.Key);
+
+    /// <summary>
     ///   Gets the frequency of this time series.
     /// </summary>
     public Period Frequency { get; }

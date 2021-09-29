@@ -2,6 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.12.0</Version>
+    <Authors>Jan-Niklas Schäfer</Authors>
+    <Company>ThinkSharp</Company>
+    <Product>ThinkSharp.TimeFlow.Engine</Product>
+    <Description>TimeFlow Engine is an extension runs xml-based time series transformations.</Description>
+    <Copyright>MIT</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/JanDotNet/Thinksharp.TimeFlow</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/JanDotNet/Thinksharp.TimeFlow</RepositoryUrl>
+    <PackageTags>TimeSeries</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +27,13 @@
       <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
         <_Parameter1>$(AssemblyName).Test</_Parameter1>
       </AssemblyAttribute>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

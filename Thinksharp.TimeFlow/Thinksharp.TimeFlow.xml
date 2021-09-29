@@ -65,6 +65,16 @@
               Gets the time zone object of this time series.
             </summary>
         </member>
+        <member name="P:Thinksharp.TimeFlow.TimeSeries.Values">
+            <summary>
+            Gets the value of the time series.
+            </summary>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.TimeSeries.TimePoints">
+            <summary>
+            Gets the time points of the time series.
+            </summary>
+        </member>
         <member name="P:Thinksharp.TimeFlow.TimeSeries.Frequency">
             <summary>
               Gets the frequency of this time series.
