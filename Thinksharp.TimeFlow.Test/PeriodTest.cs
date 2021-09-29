@@ -297,5 +297,12 @@ namespace Thinksharp.TimeFlow
 
       Assert.ThrowsException<FormatException>(() => Period.Parse("TEST"));
     }
+
+    [TestMethod]
+    public void TestToString()
+    {
+      Assert.AreEqual("1 ms", Period.Milliseconds.ToString());
+      Assert.AreEqual("12 min", new Period(12, PeriodUnit.Minute).ToString());
+    }
   }
 }

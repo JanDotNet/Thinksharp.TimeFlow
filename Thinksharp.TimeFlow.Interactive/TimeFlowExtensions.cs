@@ -44,7 +44,7 @@ namespace Thinksharp.TimeFlow
       var chartLayout = new Layout.Layout
       {
         title = chartTitle,
-        xaxis = new Xaxis { title = xAxisTitel ?? $"Time ({timeFrame.Frequency})" },
+        xaxis = new Xaxis { title = xAxisTitel ?? $"Time (Freq: {timeFrame.Frequency})" },
         yaxis = new Yaxis { title = yAxisTitle ?? "Values" }
       };
 

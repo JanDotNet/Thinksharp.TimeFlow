@@ -87,18 +87,19 @@ namespace Thinksharp.TimeFlow
       }
     }
 
-    public void ReSample(Period period, AggregationType aggregationType)
+    public TimeFrame ReSample(Period period, AggregationType aggregationType)
     {
       if (this.Frequency == period)
       {
-        return;
+        return this;
       }
 
-      this.Frequency = period;
+      var tf = new TimeFrame();
       foreach (var ts in this.timeSeries)
       {
-        this[ts.Name] = ts.TimeSeries.ReSample(period, aggregationType);
+        tf[ts.Name] = ts.TimeSeries.ReSample(period, aggregationType);        
       }
+      return tf;
     }
 
     public void ReSample(Period period, Dictionary<string, AggregationType> aggragationTypes)

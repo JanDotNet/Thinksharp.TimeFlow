@@ -134,5 +134,22 @@ namespace Thinksharp.TimeFlow
       Assert.AreEqual(ts2, array[1].Value);
     }
 
+    [TestMethod]
+    public void TestReSample()
+    {
+      var frame = new TimeFrame();
+
+      frame["TS1"] = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), new DateTime(2021, 03, 31), Period.Day);
+      frame["TS2"] = TimeSeries.Factory.FromValue(1, new DateTime(2021, 02, 01), new DateTime(2021, 04, 30), Period.Day);
+
+      frame = frame.ReSample(Period.Month, AggregationType.Sum);
+
+      var ts1 = TimeSeries.Factory.FromGenerator(new DateTime(2021, 01, 01), new DateTime(2021, 03, 31), Period.Month, ts => DateTime.DaysInMonth(ts.Year, ts.Month));
+      var ts2 = TimeSeries.Factory.FromGenerator(new DateTime(2021, 02, 01), new DateTime(2021, 04, 30), Period.Month, ts => DateTime.DaysInMonth(ts.Year, ts.Month));
+
+      Assert.IsTrue(ts1 == frame["TS1"]);
+      Assert.IsTrue(ts2 == frame["TS2"]);
+    }
+
   }
 }

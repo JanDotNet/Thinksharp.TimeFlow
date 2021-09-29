@@ -71,13 +71,13 @@ namespace Thinksharp.TimeFlow
         }
 
         var originalRowCount = rows.Count;
-        if (rows.Count > 32)
+        if (rows.Count > 20)
         {
-          rows = rows.Take(10).Concat(rows.Skip(rows.Count - 10)).ToList();
+          rows = rows.Take(5).Concat(rows.Skip(rows.Count - 5)).ToList();
           var cells = new List<IHtmlContent>();
           cells.Add(td("..."));
-          cells.Add(td($"{originalRowCount - 20} more"));
-          rows.Insert(10, cells);
+          cells.Add(td($"{originalRowCount - 10} more"));
+          rows.Insert(5, cells);
         }
 
         var t = table(
