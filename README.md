@@ -22,14 +22,16 @@ See [jupiter notebook](Notebooks/timeseries.ipynb) for examples (reload if visua
 
 ThinkSharp.TimeFlow can be installed via [Nuget](https://www.nuget.org/packages/Thinksharp.TimeFlow)
 
-      Install-Package Thinksharp.TimeFlow
+    Install-Package Thinksharp.TimeFlow
 
 ### Usage in .Net Interactive (Jupiter Notebooks)
 
-        #r "nuget: Thinksharp.TimeFlow"
-        #r "nuget: Thinksharp.TimeFlow.Interactive"
-        #r "nuget: XPlot.Plotly"
-        #r "nuget: XPlot.Plotly.Interactive"
+Reference Nuget **Package Thinksharp.TimeFlow** and **Thinksharp.TimeFlow.Interactive** as well as **XPlot.Plotly** if you want to use plotting abilities.
+
+    #r "nuget: Thinksharp.TimeFlow"
+    #r "nuget: Thinksharp.TimeFlow.Interactive"
+    #r "nuget: XPlot.Plotly"
+    #r "nuget: XPlot.Plotly.Interactive"
 
 ## License
 
