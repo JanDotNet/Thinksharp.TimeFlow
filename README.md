@@ -1,7 +1,7 @@
 # Thinksharp.TimeFlow
 
 [![NuGet](https://img.shields.io/nuget/v/Thinksharp.TimeFlow.svg)](https://www.nuget.org/packages/Thinksharp.TimeFlow/) 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.TXT)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MSBFDUU5UUQZL)
 
 ## Introduction
@@ -35,7 +35,7 @@ Reference Nuget **Package Thinksharp.TimeFlow** and **Thinksharp.TimeFlow.Intera
 
 ## License
 
-ThinkSharp.TimeFlow is released under [The MIT license (MIT)](LICENSE.TXT)
+ThinkSharp.TimeFlow is released under [The MIT license (MIT)](LICENSE)
 
 ## Versioning
 
