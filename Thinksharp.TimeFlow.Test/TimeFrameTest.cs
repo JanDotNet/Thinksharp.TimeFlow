@@ -50,7 +50,7 @@ namespace Thinksharp.TimeFlow
     }
 
     [TestMethod]
-    public void TestEnumerate()
+    public void TestEnumerate_Daily()
     {
       var frame = new TimeFrame();
 
@@ -71,6 +71,31 @@ namespace Thinksharp.TimeFlow
       CollectionAssert.AreEqual(names_exp, names);
       CollectionAssert.AreEqual(timePoints_exp, timePoints);
       CollectionAssert.AreEqual(timeSeries_ex, timeseries);
+    }
+
+    [TestMethod]
+    public void TestEnumerate_Hourly()
+    {
+      var frame = new TimeFrame();
+
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), new DateTime(2021, 12, 31), Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 01, 01), new DateTime(2021, 12, 31), Period.Day);
+
+      frame["TS1"] = ts1.ReSample(Period.Hour, AggregationType.Mean);
+      frame["TS2"] = ts2.ReSample(Period.Hour, AggregationType.Mean);
+
+      var names = frame.EnumerateNames().ToArray();
+      var timePoints = frame.EnumerateTimePoints().ToArray();
+      var timeseries = frame.EnumerateTimeSeries().ToArray();
+
+      var names_exp = new string[] { "TS1", "TS2" };      
+      var timeSeries_exp = new TimeSeries[] { frame["TS1"], frame["TS2"] };
+
+      CollectionAssert.AreEqual(names_exp, names);      
+      CollectionAssert.AreEqual(timeSeries_exp, timeseries);
+      Assert.AreEqual(365 * 24, timePoints.Length);
+      Assert.AreEqual(new DateTime(2021, 01, 01), frame.Start.LocalDateTime);
+      Assert.AreEqual(new DateTime(2021, 12, 31, 23, 0, 0), frame.End.LocalDateTime);
     }
 
     [TestMethod]

@@ -556,7 +556,7 @@
     }
 
     [TestMethod]
-    public void TestUpSample_from_day_to_hour()
+    public void TestUpSample_from_daily_year_to_hour()
     {
       var start = new DateTimeOffset(new DateTime(2021, 01, 01));
       var end = new DateTimeOffset(new DateTime(2021, 12, 31));
