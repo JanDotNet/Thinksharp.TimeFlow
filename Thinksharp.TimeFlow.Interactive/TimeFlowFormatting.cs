@@ -22,7 +22,7 @@ namespace Thinksharp.TimeFlow
         foreach (var tp in ts)
         {
           var cells = new List<IHtmlContent>();
-          cells.Add(td(tp.Key));
+          cells.Add(td(tp.Key.LocalDateTime));
           cells.Add(td(tp.Value));
           rows.Add(cells);
         }
@@ -62,7 +62,7 @@ namespace Thinksharp.TimeFlow
         foreach (var tp in tf.EnumerateTimePoints())
         {
           var cells = new List<IHtmlContent>();
-          cells.Add(td(tp));
+          cells.Add(td(tp.LocalDateTime));
           foreach (var ts in tf.Select(p => p.Value))
           {
             cells.Add(td(ts[tp]));

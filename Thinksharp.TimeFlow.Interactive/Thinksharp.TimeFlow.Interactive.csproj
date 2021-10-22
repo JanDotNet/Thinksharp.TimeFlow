@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>Thinksharp.TimeFlow</RootNamespace>
-    <Version>0.21.0</Version>
+    <Version>0.22.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Jan-Niklas Schäfer</Authors>
     <Company>ThinkSharp</Company>
