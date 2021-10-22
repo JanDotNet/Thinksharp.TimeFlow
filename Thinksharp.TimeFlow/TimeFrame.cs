@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace Thinksharp.TimeFlow
 {
+  /// <summary>
+  /// A time frame is a collection of named time series with the same frequency that can be processed together.
+  /// </summary>
   public class TimeFrame : IEnumerable<KeyValuePair<string, TimeSeries>>
   {
     private static StringComparer timeSeriesNameComparer = StringComparer.InvariantCultureIgnoreCase;
@@ -23,6 +26,9 @@ namespace Thinksharp.TimeFlow
       public TimeSeries TimeSeries { get; }
     }
 
+    /// <summary>
+    /// Creates a new instance of the time frame.
+    /// </summary>
     public TimeFrame()
     { }
 
@@ -35,12 +41,32 @@ namespace Thinksharp.TimeFlow
       this.RecalculateStartEnd();
     }
 
-    public string Name { get; set; }
+    /// <summary>
+    /// Gets the number of time series within the frame.
+    /// </summary>
     public int Count => this.timeSeries.Count;
+
+    /// <summary>
+    /// Gets the first time point of the frame.
+    /// </summary>
     public DateTimeOffset Start { get; private set; } = DateTimeOffset.MaxValue;
+
+    /// <summary>
+    /// Gets the last time point of the frame.
+    /// </summary>
     public DateTimeOffset End { get; private set; } = DateTimeOffset.MinValue;
+
+    /// <summary>
+    /// Gets the frequency of all time series within the frame.
+    /// </summary>
     public Period Frequency { get; private set; }
 
+    /// <summary>
+    /// Enumerates all time points of the frame.
+    /// </summary>
+    /// <returns>
+    /// An Enumeration of all time points.
+    /// </returns>
     public IEnumerable<DateTimeOffset> EnumerateTimePoints()
     {
       var current = this.Start;
@@ -52,6 +78,32 @@ namespace Thinksharp.TimeFlow
       }
     }
 
+    /// <summary>
+    /// Enumerates all time points of the frame.
+    /// </summary>
+    /// <returns>
+    /// An Enumeration of all time points.
+    /// </returns>
+    public IEnumerable<TimeSeries> EnumerateTimeSeries() => this.timeSeries.Select(x => x.TimeSeries);
+
+    /// <summary>
+    /// Enumerates all names of the frame.
+    /// </summary>
+    /// <returns>
+    /// An enumeration of all names.
+    /// </returns>
+    public IEnumerable<string> EnumerateNames() => this.timeSeries.Select(x => x.Name);
+
+    /// <summary>
+    /// Adds a time series with the specified name to the frame.
+    /// Note that the frequency of the time series must be equal to the frequency of the frame.
+    /// </summary>
+    /// <param name="name">
+    /// The name to use for the time series.
+    /// </param>
+    /// <param name="timeSeries">
+    /// The time series to add.
+    /// </param>
     public void Add(string name, TimeSeries timeSeries)
     {
       if (this.timeSeriesDictionary.ContainsKey(name))
@@ -74,6 +126,13 @@ namespace Thinksharp.TimeFlow
 
       this.RecalculateStartEnd();
     }
+
+    /// <summary>
+    /// Removes the time series with the specified name from the frame.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the time series to remove.
+    /// </param>
     public void Remove(string name)
     {
       var existingTimeSeriesPair = this.timeSeries.FirstOrDefault(p => timeSeriesNameComparer.Equals(p.Name, name));
@@ -87,22 +146,24 @@ namespace Thinksharp.TimeFlow
       }
     }
 
-    public TimeFrame ReSample(Period period, AggregationType aggregationType)
-    {
-      if (this.Frequency == period)
-      {
-        return this;
-      }
+    /// <summary>
+    /// Creates a copy of the TimeFrame.
+    /// </summary>
+    /// <returns>
+    /// The copy of the time frame.
+    /// </returns>
+    public TimeFrame Copy() => new TimeFrame(this.timeSeries, this.Frequency);
 
-      var tf = new TimeFrame();
-      foreach (var ts in this.timeSeries)
-      {
-        tf[ts.Name] = ts.TimeSeries.ReSample(period, aggregationType);        
-      }
-      return tf;
-    }
-
-    public void ReSample(Period period, Dictionary<string, AggregationType> aggragationTypes)
+    /// <summary>
+    /// Resamples all time series within the frame to the specified period.
+    /// </summary>
+    /// <param name="period">
+    /// The period.
+    /// </param>
+    /// <param name="aggregationType">
+    /// The aggregation type used for all time series.
+    /// </param>
+    public void ReSample(Period period, AggregationType aggregationType)
     {
       if (this.Frequency == period)
       {
@@ -110,13 +171,44 @@ namespace Thinksharp.TimeFlow
       }
 
       this.Frequency = period;
+      foreach (var ts in this.timeSeries.ToList())
+      {
+        this[ts.Name] = ts.TimeSeries.ReSample(period, aggregationType);        
+      }      
+    }
+
+    /// <summary>
+    /// Resamples all time series within the frame to the specified period using the specified aggregation types.    
+    /// </summary>
+    /// <param name="period">
+    /// The period.
+    /// </param>
+    /// <param name="aggregationTypes">
+    /// A dictionary containing one aggregation type for each time series name.
+    /// </param>
+    public void ReSample(Period period, Dictionary<string, AggregationType> aggregationTypes)
+    {
+      if (this.Frequency == period)
+      {
+        return;
+      }
+
+      // transform all time series before modify time frame
+      // to avoid invalid state in case of errors
+      var tsResampled = new Dictionary<string, TimeSeries>();
       foreach (var ts in this.timeSeries)
       {
-        if (!aggragationTypes.TryGetValue(ts.Name, out var aggregationType))
+        if (!aggregationTypes.TryGetValue(ts.Name, out var aggregationType))
         {
-          throw new InvalidOperationException($"Unable to resample time series '{ts.Name}' because the aggregation type is not specified.");
+          throw new ArgumentException($"Unable to re-sample time series '{ts.Name}' because the aggregation type is not specified.");
         }
-        this[ts.Name] = ts.TimeSeries.ReSample(period, aggregationType);
+        tsResampled[ts.Name] = ts.TimeSeries.ReSample(period, aggregationType);
+      }
+
+      this.Frequency = period;
+      foreach (var ts in this.timeSeries.ToList())
+      {
+        this[ts.Name] = tsResampled[ts.Name];
       }
     }
 
@@ -133,6 +225,15 @@ namespace Thinksharp.TimeFlow
 
     IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
+    /// <summary>
+    /// Returns a new time frame with the specified time series.
+    /// </summary>
+    /// <param name="names">
+    /// The names of the time series to get.
+    /// </param>
+    /// <returns>
+    /// A new time frame with the specified time series.
+    /// </returns>
     public TimeFrame this[params string[] names]
     {
       get
@@ -142,6 +243,16 @@ namespace Thinksharp.TimeFlow
         return new TimeFrame(filteredTimeSeries, this.Frequency);
       }
     }
+
+    /// <summary>
+    /// Gets or sets the time series with the specified name.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the time series to get.
+    /// </param>
+    /// <returns>
+    /// The time series with the specified name.
+    /// </returns>
     public TimeSeries this[string name]
     {
       get
@@ -158,6 +269,19 @@ namespace Thinksharp.TimeFlow
         this.Add(name, value);
       }
     }
+
+    /// <summary>
+    /// Gets the value of the time series with the specified name for the specified time point.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the time series to get the value for.
+    /// </param>
+    /// <param name="timePoint">
+    /// The time to get the value for.
+    /// </param>
+    /// <returns>
+    /// The value of the time series with the specified name for the specified time point.
+    /// </returns>
     public decimal? this[string name, DateTimeOffset timePoint] => this.timeSeriesDictionary.TryGetValue(name, out var ts) ? ts[timePoint]: null;
   }
 }

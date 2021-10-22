@@ -56,7 +56,7 @@ The factory is of type ITimeSeriesFactory, which can be extended via extension m
 
 ### Combining Time Series
 
-TimeSeries can be combined using default operators or with more options via special functions:
+TimeSeries can be combined using default operators:
 
 ```csharp
 var ts1 = TimeSeries.Factory.FromValue(10,
@@ -85,12 +85,20 @@ There are also methods for combining time series which may be used for advanced 
 var ts1 = TimeSeries.Factory.FromValue(1,
       new DateTime(2021, 01, 01), // start
       new DateTime(2021, 01, 05), // end
-      Frequency.Days); // 1, 1, 1, 1, 1
+      Frequency.Days); // 1.5 => 1 
+                       // 2.5 => 1
+                       // 3.5 => 1
+                       // 4.5 => 1
+                       // 5.5 => 1
 
 var ts2 = TimeSeries.Factory.FromValue(2,
     new DateTime(2021, 01, 03), // start
     new DateTime(2021, 01, 07), // end
-    Frequency.Days); // 2, 2, 2, 2, 2
+    Frequency.Days); // 3.5 => 2 
+                     // 4.5 => 2
+                     // 5.5 => 2
+                     // 6.5 => 2
+                     // 7.5 => 2
 
 var ts3 = ts1.Apply(value => value * 2); // 2, 2, 2, 2, 2 (equivalent to ts1 * 2)
 
@@ -125,13 +133,13 @@ var ts2 = ts1.Slice(0, 2); // 1, 2
 var ts3 = ts1.Slice(new DateTime(2021, 01, 02), new DateTime(2021, 01, 04)); // 2, 3, 4
 ```
 
-Time Series can be resampled which means that the frequency of the time series changes. Frequency may be expressed in periods of milliseconds, seconds, minutes, hours, days, month or years. It is also possible to use e.g QuarterHours (15 minutes) and QuarterYears (3 month).
+Time Series can be resampled which means that the frequency of the time series changes. Frequency may be expressed in periods of milliseconds, seconds, minutes, hours, days, month or years. It is also possible to use e.g. QuarterHours (15 minutes) and QuarterYears (3 month).
 
 ```csharp
 var ts1 = TimeSeries.Factory.FromValue(1,
     new DateTime(2021, 01, 01), // start
     new DateTime(2021, 01, 31), // end
-    Frequency.Days); // 1, 1, 1, 1, 1
+    Frequency.Days);
 
 // down sampling
 var ts2 = ts1.ReSample(Frequency.Months, AggregationType.Sum);     // 2021-01-01 00:00   31

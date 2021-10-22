@@ -58,7 +58,21 @@
       Assert.AreEqual(start, ts.Start);
       Assert.AreEqual(end, ts.End);
       Assert.IsTrue(ts.All(x => x.Value == 1M));
-    }    
+    }
+
+    [TestMethod]
+    public void TestFromValues()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 1, 1));
+      var end = new DateTimeOffset(new DateTime(2021, 12, 1));
+      var values = Enumerable.Range(1, 12).Select(x => (decimal?)x);
+      var ts = TimeSeries.Factory.FromValues(values, start, Period.Month);
+
+      Assert.AreEqual(12, ts.Count);
+      Assert.AreEqual(start, ts.Start);
+      Assert.AreEqual(end, ts.End);
+      Assert.IsTrue(ts.All(x => x.Value == x.Key.Month));
+    }
 
     [TestMethod]
     public void TestFromValue_Null()
@@ -644,7 +658,7 @@
     {
       var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 10, Period.Day);
       var ts_expected = TimeSeries.Factory.FromValue(1, new DateTime(2001, 01, 01), 10, Period.Day);
-      var ts_actual = ts1 + TimeSeries.Factory.Empty(Period.Day);
+      var ts_actual = ts1 + TimeSeries.Factory.Empty();
 
       Assert.IsTrue(ts_expected == ts_actual);
       Assert.IsFalse(ts_expected != ts_actual);
@@ -653,9 +667,9 @@
     [TestMethod]
     public void Test_Operator_AddTwoEmpty()
     {
-      var ts_actual = TimeSeries.Factory.Empty(Period.Day) + TimeSeries.Factory.Empty(Period.Day);
+      var ts_actual = TimeSeries.Factory.Empty() + TimeSeries.Factory.Empty();
 
-      Assert.IsTrue(ts_actual == TimeSeries.Factory.Empty(Period.Day));
+      Assert.IsTrue(ts_actual == TimeSeries.Factory.Empty());
     }
 
     [TestMethod]
@@ -730,6 +744,69 @@
       var ts_actual = ts1.JoinFull(ts2, ts3, (x1, x2, x3) => x1 + x2 + x3);
 
       Assert.IsTrue(ts_actual == ts_expected);
+    }
+
+    [TestMethod]
+    public void Test_Join_Empty()
+    {
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), 10, Period.Year);
+      var ts2 = TimeSeries.Factory.Empty();
+      
+      var ts_actual1_full = ts1.JoinFull(ts2, JoinOperation.Add);
+      var ts_actual2_full = ts2.JoinFull(ts1, JoinOperation.Add);
+      var ts_actual1_left = ts1.JoinLeft(ts2, JoinOperation.Add);
+      var ts_actual2_left = ts2.JoinLeft(ts1, JoinOperation.Add);
+
+      Assert.IsTrue(ts1 == ts_actual1_full);
+      Assert.IsTrue(ts1 == ts_actual2_full);
+      Assert.IsTrue(ts1 == ts_actual1_left);
+      Assert.IsTrue(ts2 == ts_actual2_left);
+    }
+
+    [TestMethod]
+    public void Test_Join_Different_Frequencies()
+    {
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), 10, Period.Year);
+      var ts2 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), 10, Period.Month);
+
+      Assert.ThrowsException<InvalidOperationException>(() => ts1.JoinFull(ts2, (x1, x2) => x1 + x2));
+      Assert.ThrowsException<InvalidOperationException>(() => ts2.JoinFull(ts1, (x1, x2) => x1 + x2));
+      Assert.ThrowsException<InvalidOperationException>(() => ts1.JoinLeft(ts2, (x1, x2) => x1 + x2));
+      Assert.ThrowsException<InvalidOperationException>(() => ts2.JoinLeft(ts1, (x1, x2) => x1 + x2));
+    }
+
+    [TestMethod]
+    public void Test_Join_Different_TimeZones()
+    {
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), 10, Period.Month, TimeZoneInfo.Utc);
+      var ts2 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), 10, Period.Month);
+
+      Assert.ThrowsException<InvalidOperationException>(() => ts1.JoinFull(ts2, (x1, x2) => x1 + x2));
+      Assert.ThrowsException<InvalidOperationException>(() => ts2.JoinFull(ts1, (x1, x2) => x1 + x2));
+    }
+
+    [TestMethod]
+    public void Test_Join_2_Different_Frequencies()
+    {
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), 10, Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 01, 01), 10, Period.Month);
+      var ts3 = TimeSeries.Factory.FromValue(3, new DateTime(2021, 01, 01), 10, Period.Day);
+
+      Assert.ThrowsException<InvalidOperationException>(() => ts1.JoinFull(ts2, ts3, (x1, x2, x3) => x1 + x2 + x3));
+      Assert.ThrowsException<InvalidOperationException>(() => ts2.JoinFull(ts1, ts3, (x1, x2, x3) => x1 + x2 + x3));
+      Assert.ThrowsException<InvalidOperationException>(() => ts3.JoinFull(ts1, ts2, (x1, x2, x3) => x1 + x2 + x3));
+    }
+
+    [TestMethod]
+    public void Test_Join_2_Different_TimeZones()
+    {
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), 10, Period.Day, TimeZoneInfo.Utc);
+      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 01, 01), 10, Period.Day);
+      var ts3 = TimeSeries.Factory.FromValue(3, new DateTime(2021, 01, 01), 10, Period.Day);
+
+      Assert.ThrowsException<InvalidOperationException>(() => ts1.JoinFull(ts2, ts3, (x1, x2, x3) => x1 + x2 + x3));
+      Assert.ThrowsException<InvalidOperationException>(() => ts2.JoinFull(ts1, ts3, (x1, x2, x3) => x1 + x2 + x3));
+      Assert.ThrowsException<InvalidOperationException>(() => ts3.JoinFull(ts1, ts2, (x1, x2, x3) => x1 + x2 + x3));
     }
 
     [TestMethod]

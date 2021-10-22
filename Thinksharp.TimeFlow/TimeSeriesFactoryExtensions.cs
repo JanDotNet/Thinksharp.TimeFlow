@@ -12,9 +12,14 @@ namespace Thinksharp.TimeFlow
 
   public static class TimeSeriesFactoryExtensions
   {
-    public static TimeSeries Empty(this ITimeSeriesFactory facotry, Period freq, TimeZoneInfo timeZone = null)
+    /// <summary>
+    /// Creates an empty time series.
+    /// </summary>
+    /// <param name="facotry"></param>
+    /// <returns></returns>
+    public static TimeSeries Empty(this ITimeSeriesFactory facotry)
     {
-      return new TimeSeries(Enumerable.Empty<IndexedSeriesItem<DateTimeOffset, decimal?>>(), freq, timeZone);
+      return new TimeSeries(Enumerable.Empty<IndexedSeriesItem<DateTimeOffset, decimal?>>(), DateHelper.EmptyTimeSeriesFrequency, DateHelper.EmptyTimeSeriesZoneInfo);
     }
 
     /// <summary>
@@ -41,6 +46,60 @@ namespace Thinksharp.TimeFlow
     public static TimeSeries FromValue(this ITimeSeriesFactory factory, decimal? value, DateTime startDate, int count, Period freq, TimeZoneInfo timeZone = null)
     {
       return factory.FromValue(value, new DateTimeOffset(startDate), count, freq, timeZone);
+    }
+
+    /// <summary>
+    ///   Creates a new time series with the specified values.
+    /// </summary>
+    /// <param name="values">
+    ///   The values to use.
+    /// </param>
+    /// <param name="startDate">
+    ///   The first time point of the time series.
+    /// </param>
+    /// <param name="freq">
+    ///   The frequency to use for generation.
+    /// </param>
+    /// <param name="timeZone">
+    ///   The time zone to use. (Default: 'W. Europe Standard Time')
+    /// </param>
+    /// <returns>
+    ///   A new time series with the specified values.
+    /// </returns>
+    public static TimeSeries FromValues(this ITimeSeriesFactory factory, IEnumerable<decimal?> values, DateTime startDate, Period freq, TimeZoneInfo timeZone = null)
+      => factory.FromValues(values, new DateTimeOffset(startDate), freq, timeZone);
+
+    /// <summary>
+    ///   Creates a new time series with the specified values.
+    /// </summary>
+    /// <param name="values">
+    ///   The values to use.
+    /// </param>
+    /// <param name="startDate">
+    ///   The first time point of the time series.
+    /// </param>
+    /// <param name="freq">
+    ///   The frequency to use for generation.
+    /// </param>
+    /// <param name="timeZone">
+    ///   The time zone to use. (Default: 'W. Europe Standard Time')
+    /// </param>
+    /// <returns>
+    ///   A new time series with the specified values.
+    /// </returns>
+    public static TimeSeries FromValues(this ITimeSeriesFactory factory, IEnumerable<decimal?> values, DateTimeOffset startDate, Period freq, TimeZoneInfo timeZone = null)
+    {
+      timeZone = timeZone ?? DateHelper.GetDefaultTimeZone();
+
+      var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
+      var date = startDate;
+      foreach (var value in values)
+      {
+        result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(date, value));
+        date = freq.AddPeriod(date, timeZone);
+      }
+
+      return new TimeSeries(result, freq, timeZone);
     }
 
     /// <summary>

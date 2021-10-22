@@ -5,33 +5,29 @@
   using System.Linq;
   using System.Text;
 
+  /// <summary>
+  /// A time series holds a list of time point / value pairs. 
+  /// Time points are represented as DateTimeOffsets, values as nullable decimals.
+  /// The time span between two time points (the Frequency) is always identical for the whole time series.
+  /// </summary>
   public class TimeSeries : IndexedSeries<DateTimeOffset, decimal?>
   {
     internal TimeSeries(IEnumerable<IndexedSeriesItem<DateTimeOffset, decimal?>> sortedSeries, Period freq, TimeZoneInfo timeZone)
       : base(sortedSeries)
     {
-      this.Frequency = freq;
-      this.TimeZone = timeZone;
+      this.Frequency = this.sortedValues.Count == 0 ? DateHelper.EmptyTimeSeriesFrequency : freq;
+      this.TimeZone = this.sortedValues.Count == 0 ? DateHelper.EmptyTimeSeriesZoneInfo : timeZone;
     }
-
-    public static ITimeSeriesFactory Factory { get; } = new TimeSeriesFactory();
-    public static ITimeSeriesSettings Settings { get; } = new TimeSeriesSettings();
 
     /// <summary>
-    /// Creates a <see cref="TimeFrame"/> with one time series.
+    /// The factory contains methods for creating time series object. IT can be extended by custom extension methods for the <see cref="ITimeSeriesFactory"/> interface.
     /// </summary>
-    /// <param name="name">
-    ///   The name of the time series.
-    /// </param>
-    /// <returns>
-    ///   A <see cref="TimeFrame"/> with one time series.
-    /// </returns>
-    public TimeFrame ToFrame(string name)
-    {
-      var frame = new TimeFrame();
-      frame.Add(name, this);
-      return frame;
-    }
+    public static ITimeSeriesFactory Factory { get; } = new TimeSeriesFactory();
+
+    /// <summary>
+    /// The settings object can be used to configure the time flow framework.
+    /// </summary>
+    public static ITimeSeriesSettings Settings { get; } = new TimeSeriesSettings();
 
     /// <summary>
     ///   Gets the time zone object of this time series.
@@ -99,10 +95,8 @@
     /// </returns>
     public TimeSeries JoinLeft(TimeSeries dateTimeSeries, Func<decimal?, decimal?, decimal?> agg)
     {
-      if (dateTimeSeries.Frequency != this.Frequency)
-      {
-        throw new InvalidOperationException("Unable to join time series with different frequencies.");
-      }
+      var freq = EnsureFrequenciesAreCompatible(dateTimeSeries);
+      var tz = EnsureTimeZonesAreCompatible(dateTimeSeries);
 
       var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
       foreach (var sortedValue in this.sortedValues)
@@ -113,7 +107,7 @@
         result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(sortedValue.Key, agg(leftValue, rightValue)));
       }
 
-      return new TimeSeries(result, this.Frequency, this.TimeZone);
+      return new TimeSeries(result, freq, tz);
     }
 
     /// <summary>
@@ -150,10 +144,8 @@
     /// </returns>
     public TimeSeries JoinFull(TimeSeries dateTimeSeries, Func<decimal?, decimal?, decimal?> agg)
     {
-      if (dateTimeSeries.Frequency != this.Frequency)
-      {
-        throw new InvalidOperationException("Unable to join time series with different frequencies.");
-      }
+      var freq = EnsureFrequenciesAreCompatible(dateTimeSeries);
+      var tz = EnsureTimeZonesAreCompatible(dateTimeSeries);
 
       if (this.Start <= dateTimeSeries.Start && this.End >= dateTimeSeries.End)
       {
@@ -163,8 +155,8 @@
       var ts = TimeSeries.Factory.FromValue(null,
         DateHelper.Min(this.Start, dateTimeSeries.Start),
         DateHelper.Max(this.End, dateTimeSeries.End),
-        this.Frequency,
-        this.TimeZone);
+        freq,
+        tz);
 
       return ts.JoinLeft(this, (l, r) => r).JoinLeft(dateTimeSeries, agg);
     }
@@ -189,10 +181,8 @@
     /// </returns>
     public TimeSeries JoinFull(TimeSeries ts1, TimeSeries ts2, Func<decimal?, decimal?, decimal?, decimal?> agg)
     {
-      if (ts1.Frequency != this.Frequency || ts2.Frequency != this.Frequency)
-      {
-        throw new InvalidOperationException("Unable to join time series with different frequencies.");
-      }
+      var freq = EnsureFrequenciesAreCompatible(ts1, ts2);
+      var tz = EnsureTimeZonesAreCompatible(ts1, ts2);
 
       var current = DateHelper.Min(this.Start, ts1.Start, ts2.Start);
       var end = DateHelper.Max(this.End, ts1.End, ts2.End);
@@ -206,10 +196,10 @@
 
         result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(current, agg(v1, v2, v3)));
 
-        current = this.Frequency.AddPeriod(current, this.TimeZone);
+        current = freq.AddPeriod(current, tz);
       }
 
-      return new TimeSeries(result, this.Frequency, this.TimeZone);
+      return new TimeSeries(result, freq, tz);
     }
 
     /// <summary>
@@ -235,10 +225,8 @@
     /// </returns>
     public TimeSeries JoinFull(TimeSeries ts1, TimeSeries ts2, TimeSeries ts3, Func<decimal?, decimal?, decimal?, decimal?, decimal?> agg)
     {
-      if (ts1.Frequency != this.Frequency || ts2.Frequency != this.Frequency || ts3.Frequency != this.Frequency)
-      {
-        throw new InvalidOperationException("Unable to join time series with different frequencies.");
-      }
+      var freq = EnsureFrequenciesAreCompatible(ts1, ts2);
+      var tz = EnsureTimeZonesAreCompatible(ts1, ts2);
 
       var current = DateHelper.Min(this.Start, ts1.Start, ts2.Start, ts3.Start);
       var end = DateHelper.Max(this.End, ts1.End, ts2.End, ts3.End);
@@ -253,10 +241,10 @@
 
         result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(current, agg(v1, v2, v3, v4)));
 
-        current = this.Frequency.AddPeriod(current, this.TimeZone);
+        current = freq.AddPeriod(current, tz);
       }
 
-      return new TimeSeries(result, this.Frequency, this.TimeZone);
+      return new TimeSeries(result, freq, tz);
     }
 
     /// <summary>
@@ -338,7 +326,7 @@
 
     private TimeSeries UpSample(AggregationType agg, Period frequency)
     {
-      // just upsample values
+      // just up-sample values
       if (agg == AggregationType.Mean)
       {
         var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
@@ -451,6 +439,12 @@
     /// <summary>
     ///   Creates a new time series where leading and trailing time points with specified values are dropped.
     /// </summary>
+    /// <param name="dropLeading">
+    /// Specifies if leading time points should be dropped. Default: true.
+    /// </param>
+    /// <param name="dropTrailing">
+    /// Specifies if trailing time points should be dropped. Default: true.
+    /// </param>
     /// <param name="valuesToTrim">
     ///   The value to trim.
     /// </param>
@@ -550,6 +544,30 @@
         hashcode = (hashcode * 7302013) ^ this.End.GetHashCode();
         return hashcode;
       }
+    }
+
+    private Period EnsureFrequenciesAreCompatible(params TimeSeries[] dateTimeSeries)
+    {
+      var allNonEmpty = dateTimeSeries.Concat(new[] { this }).Where(t => !t.IsEmpty);
+
+      if (allNonEmpty.GroupBy(x => x.Frequency).Count() > 1)
+      {
+        throw new InvalidOperationException("Unable to join time series with different frequencies.");
+      }
+
+      return allNonEmpty.FirstOrDefault()?.Frequency ?? this.Frequency;
+    }
+
+    private TimeZoneInfo EnsureTimeZonesAreCompatible(params TimeSeries[] dateTimeSeries)
+    {
+      var allNonEmpty = dateTimeSeries.Concat(new[] { this }).Where(t => !t.IsEmpty);
+
+      if (allNonEmpty.GroupBy(x => x.TimeZone.Id).Count() > 1)
+      {
+        throw new InvalidOperationException("Unable to join time series with different time zones.");
+      }
+
+      return allNonEmpty.FirstOrDefault()?.TimeZone ?? this.TimeZone;
     }
 
     #region Operators

@@ -113,19 +113,6 @@
       }
     }
 
-    //public int CompareTo(Period other)
-    //{
-    //  if (other == null)
-    //  {
-    //    return -1;
-    //  }
-
-    //  var thisInterval = this.AddPeriod(DateTimeOffset.MinValue);
-    //  var otherInterval = other.AddPeriod(DateTimeOffset.MinValue);
-
-    //  return thisInterval.CompareTo(otherInterval);
-    //}
-
     private static bool Compare(Period left, Period right, bool bothNull, bool oneNull, Func<DateTimeOffset, DateTimeOffset, bool> noneNullFunc)
     {
       var isLeftNull = ReferenceEquals(left, null);

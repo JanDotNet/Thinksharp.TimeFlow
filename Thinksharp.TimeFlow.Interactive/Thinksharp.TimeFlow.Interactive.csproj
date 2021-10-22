@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>Thinksharp.TimeFlow</RootNamespace>
-    <Version>0.20.0</Version>
+    <Version>0.21.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Jan-Niklas Schäfer</Authors>
     <Company>ThinkSharp</Company>
@@ -13,7 +13,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/JanDotNet/Thinksharp.TimeFlow</PackageProjectUrl>
     <RepositoryUrl>https://github.com/JanDotNet/Thinksharp.TimeFlow</RepositoryUrl>
-    <PackageTags>TimeSeries</PackageTags>
+    <PackageTags>time series</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

@@ -8,6 +8,9 @@
   {
     private static readonly ConcurrentDictionary<int, Tuple<DateTime, DateTime>> cache = new ConcurrentDictionary<int, Tuple<DateTime, DateTime>>();
     private static TimeZoneInfo defaultTimeZone = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
+    public static TimeZoneInfo EmptyTimeSeriesZoneInfo { get; } = TimeZoneInfo.Utc;
+    public static Period EmptyTimeSeriesFrequency { get; } = Period.Milliseconds;
+
     public static int GetHoursOfDay(this DateTime date)
     {
       if (!cache.TryGetValue(date.Year, out var specialDays))

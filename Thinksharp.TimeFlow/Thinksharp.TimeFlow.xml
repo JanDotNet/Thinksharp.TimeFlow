@@ -49,16 +49,162 @@
               Takes always the right value.
             </summary>
         </member>
-        <member name="M:Thinksharp.TimeFlow.TimeSeries.ToFrame(System.String)">
+        <member name="T:Thinksharp.TimeFlow.TimeFrame">
             <summary>
-            Creates a <see cref="T:Thinksharp.TimeFlow.TimeFrame"/> with one time series.
+            A time frame is a collection of named time series with the same frequency that can be processed together.
+            </summary>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeFrame.#ctor">
+            <summary>
+            Creates a new instance of the time frame.
+            </summary>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.TimeFrame.Count">
+            <summary>
+            Gets the number of time series within the frame.
+            </summary>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.TimeFrame.Start">
+            <summary>
+            Gets the first time point of the frame.
+            </summary>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.TimeFrame.End">
+            <summary>
+            Gets the last time point of the frame.
+            </summary>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.TimeFrame.Frequency">
+            <summary>
+            Gets the frequency of all time series within the frame.
+            </summary>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeFrame.EnumerateTimePoints">
+            <summary>
+            Enumerates all time points of the frame.
+            </summary>
+            <returns>
+            An Enumeration of all time points.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeFrame.EnumerateTimeSeries">
+            <summary>
+            Enumerates all time points of the frame.
+            </summary>
+            <returns>
+            An Enumeration of all time points.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeFrame.EnumerateNames">
+            <summary>
+            Enumerates all names of the frame.
+            </summary>
+            <returns>
+            An enumeration of all names.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeFrame.Add(System.String,Thinksharp.TimeFlow.TimeSeries)">
+            <summary>
+            Adds a time series with the specified name to the frame.
+            Note that the frequency of the time series must be equal to the frequency of the frame.
             </summary>
             <param name="name">
-              The name of the time series.
+            The name to use for the time series.
+            </param>
+            <param name="timeSeries">
+            The time series to add.
+            </param>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeFrame.Remove(System.String)">
+            <summary>
+            Removes the time series with the specified name from the frame.
+            </summary>
+            <param name="name">
+            The name of the time series to remove.
+            </param>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeFrame.Copy">
+            <summary>
+            Creates a copy of the TimeFrame.
+            </summary>
+            <returns>
+            The copy of the time frame.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeFrame.ReSample(Thinksharp.TimeFlow.Period,Thinksharp.TimeFlow.AggregationType)">
+            <summary>
+            Resamples all time series within the frame to the specified period.
+            </summary>
+            <param name="period">
+            The period.
+            </param>
+            <param name="aggregationType">
+            The aggregation type used for all time series.
+            </param>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeFrame.ReSample(Thinksharp.TimeFlow.Period,System.Collections.Generic.Dictionary{System.String,Thinksharp.TimeFlow.AggregationType})">
+            <summary>
+            Resamples all time series within the frame to the specified period using the specified aggregation types.    
+            </summary>
+            <param name="period">
+            The period.
+            </param>
+            <param name="aggregationTypes">
+            A dictionary containing one aggregation type for each time series name.
+            </param>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.TimeFrame.Item(System.String[])">
+            <summary>
+            Returns a new time frame with the specified time series.
+            </summary>
+            <param name="names">
+            The names of the time series to get.
             </param>
             <returns>
-              A <see cref="T:Thinksharp.TimeFlow.TimeFrame"/> with one time series.
+            A new time frame with the specified time series.
             </returns>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.TimeFrame.Item(System.String)">
+            <summary>
+            Gets or sets the time series with the specified name.
+            </summary>
+            <param name="name">
+            The name of the time series to get.
+            </param>
+            <returns>
+            The time series with the specified name.
+            </returns>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.TimeFrame.Item(System.String,System.DateTimeOffset)">
+            <summary>
+            Gets the value of the time series with the specified name for the specified time point.
+            </summary>
+            <param name="name">
+            The name of the time series to get the value for.
+            </param>
+            <param name="timePoint">
+            The time to get the value for.
+            </param>
+            <returns>
+            The value of the time series with the specified name for the specified time point.
+            </returns>
+        </member>
+        <member name="T:Thinksharp.TimeFlow.TimeSeries">
+            <summary>
+            A time series holds a list of time point / value pairs. 
+            Time points are represented as DateTimeOffsets, values as nullable decimals.
+            The time span between two time points (the Frequency) is always identical for the whole time series.
+            </summary>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.TimeSeries.Factory">
+            <summary>
+            The factory contains methods for creating time series object. IT can be extended by custom extension methods for the <see cref="T:Thinksharp.TimeFlow.ITimeSeriesFactory"/> interface.
+            </summary>
+        </member>
+        <member name="P:Thinksharp.TimeFlow.TimeSeries.Settings">
+            <summary>
+            The settings object can be used to configure the time flow framework.
+            </summary>
         </member>
         <member name="P:Thinksharp.TimeFlow.TimeSeries.TimeZone">
             <summary>
@@ -268,12 +414,25 @@
             <summary>
               Creates a new time series where leading and trailing time points with specified values are dropped.
             </summary>
+            <param name="dropLeading">
+            Specifies if leading time points should be dropped. Default: true.
+            </param>
+            <param name="dropTrailing">
+            Specifies if trailing time points should be dropped. Default: true.
+            </param>
             <param name="valuesToTrim">
               The value to trim.
             </param>
             <returns>
               A new time series where leading and trailing time points with specified values are dropped.
             </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeriesFactoryExtensions.Empty(Thinksharp.TimeFlow.ITimeSeriesFactory)">
+            <summary>
+            Creates an empty time series.
+            </summary>
+            <param name="facotry"></param>
+            <returns></returns>
         </member>
         <member name="M:Thinksharp.TimeFlow.TimeSeriesFactoryExtensions.FromValue(Thinksharp.TimeFlow.ITimeSeriesFactory,System.Nullable{System.Decimal},System.DateTime,System.Int32,Thinksharp.TimeFlow.Period,System.TimeZoneInfo)">
             <summary>
@@ -296,6 +455,46 @@
             </param>
             <returns>
               A new time series with N constant values.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeriesFactoryExtensions.FromValues(Thinksharp.TimeFlow.ITimeSeriesFactory,System.Collections.Generic.IEnumerable{System.Nullable{System.Decimal}},System.DateTime,Thinksharp.TimeFlow.Period,System.TimeZoneInfo)">
+            <summary>
+              Creates a new time series with the specified values.
+            </summary>
+            <param name="values">
+              The values to use.
+            </param>
+            <param name="startDate">
+              The first time point of the time series.
+            </param>
+            <param name="freq">
+              The frequency to use for generation.
+            </param>
+            <param name="timeZone">
+              The time zone to use. (Default: 'W. Europe Standard Time')
+            </param>
+            <returns>
+              A new time series with the specified values.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeriesFactoryExtensions.FromValues(Thinksharp.TimeFlow.ITimeSeriesFactory,System.Collections.Generic.IEnumerable{System.Nullable{System.Decimal}},System.DateTimeOffset,Thinksharp.TimeFlow.Period,System.TimeZoneInfo)">
+            <summary>
+              Creates a new time series with the specified values.
+            </summary>
+            <param name="values">
+              The values to use.
+            </param>
+            <param name="startDate">
+              The first time point of the time series.
+            </param>
+            <param name="freq">
+              The frequency to use for generation.
+            </param>
+            <param name="timeZone">
+              The time zone to use. (Default: 'W. Europe Standard Time')
+            </param>
+            <returns>
+              A new time series with the specified values.
             </returns>
         </member>
         <member name="M:Thinksharp.TimeFlow.TimeSeriesFactoryExtensions.FromValue(Thinksharp.TimeFlow.ITimeSeriesFactory,System.Nullable{System.Decimal},System.DateTimeOffset,System.Int32,Thinksharp.TimeFlow.Period,System.TimeZoneInfo)">
