@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.21.0</Version>
+    <Version>0.23.0</Version>
     <Authors>Jan-Niklas Schäfer</Authors>
     <Company>ThinkSharp</Company>
     <Description>TimeFlow is a lightweight extendable library for working with time series with support for time zones and daylight saving.</Description>

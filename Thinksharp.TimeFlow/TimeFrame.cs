@@ -71,7 +71,7 @@ namespace Thinksharp.TimeFlow
     {
       var current = this.Start;
 
-      while(current < this.End)
+      while(current <= this.End)
       {
         yield return current;
         current = this.Frequency.AddPeriod(current);

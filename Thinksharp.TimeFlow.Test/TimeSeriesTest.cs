@@ -508,7 +508,7 @@
     public void TestUpSample_from_year_to_day()
     {
       var start = new DateTimeOffset(new DateTime(2021, 01, 01));
-      var end = new DateTimeOffset(new DateTime(2021, 12, 31, 23, 45, 00));
+      var end = new DateTimeOffset(new DateTime(2021, 12, 31));
 
       var ts_year = TimeSeries.Factory.FromValue(365, start, end, Period.Year);
 
@@ -541,7 +541,7 @@
     public void TestUpSample_from_year_to_hour()
     {
       var start = new DateTimeOffset(new DateTime(2021, 01, 01));
-      var end = new DateTimeOffset(new DateTime(2021, 12, 31, 23, 45, 00));
+      var end = new DateTimeOffset(new DateTime(2021, 12, 31));
 
       var ts_year = TimeSeries.Factory.FromValue(365, start, end, Period.Year);
 
@@ -553,6 +553,24 @@
 
       Assert.IsTrue(ts_quarter_mean.All(x => x.Value == 365));
       Assert.IsTrue(ts_quarter_sum.All(x => x.Value == (1 / 24M)));
+    }
+
+    [TestMethod]
+    public void TestUpSample_from_day_to_hour()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+      var end = new DateTimeOffset(new DateTime(2021, 12, 31));
+
+      var ts = TimeSeries.Factory.FromValue(1, start, end, Period.Day);
+
+      var ts_sum = ts.ReSample(Period.Hour, AggregationType.Sum);
+      var ts_mean = ts.ReSample(Period.Hour, AggregationType.Mean);
+
+      Assert.AreEqual(365 * 24, ts_sum.Count);
+      Assert.AreEqual(365 * 24, ts_mean.Count);
+
+      Assert.IsTrue(ts_mean.All(x => x.Value == 1));
+      Assert.IsTrue(ts_sum.GroupBy(x => x.Value).Count() == 3);
     }
 
     [TestMethod]

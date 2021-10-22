@@ -50,6 +50,30 @@ namespace Thinksharp.TimeFlow
     }
 
     [TestMethod]
+    public void TestEnumerate()
+    {
+      var frame = new TimeFrame();
+
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), new DateTime(2021, 01, 31), Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 01, 01), new DateTime(2021, 01, 31), Period.Day);
+
+      frame["TS1"] = ts1;
+      frame["TS2"] = ts2;
+
+      var names = frame.EnumerateNames().ToArray();
+      var timePoints = frame.EnumerateTimePoints().ToArray();
+      var timeseries = frame.EnumerateTimeSeries().ToArray();
+
+      var names_exp = new string[] { "TS1", "TS2" };
+      var timePoints_exp = Enumerable.Range(1, 31).Select(day => new DateTimeOffset(new DateTime(2021, 01, day))).ToArray();
+      var timeSeries_ex = new TimeSeries[] { ts1, ts2 };
+
+      CollectionAssert.AreEqual(names_exp, names);
+      CollectionAssert.AreEqual(timePoints_exp, timePoints);
+      CollectionAssert.AreEqual(timeSeries_ex, timeseries);
+    }
+
+    [TestMethod]
     public void ExtendAndShrinkEnd()
     {
       var frame = new TimeFrame();
