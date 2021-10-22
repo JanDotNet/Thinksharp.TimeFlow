@@ -14,7 +14,7 @@ TimeSeries objects are **immutable**. There are some methods for transforming Ti
 
 A collection of named time series with the same frequency can be combined to one **TimeFrame**.
 
-See [jupiter notebook](Notebooks/timeseries.ipynb) for examples (reload if visualization fails for the first time).
+See [Notebooks/timeseries.ipynb](https://nbviewer.ipython.org/github/JanDotNet/Thinksharp.TimeFlow/blob/f5b7ba0ddf711b0f94e1e71dc903bd9865f9eb3a/Notebooks/timeseries.ipynb) for usage.
 
 ## Installation
 
