@@ -2,6 +2,7 @@
 {
   using System;
   using System.Collections.Generic;
+  using System.Diagnostics;
   using System.Linq;
   using System.Text;
 
@@ -10,6 +11,7 @@
   /// Time points are represented as DateTimeOffsets, values as nullable decimals.
   /// The time span between two time points (the Frequency) is always identical for the whole time series.
   /// </summary>
+  [DebuggerDisplay("Freq: {Frequency} - Count: {Count} - Range: {Start} -> {End}")]
   public class TimeSeries : IndexedSeries<DateTimeOffset, decimal?>
   {
     internal TimeSeries(IEnumerable<IndexedSeriesItem<DateTimeOffset, decimal?>> sortedSeries, Period freq, TimeZoneInfo timeZone)
@@ -417,6 +419,20 @@
     public TimeSeries Slice(DateTimeOffset timestampFrom, DateTimeOffset timestampTo)
     {
       return new TimeSeries(this.sortedValues.Where(p => p.Key >= timestampFrom && p.Key <= timestampTo), this.Frequency, this.TimeZone);
+    }
+
+    public TimeSeries Slice(DateTime timestampFrom, Period period)
+    {
+      return Slice(new DateTimeOffset(timestampFrom), period);
+    }
+
+    public TimeSeries Slice(DateTimeOffset timestampFrom, Period period)
+    {
+      if (this.Frequency >= period)
+      {
+        throw new ArgumentException($"Unable to slice period {period} from time series with frequency '{this.Frequency}'.");
+      }
+      return Slice(timestampFrom, this.Frequency.SubtractPeriod(period.AddPeriod(timestampFrom, this.TimeZone), this.TimeZone));
     }
 
     /// <summary>

@@ -49,6 +49,34 @@
               Takes always the right value.
             </summary>
         </member>
+        <member name="M:Thinksharp.TimeFlow.Period.FromTimePoints(System.DateTimeOffset,System.DateTimeOffset)">
+            <summary>
+            Creates an period from 2 time points.
+            </summary>
+            <param name="first">The first time point.</param>
+            <param name="second">The second time point.</param>
+            <returns>The period that describes the difference between the 2 specified time points.</returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.Period.GenerateTimePointSequence(System.DateTimeOffset,System.TimeZoneInfo)">
+            <summary>
+            Creates an infinite sequence of time points
+            </summary>
+            <param name="start">The first time point to use.</param>
+            <param name="timeZone">The time zone to use.</param>
+            <returns>
+            An infinite sequence of time points
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.Period.GenerateTimePointSequence(System.DateTime,System.TimeZoneInfo)">
+            <summary>
+            Creates an infinite sequence of time points
+            </summary>
+            <param name="start">The first time point to use.</param>
+            <param name="timeZone">The time zone to use.</param>
+            <returns>
+            An infinite sequence of time points
+            </returns>
+        </member>
         <member name="T:Thinksharp.TimeFlow.TimeFrame">
             <summary>
             A time frame is a collection of named time series with the same frequency that can be processed together.
@@ -433,6 +461,21 @@
             </summary>
             <param name="facotry"></param>
             <returns></returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeriesFactoryExtensions.FromEnumerable(Thinksharp.TimeFlow.ITimeSeriesFactory,System.Collections.Generic.IEnumerable{Thinksharp.TimeFlow.IndexedSeriesItem{System.DateTimeOffset,System.Nullable{System.Decimal}}},System.TimeZoneInfo)">
+            <summary>
+              Creates a new time series with N constant values.
+            </summary>
+            <param name="timePoints">
+              An  enumerable of time point / value pairs to create the time series for.
+              NOTE: The period between the time points must be equal!
+            </param>    
+            <param name="timeZone">
+              The time zone to use. (Default: 'W. Europe Standard Time')
+            </param>
+            <returns>
+              A new time series with N constant values.
+            </returns>
         </member>
         <member name="M:Thinksharp.TimeFlow.TimeSeriesFactoryExtensions.FromValue(Thinksharp.TimeFlow.ITimeSeriesFactory,System.Nullable{System.Decimal},System.DateTime,System.Int32,Thinksharp.TimeFlow.Period,System.TimeZoneInfo)">
             <summary>

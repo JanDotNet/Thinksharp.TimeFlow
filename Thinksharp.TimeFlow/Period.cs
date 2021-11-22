@@ -1,6 +1,8 @@
 ﻿namespace Thinksharp.TimeFlow
 {
   using System;
+  using System.Collections.Generic;
+  using System.Linq;
   using System.Text.RegularExpressions;
 
   public class Period
@@ -27,10 +29,100 @@
     public static Period Month { get; } = new Period(1, PeriodUnit.Month);
     public static Period QuarterYear { get; } = new Period(3, PeriodUnit.Month);
     public static Period Year { get; } = new Period(1, PeriodUnit.Year);
+
+    /// <summary>
+    /// Creates an period from 2 time points.
+    /// </summary>
+    /// <param name="first">The first time point.</param>
+    /// <param name="second">The second time point.</param>
+    /// <returns>The period that describes the difference between the 2 specified time points.</returns>
+    public static Period FromTimePoints(DateTimeOffset first, DateTimeOffset second)
+    {
+      if (first == second)
+      {
+        throw new ArgumentException("Can not create period from identical time points.");
+      }
+
+      if (first > second)
+      {
+        var tmp = first;
+        first = second;
+        second = tmp;        
+      }
+
+      if (first.Date.Month == 1 && second.Month == 1 && first.Day == 1 && second.Day == 1 && first.Year < second.Year)
+      {
+        return new Period(second.Year - first.Year, PeriodUnit.Year);
+      }
+      if (first.Date.Year == second.Date.Year)
+      {
+        if (first.Day == 1 && second.Day == 1 && first.Month < second.Month)
+        {
+          var numberOfMonths = second.Month - first.Month;
+
+          return new Period(numberOfMonths, PeriodUnit.Month);
+        }
+      }
+
+      var span = second - first;
+
+      if (span.TotalSeconds < 1.0)
+      {
+        return new Period((int)span.TotalMilliseconds, PeriodUnit.Millisecond);
+      }
+      if (span.TotalMinutes < 1.0 || span.TotalMinutes % 1 != 0)
+      {
+        return new Period((int)span.TotalSeconds, PeriodUnit.Second);
+      }
+      if (span.TotalHours < 1.0 || span.TotalHours % 1 != 0)
+      {
+        return new Period((int)span.TotalMinutes, PeriodUnit.Minute);
+      }
+      if (span.TotalDays < 1.0 || span.TotalDays % 1 != 0)
+      {
+        return new Period((int)span.TotalHours, PeriodUnit.Hour);
+      }     
+
+      return new Period(span.Days, PeriodUnit.Day);
+    }
     public DateTimeOffset AddPeriod(DateTimeOffset dt, TimeZoneInfo timeZone = null)
       => this.Unit.AddPeriod(dt, this.Value, timeZone);
     public DateTimeOffset SubtractPeriod(DateTimeOffset dt, TimeZoneInfo timeZone = null)
       => this.Unit.AddPeriod(dt, -this.Value, timeZone);
+
+    /// <summary>
+    /// Creates an infinite sequence of time points
+    /// </summary>
+    /// <param name="start">The first time point to use.</param>
+    /// <param name="timeZone">The time zone to use.</param>
+    /// <returns>
+    /// An infinite sequence of time points
+    /// </returns>
+    public IEnumerable<DateTimeOffset> GenerateTimePointSequence(DateTimeOffset start, TimeZoneInfo timeZone = null)
+    {
+      if (timeZone == null)
+      {
+        timeZone = DateHelper.GetDefaultTimeZone();
+      }
+
+      var current = start;
+      while(true)
+      {
+        yield return current;
+        current = this.AddPeriod(current, timeZone);
+      }
+    }
+
+    /// <summary>
+    /// Creates an infinite sequence of time points
+    /// </summary>
+    /// <param name="start">The first time point to use.</param>
+    /// <param name="timeZone">The time zone to use.</param>
+    /// <returns>
+    /// An infinite sequence of time points
+    /// </returns>
+    public IEnumerable<DateTimeOffset> GenerateTimePointSequence(DateTime start, TimeZoneInfo timeZone = null)
+      => GenerateTimePointSequence(new DateTimeOffset(start), timeZone);
 
     public static DateTimeOffset operator +(DateTimeOffset dt, Period period) => period.AddPeriod(dt);
     public static DateTimeOffset operator +(Period period, DateTimeOffset dt) => period.AddPeriod(dt);

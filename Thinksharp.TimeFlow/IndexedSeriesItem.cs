@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Thinksharp.TimeFlow
 {
+  [DebuggerDisplay("{Key} -> {Value}")]
   public class IndexedSeriesItem<TIndex, TValue>
   {
     public IndexedSeriesItem(TIndex key, TValue value)

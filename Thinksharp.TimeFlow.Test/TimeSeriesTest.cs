@@ -75,6 +75,20 @@
     }
 
     [TestMethod]
+    public void TestFromEnumerable()
+    {
+      var timePoints = Period.Hour.GenerateTimePointSequence(new DateTime(2021, 1, 1)).Take(5).ToList();
+      var ts = TimeSeries.Factory.FromEnumerable(timePoints.Select(x => new IndexedSeriesItem<DateTimeOffset, decimal?>(x, x.Hour)));
+      Assert.AreEqual(5, ts.Count);
+      Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 1, 1)), ts[0].Key);
+      Assert.AreEqual(0M, ts[0].Value);
+      Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 1, 1).AddHours(4)), ts[4].Key);
+      Assert.AreEqual(4M, ts[4].Value);
+
+      Assert.AreEqual(Period.Hour, ts.Frequency);
+    }
+
+    [TestMethod]
     public void TestFromValue_Null()
     {
       var start = new DateTimeOffset(new DateTime(2021, 01, 01));
@@ -102,6 +116,42 @@
 
       var ts3 = ts.Apply(x => (x ?? 0) * (x ?? 0));
       Assert.IsTrue(ts3.All(x => x.Value == 4));
+    }
+
+    [TestMethod]
+    public void TestSlice_days()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+      var end = new DateTimeOffset(new DateTime(2021, 12, 31));
+      var ts = TimeSeries.Factory.FromValue(1, start, end, Period.Day);
+
+      Assert.AreEqual(365, ts.Count);
+      Assert.AreEqual(31, ts.Slice(start, Period.Month).Count);
+      Assert.AreEqual(31 + 28 + 31, ts.Slice(start, new Period(3, PeriodUnit.Month)).Count);
+    }
+
+    [TestMethod]
+    public void TestSlice_hours()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+      var end = new DateTimeOffset(new DateTime(2021, 12, 31, 23, 0, 0));
+      var ts = TimeSeries.Factory.FromValue(1, start, end, Period.Hour);
+
+      Assert.AreEqual(365 * 24, ts.Count);
+      Assert.AreEqual(24, ts.Slice(start, Period.Day).Count);
+      Assert.AreEqual(31 * 24, ts.Slice(start, Period.Month).Count);
+      Assert.AreEqual(31 * 24 + 28 * 24 + 31 * 24 -1, ts.Slice(start, new Period(3, PeriodUnit.Month)).Count);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void TestSlice_period_must_be_greater_than_timeseries_frequency()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+      var end = new DateTimeOffset(new DateTime(2021, 12, 31));
+      var ts = TimeSeries.Factory.FromValue(1, start, end, Period.Day);
+
+      var sts = ts.Slice(start, Period.Minutes);
     }
 
     [TestMethod]

@@ -25,6 +25,30 @@ namespace Thinksharp.TimeFlow
     /// <summary>
     ///   Creates a new time series with N constant values.
     /// </summary>
+    /// <param name="timePoints">
+    ///   An  enumerable of time point / value pairs to create the time series for.
+    ///   NOTE: The period between the time points must be equal!
+    /// </param>    
+    /// <param name="timeZone">
+    ///   The time zone to use. (Default: 'W. Europe Standard Time')
+    /// </param>
+    /// <returns>
+    ///   A new time series with N constant values.
+    /// </returns>
+    public static TimeSeries FromEnumerable(this ITimeSeriesFactory factory, IEnumerable<IndexedSeriesItem<DateTimeOffset, decimal?>> timePoints, TimeZoneInfo timeZone = null)
+    {
+      var timePointList = timePoints.OrderBy(x => x.Key).ToList();
+
+      var period = timePointList.Count < 2
+        ? Period.Day
+        : Period.FromTimePoints(timePointList[0].Key, timePointList[1].Key);
+
+      return new TimeSeries(timePointList, period, timeZone ?? DateHelper.GetDefaultTimeZone());
+    }
+
+    /// <summary>
+    ///   Creates a new time series with N constant values.
+    /// </summary>
     /// <param name="value">
     ///   The constant value to use.
     /// </param>

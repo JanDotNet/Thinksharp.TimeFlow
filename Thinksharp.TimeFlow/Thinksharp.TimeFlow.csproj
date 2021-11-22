@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.23.0</Version>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <Version>0.25.0</Version>
     <Authors>Jan-Niklas Schäfer</Authors>
     <Company>ThinkSharp</Company>
     <Description>TimeFlow is a lightweight extendable library for working with time series with support for time zones and daylight saving.</Description>
@@ -14,11 +14,14 @@
     <PackageReleaseNotes>0.9.0 Initial Version
 0.10.0 Changed type Frequency to Period
 0.11.0 Added support for period serialization
-0.21.0 Some improvements and bugfixes</PackageReleaseNotes>
+0.21.0 Some improvements and bugfixes
+0.24.0 Improved API for TimeSeries and TimeFrame</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Product>ThinkSharp.TimeFlow</Product>
+    <AssemblyVersion>0.25.0.0</AssemblyVersion>
+    <FileVersion>0.25.0.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

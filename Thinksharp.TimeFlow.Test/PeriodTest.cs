@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
 
 namespace Thinksharp.TimeFlow
 {
@@ -303,6 +304,44 @@ namespace Thinksharp.TimeFlow
     {
       Assert.AreEqual("1 ms", Period.Milliseconds.ToString());
       Assert.AreEqual("12 min", new Period(12, PeriodUnit.Minute).ToString());
+    }
+
+    [TestMethod]
+    public void TestGenerateTimePointSequence()
+    {
+      var timepoints = Period.Hour.GenerateTimePointSequence(new DateTime(2021, 01, 01)).Take(5).ToList();
+      Assert.AreEqual(5, timepoints.Count);
+      Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 01, 01, 0, 0, 0)), timepoints[0]);
+      Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 01, 01, 1, 0, 0)), timepoints[1]);
+      Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 01, 01, 2, 0, 0)), timepoints[2]);
+      Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 01, 01, 3, 0, 0)), timepoints[3]);
+      Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 01, 01, 4, 0, 0)), timepoints[4]);
+    }
+
+    [TestMethod]
+    public void TestFromTimePoints()
+    {
+      var baseTime = new DateTimeOffset(2021, 01, 01, 01, 01, 01, TimeSpan.FromHours(2));
+      Assert.AreEqual(new Period(1, PeriodUnit.Millisecond), Period.FromTimePoints(baseTime.AddMilliseconds(2), baseTime.AddMilliseconds(3)));
+      Assert.AreEqual(new Period(5, PeriodUnit.Millisecond), Period.FromTimePoints(baseTime.AddMilliseconds(2), baseTime.AddMilliseconds(7)));
+
+      Assert.AreEqual(new Period(1, PeriodUnit.Second), Period.FromTimePoints(baseTime.AddSeconds(2), baseTime.AddSeconds(3)));
+      Assert.AreEqual(new Period(5, PeriodUnit.Second), Period.FromTimePoints(baseTime.AddSeconds(2), baseTime.AddSeconds(7)));
+
+      Assert.AreEqual(new Period(1, PeriodUnit.Minute), Period.FromTimePoints(baseTime.AddMinutes(2), baseTime.AddMinutes(3)));
+      Assert.AreEqual(new Period(5, PeriodUnit.Minute), Period.FromTimePoints(baseTime.AddMinutes(2), baseTime.AddMinutes(7)));
+
+      Assert.AreEqual(new Period(1, PeriodUnit.Hour), Period.FromTimePoints(baseTime.AddHours(2), baseTime.AddHours(3)));
+      Assert.AreEqual(new Period(5, PeriodUnit.Hour), Period.FromTimePoints(baseTime.AddHours(2), baseTime.AddHours(7)));
+
+      Assert.AreEqual(new Period(1, PeriodUnit.Day), Period.FromTimePoints(baseTime.AddDays(2), baseTime.AddDays(3)));
+      Assert.AreEqual(new Period(5, PeriodUnit.Day), Period.FromTimePoints(baseTime.AddDays(2), baseTime.AddDays(7)));
+
+      Assert.AreEqual(new Period(3, PeriodUnit.Month), Period.FromTimePoints(baseTime, baseTime.AddMonths(3)));
+      Assert.AreEqual(new Period(5, PeriodUnit.Month), Period.FromTimePoints(baseTime.AddMonths(2), baseTime.AddMonths(7)));
+
+      Assert.AreEqual(new Period(1, PeriodUnit.Year), Period.FromTimePoints(baseTime, baseTime.AddYears(1)));
+      Assert.AreEqual(new Period(3, PeriodUnit.Year), Period.FromTimePoints(baseTime, baseTime.AddYears(3)));
     }
   }
 }

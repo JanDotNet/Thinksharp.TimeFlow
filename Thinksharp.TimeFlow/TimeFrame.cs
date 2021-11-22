@@ -212,6 +212,30 @@ namespace Thinksharp.TimeFlow
       }
     }
 
+    public TimeFrame Slice(DateTime day)
+    {
+      return new TimeFrame(this.Select(ts => new NameTimeSeriesPair(ts.Key, ts.Value.Slice(day))), this.Frequency);
+    }
+    public TimeFrame Slice(DateTimeOffset start, DateTimeOffset end)
+    {
+      return new TimeFrame(this.Select(ts => new NameTimeSeriesPair(ts.Key, ts.Value.Slice(start, end))), this.Frequency);
+    }
+
+    public TimeFrame Slice(DateTimeOffset start, Period period)
+    {
+      return new TimeFrame(this.Select(ts => new NameTimeSeriesPair(ts.Key, ts.Value.Slice(start, period))), this.Frequency);
+    }
+
+    public TimeFrame Slice(DateTime start, Period period)
+    {
+      return new TimeFrame(this.Select(ts => new NameTimeSeriesPair(ts.Key, ts.Value.Slice(start, period))), this.Frequency);
+    }
+
+    public TimeFrame Slice(DateTime start, DateTime end)
+    {
+      return Slice(new DateTimeOffset(start), new DateTimeOffset(end));
+    }
+
     private void RecalculateStartEnd()
     {
       this.Start = this.timeSeries.Select(p => p.TimeSeries.Start).DefaultIfEmpty(DateTimeOffset.MaxValue).Min();
