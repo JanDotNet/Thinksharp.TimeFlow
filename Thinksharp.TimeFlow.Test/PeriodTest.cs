@@ -21,6 +21,8 @@ namespace Thinksharp.TimeFlow
       Assert.IsTrue(Period.QuarterHour == Period.QuarterHour);
       Assert.IsFalse(Period.Day == Period.Hour);
       Assert.IsFalse(Period.Day == Period.QuarterHour);
+      Assert.IsFalse(Period.Day == Period.Milliseconds);
+      Assert.IsFalse(Period.Day == Period.Seconds);
 
       Assert.IsTrue((Period)null == (Period)null);
       Assert.IsFalse((Period)null == (Period)Period.Day);
@@ -31,6 +33,7 @@ namespace Thinksharp.TimeFlow
     public void Operators_neq()
     {
       Assert.IsTrue(Period.Day != Period.Hour);
+      Assert.IsTrue(Period.Day != Period.Milliseconds);
       Assert.IsTrue(Period.Day != Period.QuarterHour);
       Assert.IsFalse(Period.Day != Period.Day);
       Assert.IsFalse(Period.Hour != Period.Hour);

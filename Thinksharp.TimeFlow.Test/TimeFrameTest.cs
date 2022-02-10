@@ -135,6 +135,18 @@ namespace Thinksharp.TimeFlow
     }
 
     [TestMethod]
+    public void DifferentTimeZonesNotAllowed()
+    {
+      var frame = new TimeFrame();
+
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), new DateTime(2021, 01, 31), Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 01, 01), new DateTime(2021, 03, 31), Period.Day, TimeZoneInfo.Utc);
+
+      frame.Add("TS1", ts1);
+      Assert.ThrowsException<InvalidOperationException>(() => frame.Add("TS2", ts2));
+    }
+
+    [TestMethod]
     public void RemoveUntilReset()
     {
       var frame = new TimeFrame();
@@ -220,6 +232,59 @@ namespace Thinksharp.TimeFlow
 
       Assert.IsTrue(ts1 == frame["TS1"]);
       Assert.IsTrue(ts2 == frame["TS2"]);
+    }
+
+    [TestMethod]
+    public void TestEmptyTimeFrameInitialization()
+    {
+      var frame = new TimeFrame();
+
+      Assert.AreEqual(DateHelper.EmptyTimeSeriesFrequency, frame.Frequency);
+      Assert.AreEqual(DateHelper.EmptyTimeSeriesZoneInfo, frame.TimeZone);
+    }
+
+    [TestMethod]
+    public void TestTimeZoneAndFrequencyAdjusted()
+    {
+      var frame = new TimeFrame();
+
+      frame["TS2"] = TimeSeries.Factory.FromValue(1, new DateTime(2021, 02, 01), new DateTime(2021, 04, 30), Period.Day);
+
+      Assert.AreEqual(Period.Day, frame.Frequency);
+      Assert.AreEqual(DateHelper.GetDefaultTimeZone(), frame.TimeZone);
+    }
+
+    [TestMethod]
+    public void TestTimeZoneAndFrequencyCleared()
+    {
+      var frame = new TimeFrame();
+
+      frame["TS2"] = TimeSeries.Factory.FromValue(1, new DateTime(2021, 02, 01), new DateTime(2021, 04, 30), Period.Day);
+      frame.Remove("TS2");
+      Assert.AreEqual(DateHelper.EmptyTimeSeriesFrequency, frame.Frequency);
+      Assert.AreEqual(DateHelper.EmptyTimeSeriesZoneInfo, frame.TimeZone);
+    }
+
+    [TestMethod]
+    public void TestIgnoreFequencyOfEmptyTimeSeries()
+    {
+      var frame = new TimeFrame();
+
+      frame["TS1"] = TimeSeries.Factory.Empty();
+      frame["TS2"] = TimeSeries.Factory.FromValue(1, new DateTime(2021, 02, 01), new DateTime(2021, 04, 30), Period.Day);
+
+      Assert.AreEqual(Period.Day, frame.Frequency);
+    }
+
+    [TestMethod]
+    public void TestIgnoreTimeZoneOfEmptyTimeSeries()
+    {
+      var frame = new TimeFrame();
+
+      frame["TS1"] = TimeSeries.Factory.Empty();
+      frame["TS2"] = TimeSeries.Factory.FromValue(1, new DateTime(2021, 02, 01), new DateTime(2021, 04, 30), Period.Day);
+
+      Assert.AreEqual(Period.Day, frame.Frequency);
     }
 
   }

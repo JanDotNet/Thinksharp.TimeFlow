@@ -285,8 +285,8 @@
         ? new Func<IEnumerable<decimal>, decimal>(x => x.Sum())
         : x => x.Average();
 
-      if (frequency == this.Frequency)
-      {
+      if (this.IsEmpty || frequency == this.Frequency)
+      {        
         return this;
       }
 
@@ -564,7 +564,7 @@
 
     private Period EnsureFrequenciesAreCompatible(params TimeSeries[] dateTimeSeries)
     {
-      var allNonEmpty = dateTimeSeries.Concat(new[] { this }).Where(t => !t.IsEmpty);
+      var allNonEmpty = new[] { this }.Concat(dateTimeSeries).Where(t => !t.IsEmpty);
 
       if (allNonEmpty.GroupBy(x => x.Frequency).Count() > 1)
       {
@@ -576,7 +576,7 @@
 
     private TimeZoneInfo EnsureTimeZonesAreCompatible(params TimeSeries[] dateTimeSeries)
     {
-      var allNonEmpty = dateTimeSeries.Concat(new[] { this }).Where(t => !t.IsEmpty);
+      var allNonEmpty = new[] { this }.Concat(dateTimeSeries).Where(t => !t.IsEmpty);
 
       if (allNonEmpty.GroupBy(x => x.TimeZone.Id).Count() > 1)
       {

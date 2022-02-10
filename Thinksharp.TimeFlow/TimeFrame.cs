@@ -30,13 +30,17 @@ namespace Thinksharp.TimeFlow
     /// Creates a new instance of the time frame.
     /// </summary>
     public TimeFrame()
-    { }
+    {
+      this.Frequency = DateHelper.EmptyTimeSeriesFrequency;
+      this.TimeZone = DateHelper.EmptyTimeSeriesZoneInfo;
+    }
 
-    private TimeFrame(IEnumerable<NameTimeSeriesPair> timeSeries, Period frequency)
+    private TimeFrame(IEnumerable<NameTimeSeriesPair> timeSeries, Period frequency, TimeZoneInfo timeZone)
     {
       this.timeSeries = timeSeries.ToList();
       this.timeSeriesDictionary = timeSeries.ToDictionary(x => x.Name, x => x.TimeSeries);
       this.Frequency = frequency;
+      this.TimeZone = timeZone;
 
       this.RecalculateStartEnd();
     }
@@ -60,6 +64,11 @@ namespace Thinksharp.TimeFlow
     /// Gets the frequency of all time series within the frame.
     /// </summary>
     public Period Frequency { get; private set; }
+
+    /// <summary>
+    ///   Gets the time zone object of this time frame.
+    /// </summary>
+    public TimeZoneInfo TimeZone { get; private set; }
 
     /// <summary>
     /// Enumerates all time points of the frame.
@@ -111,13 +120,21 @@ namespace Thinksharp.TimeFlow
         throw new InvalidOperationException($"Time series with name '{name}' already exists.");
       }
 
-      if (this.timeSeries.Count == 0)
+      if (this.timeSeries.Count == 0 || this.timeSeries.All(ts => ts.TimeSeries.IsEmpty))
       {
         this.Frequency = timeSeries.Frequency;
+        this.TimeZone = timeSeries.TimeZone;
       }
-      else if (timeSeries.Frequency != this.Frequency)
+      else 
       {
-        throw new InvalidOperationException($"Time series frequency ('{timeSeries.Frequency}' must be equal the frequency of the frame ('{this.Frequency}').");
+        if (timeSeries.Frequency != this.Frequency)
+        {
+          throw new InvalidOperationException($"Time series frequency ('{timeSeries.Frequency}' must be equal the frequency of the frame ('{this.Frequency}').");
+        }
+        if (timeSeries.TimeZone != this.TimeZone)
+        {
+          throw new InvalidOperationException($"Time series time zone ('{timeSeries.TimeZone}' must be equal the time zone of the frame ('{this.TimeZone}').");
+        }
       }
 
       var pair = new NameTimeSeriesPair(name, timeSeries);
@@ -152,7 +169,7 @@ namespace Thinksharp.TimeFlow
     /// <returns>
     /// The copy of the time frame.
     /// </returns>
-    public TimeFrame Copy() => new TimeFrame(this.timeSeries, this.Frequency);
+    public TimeFrame Copy() => new TimeFrame(this.timeSeries, this.Frequency, this.TimeZone);
 
     /// <summary>
     /// Resamples all time series within the frame to the specified period.
@@ -214,21 +231,21 @@ namespace Thinksharp.TimeFlow
 
     public TimeFrame Slice(DateTime day)
     {
-      return new TimeFrame(this.Select(ts => new NameTimeSeriesPair(ts.Key, ts.Value.Slice(day))), this.Frequency);
+      return new TimeFrame(this.Select(ts => new NameTimeSeriesPair(ts.Key, ts.Value.Slice(day))), this.Frequency, this.TimeZone);
     }
     public TimeFrame Slice(DateTimeOffset start, DateTimeOffset end)
     {
-      return new TimeFrame(this.Select(ts => new NameTimeSeriesPair(ts.Key, ts.Value.Slice(start, end))), this.Frequency);
+      return new TimeFrame(this.Select(ts => new NameTimeSeriesPair(ts.Key, ts.Value.Slice(start, end))), this.Frequency, this.TimeZone);
     }
 
     public TimeFrame Slice(DateTimeOffset start, Period period)
     {
-      return new TimeFrame(this.Select(ts => new NameTimeSeriesPair(ts.Key, ts.Value.Slice(start, period))), this.Frequency);
+      return new TimeFrame(this.Select(ts => new NameTimeSeriesPair(ts.Key, ts.Value.Slice(start, period))), this.Frequency, this.TimeZone);
     }
 
     public TimeFrame Slice(DateTime start, Period period)
     {
-      return new TimeFrame(this.Select(ts => new NameTimeSeriesPair(ts.Key, ts.Value.Slice(start, period))), this.Frequency);
+      return new TimeFrame(this.Select(ts => new NameTimeSeriesPair(ts.Key, ts.Value.Slice(start, period))), this.Frequency, this.TimeZone);
     }
 
     public TimeFrame Slice(DateTime start, DateTime end)
@@ -238,8 +255,15 @@ namespace Thinksharp.TimeFlow
 
     private void RecalculateStartEnd()
     {
-      this.Start = this.timeSeries.Select(p => p.TimeSeries.Start).DefaultIfEmpty(DateTimeOffset.MaxValue).Min();
-      this.End = this.timeSeries.Select(p => p.TimeSeries.End).DefaultIfEmpty(DateTimeOffset.MinValue).Max();
+      var nonEmtpy = this.timeSeries.Where(ts => !ts.TimeSeries.IsEmpty).ToArray();
+      this.Start = nonEmtpy.Select(p => p.TimeSeries.Start).DefaultIfEmpty(DateTimeOffset.MaxValue).Min();
+      this.End = nonEmtpy.Select(p => p.TimeSeries.End).DefaultIfEmpty(DateTimeOffset.MinValue).Max();
+
+      if (nonEmtpy.Length == 0)
+      {
+        this.Frequency = DateHelper.EmptyTimeSeriesFrequency;
+        this.TimeZone = DateHelper.EmptyTimeSeriesZoneInfo;
+      }
     }
 
     public IEnumerator<KeyValuePair<string, TimeSeries>> GetEnumerator()
@@ -264,7 +288,7 @@ namespace Thinksharp.TimeFlow
       {
         var filteredTimeSeries = this.timeSeries.Where(x => names.Contains(x.Name));
 
-        return new TimeFrame(filteredTimeSeries, this.Frequency);
+        return new TimeFrame(filteredTimeSeries, this.Frequency, this.TimeZone);
       }
     }
 

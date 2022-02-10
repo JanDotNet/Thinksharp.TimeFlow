@@ -15,9 +15,9 @@ namespace Thinksharp.TimeFlow
     /// <summary>
     /// Creates an empty time series.
     /// </summary>
-    /// <param name="facotry"></param>
+    /// <param name="factory"></param>
     /// <returns></returns>
-    public static TimeSeries Empty(this ITimeSeriesFactory facotry)
+    public static TimeSeries Empty(this ITimeSeriesFactory factory)
     {
       return new TimeSeries(Enumerable.Empty<IndexedSeriesItem<DateTimeOffset, decimal?>>(), DateHelper.EmptyTimeSeriesFrequency, DateHelper.EmptyTimeSeriesZoneInfo);
     }

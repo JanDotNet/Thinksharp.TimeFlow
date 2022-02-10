@@ -107,6 +107,11 @@
             Gets the frequency of all time series within the frame.
             </summary>
         </member>
+        <member name="P:Thinksharp.TimeFlow.TimeFrame.TimeZone">
+            <summary>
+              Gets the time zone object of this time frame.
+            </summary>
+        </member>
         <member name="M:Thinksharp.TimeFlow.TimeFrame.EnumerateTimePoints">
             <summary>
             Enumerates all time points of the frame.
@@ -459,7 +464,7 @@
             <summary>
             Creates an empty time series.
             </summary>
-            <param name="facotry"></param>
+            <param name="factory"></param>
             <returns></returns>
         </member>
         <member name="M:Thinksharp.TimeFlow.TimeSeriesFactoryExtensions.FromEnumerable(Thinksharp.TimeFlow.ITimeSeriesFactory,System.Collections.Generic.IEnumerable{Thinksharp.TimeFlow.IndexedSeriesItem{System.DateTimeOffset,System.Nullable{System.Decimal}}},System.TimeZoneInfo)">

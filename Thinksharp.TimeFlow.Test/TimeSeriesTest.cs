@@ -890,7 +890,17 @@
 
       Assert.IsTrue(ts_actual == ts_expected);
     }
-    
+
+    [TestMethod]
+    public void Test_Resample_Empty()
+    {
+      var ts1 = TimeSeries.Factory.Empty();
+
+      var ts_expected = ts1.ReSample(Period.Day, AggregationType.Mean);
+      
+      Assert.AreEqual(Period.Milliseconds, ts_expected.Frequency);      
+    }
+
     [TestMethod]
     public void Test_Function()
     {

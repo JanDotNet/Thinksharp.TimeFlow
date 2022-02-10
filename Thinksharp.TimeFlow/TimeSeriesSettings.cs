@@ -12,6 +12,6 @@ namespace Thinksharp.TimeFlow
 
   public static class TimeSeriesSettingsExtensions
   {
-    public static void SetDefaultTimeZome(TimeZoneInfo timeZoneInfo) => DateHelper.SetDefaultTimeZone(timeZoneInfo);
+    public static void SetDefaultTimeZome(this ITimeSeriesSettings settings, TimeZoneInfo timeZoneInfo) => DateHelper.SetDefaultTimeZone(timeZoneInfo);
   }
 }
