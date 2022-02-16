@@ -16,18 +16,19 @@ A collection of named time series with the same frequency can be combined to one
 
 ## Installation
 
-### Usage in .Net Projects
+## Usage in .Net Projects
 
 ThinkSharp.TimeFlow can be installed via [Nuget](https://www.nuget.org/packages/Thinksharp.TimeFlow)
 
     Install-Package Thinksharp.TimeFlow
 
-### Usage
+## Usage
 
-#### Time Series Creation
+### Time Series Creation
 
 Time series can be created using the available methods of the static TimeSeries.Factory property. The factory is of type ITimeSeriesFactory, which can be extended via extension methods. Therefore third party libraries may provide advanced factory methods or user can write it's own use-case specific ones.
-TimeSeries.Factory.FromValue
+
+#### TimeSeries.Factory.FromValue
 
     // FromValue creates a time series with a defined value for each time point:
     var ts = TimeSeries.Factory.FromValue(10,
@@ -87,7 +88,7 @@ TimeSeries.Factory.FromValue
 |04/01/2021 00:00:00 +01:00|4|
 |05/01/2021 00:00:00 +01:00|5|
 
-####Time Series Transformation
+## Time Series Transformation
 
 Combining Time Series via Operators
 
@@ -163,7 +164,7 @@ Combining Time Series via Methods
 |06/01/2021 00:00:00 +01:00||2|||||2|
 |07/01/2021 00:00:00 +01:00||2|||||2|
     
-#### Slicing
+### Slicing
 
     var ts = TimeSeries.Factory.FromGenerator(
         new DateTime(2021, 01, 01), // start
@@ -190,7 +191,7 @@ Combining Time Series via Methods
 |05/01/2021 00:00:00 +01:00|5|||
 	
 
-#### Re-sampling
+### Re-sampling
 
     var ts = TimeSeries.Factory.FromValue(1,
         new DateTime(2021, 01, 01), // start
@@ -348,11 +349,11 @@ Combining Time Series via Methods
 |05/01/2021 23:00:00 +01:00|0,2083333333333333333333333333|5|
 
 
-### Usage in LINQPad
+## Usage in LINQPad
 
 [Thinksharp.TimeFlow.LinqPad](https://github.com/JanDotNet/Thinksharp.TimeFlow.LinqPad) provides chart and raw data visualization extensions for LINQPad.
 
-### Usage in .Net Interactive (Jupiter Notebooks)
+## Usage in .Net Interactive (Jupiter Notebooks)
 
 Reference Nuget **Package Thinksharp.TimeFlow** and **Thinksharp.TimeFlow.Interactive** as well as **XPlot.Plotly** if you want to use plotting abilities.
 
