@@ -125,44 +125,49 @@ Combining Time Series via Operators
 
 Combining Time Series via Methods
 
-    var a = TimeSeries.Factory.FromValue(1,
-        new DateTime(2021, 01, 01), // start
-        new DateTime(2021, 01, 05), // end
-        Period.Day);
+	var a = TimeSeries.Factory.FromValue(1,
+		new DateTime(2021, 01, 01), // start
+		new DateTime(2021, 01, 05), // end
+		Period.Day);
 
-    var b = TimeSeries.Factory.FromValue(2,
-      new DateTime(2021, 01, 03), // start
-      new DateTime(2021, 01, 07), // end
-      Period.Day);
+	var b = TimeSeries.Factory.FromValue(2,
+	  new DateTime(2021, 01, 03), // start
+	  new DateTime(2021, 01, 07), // end
+	  Period.Day);
 
-    var tf = new TimeFrame();
-    tf["a"] = a;
-    tf["b"] = b;
-    tf["apply * 2"] = a.Apply(value => value * 2);
+	var tf = new TimeFrame();
+	tf["a"] = a;
+	tf["b"] = b;
+	tf["apply * 2"] = a.Apply(value => value * 2);
 
-    // join left produces a time series with the same time points as the left time series.
-    // note that nulls will be evaluated to null
-    tf["JoinLeft r + l"] = a.JoinLeft(b, (l, r) => l + r);
-    // Use pre defined JoinOperation to ignore nulls
-    tf["JoinLeft JoinOperation.Add"] = a.JoinLeft(b, JoinOperation.Add);   
+	// join left produces a time series with the same time points as the left time series.
+	// note that nulls will be evaluated to null
+	tf["JoinLeft r + l"] = a.JoinLeft(b, (l, r) => l + r);
 
-    // join full combines both time series
-    // note that nulls will be evaluated to null
-    tf["JoinFull r + l"] = a.JoinFull(b, (left, right) => left + right); 
-    // Use pre defined JoinOperation to ignore nulls
-    tf["JoinFull JoinOperation.Add"] = a.JoinFull(b, JoinOperation.Add);
+	// Use pre defined JoinOperation to ignore nulls
+	tf["JoinLeft JoinOperation.Add"] = a.JoinLeft(b, JoinOperation.Add);
+
+	// join full combines both time series
+	// note that nulls will be evaluated to null
+	tf["JoinFull r + l"] = a.JoinFull(b, (left, right) => left + right);
+
+	// Use pre defined JoinOperation to ignore nulls
+	tf["JoinFull JoinOperation.Add"] = a.JoinFull(b, JoinOperation.Add);
+
+	// operators behave like full join with JoinOperations to ignore nulls.
+	tf["a+b"] = a + b;
 
     tf
 
-|Date|a|b|apply * 2|JoinLeft r + l|JoinLeft JoinOperation.Add|JoinFull r + l|JoinFull JoinOperation.Add|
-| ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- |
-|01/01/2021 00:00:00 +01:00|1||2||1||1|
-|02/01/2021 00:00:00 +01:00|1||2||1||1|
-|03/01/2021 00:00:00 +01:00|1|2|2|3|3|3|3|
-|04/01/2021 00:00:00 +01:00|1|2|2|3|3|3|3|
-|05/01/2021 00:00:00 +01:00|1|2|2|3|3|3|3|
-|06/01/2021 00:00:00 +01:00||2|||||2|
-|07/01/2021 00:00:00 +01:00||2|||||2|
+|Date|a|b|apply * 2|JoinLeft r + l|JoinLeft JoinOperation.Add|JoinFull r + l|JoinFull JoinOperation.Add|a+b|
+| ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- |
+|01/01/2021 00:00:00 +01:00|1||2||1||1|1|
+|02/01/2021 00:00:00 +01:00|1||2||1||1|1|
+|03/01/2021 00:00:00 +01:00|1|2|2|3|3|3|3|3|
+|04/01/2021 00:00:00 +01:00|1|2|2|3|3|3|3|3|
+|05/01/2021 00:00:00 +01:00|1|2|2|3|3|3|3|3|
+|06/01/2021 00:00:00 +01:00||2|||||2|2|
+|07/01/2021 00:00:00 +01:00||2|||||2|2|
     
 ### Slicing
 
