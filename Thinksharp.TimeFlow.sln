@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31515.178
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thinksharp.TimeFlow", "Thinksharp.TimeFlow\Thinksharp.TimeFlow.csproj", "{DAEA5AFB-86E7-4465-BE7B-9138690F039F}"
 EndProject
@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thinksharp.TimeFlow.Engine.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thinksharp.TimeFlow.Excel", "Thinksharp.TimeFlow.Excel\Thinksharp.TimeFlow.Excel.csproj", "{C76DCFBF-8BAE-4688-AB8D-14875E9D5442}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thinksharp.TimeFlow.Interactive", "Thinksharp.TimeFlow.Interactive\Thinksharp.TimeFlow.Interactive.csproj", "{18AF4EBA-B83C-420C-B178-FCCE868DFD48}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thinksharp.TimeFlow.Interactive", "Thinksharp.TimeFlow.Interactive\Thinksharp.TimeFlow.Interactive.csproj", "{18AF4EBA-B83C-420C-B178-FCCE868DFD48}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
