@@ -277,6 +277,17 @@ namespace Thinksharp.TimeFlow
     }
 
     [TestMethod]
+    public void TestIgnoreFequencyOfEmptyTimeSeries2()
+    {
+      var frame = new TimeFrame();
+
+      frame["TS2"] = TimeSeries.Factory.FromValue(1, new DateTime(2021, 02, 01), new DateTime(2021, 04, 30), Period.Day);
+      frame["TS1"] = TimeSeries.Factory.Empty();
+
+      Assert.AreEqual(Period.Day, frame.Frequency);
+    }
+
+    [TestMethod]
     public void TestIgnoreTimeZoneOfEmptyTimeSeries()
     {
       var frame = new TimeFrame();

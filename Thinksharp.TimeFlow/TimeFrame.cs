@@ -125,7 +125,7 @@ namespace Thinksharp.TimeFlow
         this.Frequency = timeSeries.Frequency;
         this.TimeZone = timeSeries.TimeZone;
       }
-      else 
+      else if (!timeSeries.IsEmpty)
       {
         if (timeSeries.Frequency != this.Frequency)
         {
