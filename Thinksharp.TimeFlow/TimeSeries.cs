@@ -52,6 +52,16 @@
     public Period Frequency { get; }
 
     /// <summary>
+    /// Adds a period to the specified time point considering the frequency and the time zone of the current time frame.
+    /// </summary>
+    /// <param name="timePoint">
+    /// The time point to add a period to.</param>
+    /// <returns>
+    /// A new time point.
+    /// </returns>
+    public DateTimeOffset AddPeriodTo(DateTimeOffset timePoint) => this.Frequency.AddPeriod(timePoint, this.TimeZone);
+
+    /// <summary>
     ///   Returns a new time series where all values are mapped using the specified mapping function.
     /// </summary>
     /// <param name="func">

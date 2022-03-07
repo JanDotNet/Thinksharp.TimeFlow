@@ -253,6 +253,16 @@ namespace Thinksharp.TimeFlow
       return Slice(new DateTimeOffset(start), new DateTimeOffset(end));
     }
 
+    /// <summary>
+    /// Adds a period to the specified time point considering the frequency and the time zone of the current time frame.
+    /// </summary>
+    /// <param name="timePoint">
+    /// The time point to add a period to.</param>
+    /// <returns>
+    /// A new time point.
+    /// </returns>
+    public DateTimeOffset AddPeriodTo(DateTimeOffset timePoint) => this.Frequency.AddPeriod(timePoint, this.TimeZone);
+
     private void RecalculateStartEnd()
     {
       var nonEmtpy = this.timeSeries.Where(ts => !ts.TimeSeries.IsEmpty).ToArray();

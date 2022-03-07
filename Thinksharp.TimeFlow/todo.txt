@@ -1,5 +1,4 @@
 ﻿Resample parameter: auf volle Periode bzw. von start an
 Fehler Resample
-Konfiguration default Frequency
-TimeFrame mit leeren TimeSeries sollte die Freuqnecy nicht berücksichtigen
-Slice(Andere Zeitreihe)
+Slice(Andere Zeitreihe
+Überladung für int / double
