@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <Authors>Jan-Niklas Schäfer</Authors>
     <Company>ThinkSharp</Company>
     <Description>TimeFlow is a lightweight extendable library for working with time series with support for time zones and daylight saving.</Description>
@@ -20,8 +20,8 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Product>ThinkSharp.TimeFlow</Product>
-    <AssemblyVersion>1.0.2.0</AssemblyVersion>
-    <FileVersion>1.0.2.0</FileVersion>
+    <AssemblyVersion>1.0.3.0</AssemblyVersion>
+    <FileVersion>1.0.3.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
