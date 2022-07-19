@@ -186,6 +186,16 @@
             A dictionary containing one aggregation type for each time series name.
             </param>
         </member>
+        <member name="M:Thinksharp.TimeFlow.TimeFrame.AddPeriodTo(System.DateTimeOffset)">
+            <summary>
+            Adds a period to the specified time point considering the frequency and the time zone of the current time frame.
+            </summary>
+            <param name="timePoint">
+            The time point to add a period to.</param>
+            <returns>
+            A new time point.
+            </returns>
+        </member>
         <member name="P:Thinksharp.TimeFlow.TimeFrame.Item(System.String[])">
             <summary>
             Returns a new time frame with the specified time series.
@@ -258,6 +268,16 @@
             <summary>
               Gets the frequency of this time series.
             </summary>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.AddPeriodTo(System.DateTimeOffset)">
+            <summary>
+            Adds a period to the specified time point considering the frequency and the time zone of the current time frame.
+            </summary>
+            <param name="timePoint">
+            The time point to add a period to.</param>
+            <returns>
+            A new time point.
+            </returns>
         </member>
         <member name="M:Thinksharp.TimeFlow.TimeSeries.Apply(System.Func{System.Nullable{System.Decimal},System.Nullable{System.Decimal}})">
             <summary>
