@@ -358,6 +358,10 @@ Combining Time Series via Methods
 
 [Thinksharp.TimeFlow.LinqPad](https://github.com/JanDotNet/Thinksharp.TimeFlow.LinqPad) provides chart and raw data visualization extensions for LINQPad.
 
+## Usage in Excel / WPF
+
+[Thinksharp.TimeFlow.Reporting](https://github.com/JanDotNet/Thinksharp.TimeFlow.Reporting) provides chart and advanced reporting functionality for excel and WPF.
+
 ## Usage in .Net Interactive (Jupiter Notebooks)
 
 Reference Nuget **Package Thinksharp.TimeFlow** and **Thinksharp.TimeFlow.Interactive** as well as **XPlot.Plotly** if you want to use plotting abilities.
