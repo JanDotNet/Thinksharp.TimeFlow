@@ -286,44 +286,57 @@
     /// <param name="aggregationType">
     ///   The aggregation type to use for up/down sampling
     /// </param>
+    /// <param name="resampleOption">
+    /// The resample options to use.
+    /// </param>
     /// <returns>
     ///   A new time series with the new frequency.
     /// </returns>
-    public TimeSeries ReSample(Period frequency, AggregationType aggregationType)
+    public TimeSeries ReSample(Period frequency, AggregationType aggregationType, ResampleOption resampleOption = null)
     {
-      var aggregator = aggregationType == AggregationType.Sum
-        ? new Func<IEnumerable<decimal>, decimal>(x => x.Sum())
-        : x => x.Average();
+      var opt = resampleOption ?? new ResampleOption();
+
+      var aggregator =
+          aggregationType == AggregationType.Sum ? new Func<IEnumerable<decimal>, decimal>(x => x.Sum())
+        : aggregationType == AggregationType.Mean ? x => x.Average()
+        : aggregationType == AggregationType.Cumulate ? new Func<IEnumerable<decimal>, decimal>(vals => vals.Aggregate(0M, (agg, val) => agg + val))
+        : throw new NotSupportedException($"Aggregation Type '{aggregationType}' is nto supported.");
 
       if (this.IsEmpty || frequency == this.Frequency)
-      {        
+      {
         return this;
       }
 
-      // down-sampling
-      if (this.Frequency < frequency)
+      // down-sampling (Absolut)
+      if (this.Frequency < frequency && opt.ResampleType == ResampleType.Absolut)
       {
         if (frequency == Period.Hour)
         {
-          return this.DownSample(x => new DateTimeOffset(x.Year, x.Month, x.Day, x.Hour, 0, 0, x.Offset), aggregator, frequency);
+          return this.DownSampleAbsolut(x => new DateTimeOffset(x.Year, x.Month, x.Day, x.Hour, 0, 0, x.Offset), aggregator, frequency, opt);
         }
-        
+
         if (frequency == Period.Day)
         {
-          return this.DownSample(x => x.Date, aggregator, frequency);
+          return this.DownSampleAbsolut(x => new DateTimeOffset(x.Date), aggregator, frequency, opt);
         }
         if (frequency == Period.Month)
         {
-          return this.DownSample(x => new DateTime(x.Year, x.Month, 1), aggregator, frequency);
+          return this.DownSampleAbsolut(x => new DateTimeOffset(new DateTime(x.Year, x.Month, 1)), aggregator, frequency, opt);
         }
         if (frequency == Period.QuarterYear)
         {
-          return this.DownSample(x => x.Year * 10000 + x.GetQuarterYear(), aggregator, frequency);
+          return this.DownSampleAbsolut(x => new DateTimeOffset(new DateTime(x.Year, (x.GetQuarterYear()-1)*3+1, 1)), aggregator, frequency, opt);
         }
         if (frequency == Period.Year)
         {
-          return this.DownSample(x => x.Year, aggregator, frequency);
+          return this.DownSampleAbsolut(x => new DateTimeOffset(new DateTime(x.Year, 1, 1)), aggregator, frequency, opt);
         }
+      }
+
+      // down-sampling (Realtive)
+      if (this.Frequency < frequency && opt.ResampleType == ResampleType.Relative)
+      {
+        return this.DownSampleRelative(aggregator, frequency, opt);
       }
 
       // up-sampling
@@ -336,9 +349,32 @@
       throw new InvalidOperationException($"Re-sample from '{this.Frequency}' to '{frequency}' is not supported yet.");
     }
 
+
+    /// <summary>
+    ///   Creates a new time series with changed frequency.
+    /// </summary>
+    /// <param name="frequency">
+    ///   The new frequency.
+    /// </param>
+    /// <param name="aggregationType">
+    ///   The aggregation type to use for up/down sampling
+    /// </param>
+    /// <returns>
+    ///   A new time series with the new frequency.
+    /// </returns>
+    public TimeSeries ReSample(Period frequency, AggregationType aggregationType)
+    {
+      return ReSample(frequency, aggregationType, new ResampleOption());
+    }
+
     private TimeSeries UpSample(AggregationType agg, Period frequency)
     {
       // just up-sample values
+      if (agg == AggregationType.Cumulate)
+      {
+        throw new NotSupportedException($"Up-sampling ({this.Frequency} => {frequency}) does not support aggregtation type '{agg}'");
+      }
+      
       if (agg == AggregationType.Mean)
       {
         var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
@@ -378,24 +414,110 @@
       throw new NotSupportedException($"AggregationType '{agg}' is not supported.");
     }
 
-    private TimeSeries DownSample<TGRoup>(
-      Func<DateTimeOffset, TGRoup> keySelector,
+    private TimeSeries DownSampleAbsolut(
+      Func<DateTimeOffset, DateTimeOffset> keySelector,
       Func<IEnumerable<decimal>, decimal> aggregator,
-      Period frequency)
+      Period frequency,
+      ResampleOption opt)
     {
       var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
       var groupedByDay = this.sortedValues.GroupBy(x => keySelector(x.Key)).OrderBy(x => x.Key);
       foreach (var grouped in groupedByDay)
       {
         var range = grouped;
-        var dateOffset = range.Min(x => x.Key);
-        var isEmpty = range.Select(x => x.Value).All(v => !v.HasValue);
-        var aggValue = isEmpty ? null : (decimal?) aggregator(range.Select(x => x.Value ?? 0));
+        DateTimeOffset minTimePoint = DateTimeOffset.MaxValue;
+        var allNull = true;
+        var aggValueBecomesNull = false;
+        var aggValueBecomesZero = false;
+        var values = new List<decimal>();
+        foreach (var item in range)
+        {
+          if (item.Key < minTimePoint) minTimePoint = item.Key;
 
-        result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(dateOffset, aggValue));
+          HandleValue(item.Value, opt, values, ref aggValueBecomesNull, ref aggValueBecomesZero, ref allNull);
+        }
+
+        var aggValue = GetAggregationValue(aggregator, allNull, aggValueBecomesNull, aggValueBecomesZero, values);
+
+        result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(keySelector(minTimePoint), aggValue));
       }
 
       return new TimeSeries(result, frequency, this.TimeZone);
+    }
+
+    private static decimal? GetAggregationValue(Func<IEnumerable<decimal>, decimal> aggregator, bool allNull, bool aggValueBecomesNull, bool aggValueBecomesZero, List<decimal> values)
+    {
+      return (allNull || aggValueBecomesNull) ? null
+                : aggValueBecomesZero ? 0
+                : (decimal?)aggregator(values);
+    }
+
+    private TimeSeries DownSampleRelative(
+      Func<IEnumerable<decimal>, decimal> aggregator,
+      Period frequency,
+      ResampleOption opt)
+    {
+      var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
+
+      var tpCurrent = this.Start;
+      var tpNext = this.Start + frequency;
+
+      var values = new List<decimal>();
+      var allNull = true;
+      var aggValueBecomesNull = false;
+      var aggValueBecomesZero = false;
+
+      foreach (var timepoint in this.sortedValues)
+      {        
+        if (timepoint.Key >= tpNext)
+        {
+          var aggValue = GetAggregationValue(aggregator, allNull, aggValueBecomesNull, aggValueBecomesZero, values);
+          result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(tpCurrent, aggValue));
+
+          values = new List<decimal>();
+          allNull = true;
+          aggValueBecomesNull = false;
+          aggValueBecomesZero = false;
+
+          tpCurrent = tpNext;
+          tpNext = tpCurrent + frequency;
+        }
+
+        HandleValue(timepoint.Value, opt, values, ref aggValueBecomesNull, ref aggValueBecomesZero, ref allNull);
+      }
+
+      var lastAggValue = GetAggregationValue(aggregator, allNull, aggValueBecomesNull, aggValueBecomesZero, values);
+      result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(tpCurrent, lastAggValue));
+
+      return new TimeSeries(result, frequency, this.TimeZone);
+    }
+
+    private static void HandleValue(decimal? value, ResampleOption opt, List<decimal> values, ref bool aggValueBecomesNull, ref bool aggValueBecomesZero, ref bool allNull)
+    {
+      allNull = allNull && !value.HasValue;
+
+      if (!value.HasValue)
+      {
+        switch (opt.SingleValueIsNull)
+        {
+          case SingleValueNullBehavior.AggregationValueBecomesNull:
+            aggValueBecomesNull = true;
+            break;
+          case SingleValueNullBehavior.AggregationValueBecomesZero:
+            aggValueBecomesZero = true;
+            break;
+          case SingleValueNullBehavior.SingleValueBecomesWillBeIgnoredForAggregartion:
+            break;
+          case SingleValueNullBehavior.SingleValueBecomesZero:
+            values.Add(0);
+            break;
+          default: throw new NotSupportedException($"Behavor '{opt.SingleValueIsNull}' is not supoorted yet.");
+        }
+      }
+      else
+      {
+        values.Add(value.Value);
+      }
     }
 
     /// <summary>
@@ -515,6 +637,36 @@
       }
 
       return this.Slice(startIndex, count);
+    }
+
+    /// <summary>
+    /// Shifts all time point of the time series by the specified time period (adds the period to the time points).
+    /// </summary>
+    /// <param name="shiftPeriod">
+    /// The period to use for shift.</param>
+    /// <returns>
+    /// A new time series that's time points has been shifted by the specified period.
+    /// </returns>
+    public TimeSeries ShiftRight(Period shiftPeriod)
+    {
+      var startShifted = this.Start + shiftPeriod;
+      var endShifted = this.End + shiftPeriod;
+      return TimeSeries.Factory.FromGenerator(startShifted, endShifted, this.Frequency, tp => this[tp - shiftPeriod]);
+    }
+
+    /// <summary>
+    /// Shifts all time point of the time series by the specified time period (subtracts the period from the time points).
+    /// </summary>
+    /// <param name="shiftPeriod">
+    /// The period to use for shift.</param>
+    /// <returns>
+    /// A new time series that's time points has been shifted by the specified period.
+    /// </returns>
+    public TimeSeries ShiftLeft(Period shiftPeriod)
+    {
+      var startShifted = this.Start - shiftPeriod;
+      var endShifted = this.End - shiftPeriod;
+      return TimeSeries.Factory.FromGenerator(startShifted, endShifted, this.Frequency, tp => this[tp + shiftPeriod]);
     }
 
     public string ToTsv(IFormatProvider formatProvider = null)

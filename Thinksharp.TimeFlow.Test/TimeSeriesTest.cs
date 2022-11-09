@@ -902,6 +902,60 @@
     }
 
     [TestMethod]
+    public void Test_Resample_Relative()
+    {
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01, 06, 00, 00), new DateTime(2021, 01, 03, 05, 00, 00), Period.Hour);
+
+      var opAbs = new ResampleOption() {  ResampleType = ResampleType.Absolut };
+      var opRel = new ResampleOption() { ResampleType = ResampleType.Relative };
+
+      var tsAbs = ts1.ReSample(Period.Day, AggregationType.Sum, opAbs);
+      var tsRes = ts1.ReSample(Period.Day, AggregationType.Sum, opRel);
+
+      Assert.AreEqual(new DateTime(2021, 01, 01, 06, 00, 00), tsRes.Start);
+      Assert.AreEqual(new DateTime(2021, 01, 02, 06, 00, 00), tsRes.End);
+      Assert.IsTrue(tsRes.Values.Select(v => v.Value).All(v => v == 24));
+
+      Assert.AreEqual(new DateTime(2021, 01, 01, 00, 00, 00), tsAbs.Start);
+      Assert.AreEqual(new DateTime(2021, 01, 03, 00, 00, 00), tsAbs.End);
+      Assert.IsTrue(tsAbs[0].Value == 18);
+      Assert.IsTrue(tsAbs[1].Value == 24);
+      Assert.IsTrue(tsAbs[2].Value == 6);
+    }
+
+    [TestMethod]
+    public void Test_Shift()
+    {
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01, 06, 00, 00), new DateTime(2021, 01, 03, 05, 00, 00), Period.Hour);
+
+      var shiftPeriod = new Period(6, PeriodUnit.Hour);
+      var ts_L = ts1.ShiftLeft(shiftPeriod);      
+
+      Assert.AreEqual(new DateTime(2021, 01, 01, 00, 00, 00), ts_L.Start.DateTime);
+      Assert.AreEqual(new DateTime(2021, 01, 02, 23, 00, 00), ts_L.End.DateTime);
+
+      Assert.AreEqual(ts1.Count, ts_L.Count);
+
+      for (int i = 0; i < ts1.Count; i++)
+      {
+        Assert.AreEqual(ts1[i].Value, ts_L[i].Value);
+        Assert.AreEqual(ts1[i].Key - shiftPeriod, ts_L[i].Key);
+      }
+
+      var ts_R = ts1.ShiftRight(shiftPeriod);
+      Assert.AreEqual(new DateTime(2021, 01, 01, 12, 00, 00), ts_R.Start.DateTime);
+      Assert.AreEqual(new DateTime(2021, 01, 03, 11, 00, 00), ts_R.End.DateTime);
+
+      Assert.AreEqual(ts1.Count, ts_R.Count);
+
+      for (int i = 0; i < ts1.Count; i++)
+      {
+        Assert.AreEqual(ts1[i].Value, ts_R[i].Value);
+        Assert.AreEqual(ts1[i].Key + shiftPeriod, ts_R[i].Key);
+      }
+    }
+
+    [TestMethod]
     public void Test_Function()
     {
       var ts = TimeSeries.Factory.FromGenerator(new DateTime(2021, 01, 01), new DateTime(2021, 01, 05), Period.Day, x => x.Day);

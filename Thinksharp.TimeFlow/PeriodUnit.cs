@@ -14,6 +14,10 @@ namespace Thinksharp.TimeFlow
         var utc = dt.ToUniversalTime().AddMilliseconds(value);
         return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc, timeZone.Id);
       }
+      public override DateTimeOffset GetFirstTimePoint(DateTimeOffset dt)
+      {
+        return new DateTimeOffset(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, dt.Millisecond, dt.Offset);
+      }
 
       internal override TimeSpan PeriodUnitInterval { get; } = TimeSpan.FromMilliseconds(1);
 
@@ -27,6 +31,11 @@ namespace Thinksharp.TimeFlow
 
         var utc = dt.ToUniversalTime().AddSeconds(value);
         return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc, timeZone.Id);
+      }
+
+      public override DateTimeOffset GetFirstTimePoint(DateTimeOffset dt)
+      {
+        return new DateTimeOffset(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, 0, dt.Offset);
       }
 
       internal override TimeSpan PeriodUnitInterval { get; } = TimeSpan.FromSeconds(1);
@@ -43,6 +52,10 @@ namespace Thinksharp.TimeFlow
         return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc, timeZone.Id);
       }
 
+      public override DateTimeOffset GetFirstTimePoint(DateTimeOffset dt)
+      {
+        return new DateTimeOffset(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, 0, 0, dt.Offset);
+      }
       internal override TimeSpan PeriodUnitInterval { get; } = TimeSpan.FromMinutes(1);
 
       public override string Name => "min";
@@ -55,6 +68,10 @@ namespace Thinksharp.TimeFlow
 
         var utc = dt.ToUniversalTime().AddHours(value);
         return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc, timeZone.Id);
+      }
+      public override DateTimeOffset GetFirstTimePoint(DateTimeOffset dt)
+      {
+        return new DateTimeOffset(dt.Year, dt.Month, dt.Day, dt.Hour, 0, 0, 0, dt.Offset);
       }
 
       internal override TimeSpan PeriodUnitInterval { get; } = TimeSpan.FromHours(1);
@@ -73,6 +90,10 @@ namespace Thinksharp.TimeFlow
         return localTime + offsetDiff;
       }
 
+      public override DateTimeOffset GetFirstTimePoint(DateTimeOffset dt)
+      {
+        return new DateTimeOffset(dt.Year, dt.Month, dt.Day, 0, 0, 0, 0, dt.Offset);
+      }
       internal override TimeSpan PeriodUnitInterval { get; } = TimeSpan.FromDays(1);
 
       public override string Name => "d";
@@ -85,6 +106,11 @@ namespace Thinksharp.TimeFlow
 
         var date = dt.AddMonths(value);
         return new DateTimeOffset(date.DateTime, timeZone.GetUtcOffset(date.DateTime));
+      }
+
+      public override DateTimeOffset GetFirstTimePoint(DateTimeOffset dt)
+      {
+        return new DateTimeOffset(dt.Year, dt.Month, 1, 0, 0, 0, 0, dt.Offset);
       }
 
       internal override TimeSpan PeriodUnitInterval { get; } = TimeSpan.FromDays(30);
@@ -101,6 +127,10 @@ namespace Thinksharp.TimeFlow
         return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc, timeZone.Id);
       }
 
+      public override DateTimeOffset GetFirstTimePoint(DateTimeOffset dt)
+      {
+        return new DateTimeOffset(dt.Year, 1, 1, 0, 0, 0, 0, dt.Offset);
+      }
       internal override TimeSpan PeriodUnitInterval { get; } = TimeSpan.FromDays(365);
 
       public override string Name => "yr";
@@ -133,6 +163,7 @@ namespace Thinksharp.TimeFlow
 
       return unit;
     }
+    public abstract DateTimeOffset GetFirstTimePoint(DateTimeOffset dt);
     public abstract DateTimeOffset AddPeriod(DateTimeOffset dt, int value, TimeZoneInfo timeZone = null);
     internal abstract TimeSpan PeriodUnitInterval { get; }
     public abstract string Name { get; }

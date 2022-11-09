@@ -3,6 +3,7 @@
   public enum AggregationType
   {
     Sum,
-    Mean
+    Mean,
+    Cumulate,
   }
 }
