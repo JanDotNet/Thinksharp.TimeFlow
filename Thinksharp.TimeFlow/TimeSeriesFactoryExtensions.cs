@@ -295,5 +295,49 @@ namespace Thinksharp.TimeFlow
 
       return new TimeSeries(timePoints, freq, timeZone);
     }
+
+    /// <summary>
+    ///   Creates a new time series for the specified dictionary.
+    ///   The times series starts by the first and ends with the last time time point in the dictionary.
+    /// </summary>
+    /// <param name="timePoints">
+    ///   The dictionary that contains the time points to use.
+    /// </param>
+    /// <param name="freq">
+    ///   The frequency to use. Note that the frequency have to match the time points in the dictionary.
+    /// </param>
+    /// <param name="timeZone">
+    ///   The time zone to use. (Default: 'W. Europe Standard Time')
+    /// </param>
+    /// <returns>
+    ///   A new time series with the generated values.
+    /// </returns>
+		public static TimeSeries FromDictionary(this ITimeSeriesFactory factory, IDictionary<DateTimeOffset, decimal?> timePoints, Period freq, TimeZoneInfo timeZone = null)
+	    => factory.FromGenerator(timePoints.Keys.Min(), timePoints.Keys.Max(), freq, tp => timePoints.TryGetValue(tp, out var val) ? val : null, timeZone);
+
+    /// <summary>
+    ///   Creates a new time series for the specified dictionary.
+    ///   The times series starts by the first and ends with the last time time point in the dictionary.
+    /// </summary>
+    /// <param name="timePoints">
+    ///   The dictionary that contains the time points to use.
+    /// </param>
+    /// <param name="firstTimePoint">
+    ///   The first time point of the time series.
+    /// </param>
+    /// <param name="lastTimePoint">
+    ///   The last time point of the time series.
+    /// </param>
+    /// <param name="freq">
+    ///   The frequency to use. Note that the frequency have to match the time points in the dictionary.
+    /// </param>
+    /// <param name="timeZone">
+    ///   The time zone to use. (Default: 'W. Europe Standard Time')
+    /// </param>
+    /// <returns>
+    ///   A new time series with the generated values.
+    /// </returns>
+    public static TimeSeries FromDictionary(this ITimeSeriesFactory factory, IDictionary<DateTimeOffset, decimal?> timePoints, DateTimeOffset firstTimePoint, DateTimeOffset lastTimePoint, Period freq, TimeZoneInfo timeZone = null)
+      => factory.FromGenerator(firstTimePoint, lastTimePoint, freq, tp => timePoints.TryGetValue(tp, out var val) ? val : null, timeZone);
   }
 }

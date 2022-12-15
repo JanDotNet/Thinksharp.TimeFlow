@@ -180,7 +180,10 @@ namespace Thinksharp.TimeFlow
     /// <param name="aggregationType">
     /// The aggregation type used for all time series.
     /// </param>
-    public void ReSample(Period period, AggregationType aggregationType)
+    /// <param name="opt">
+    /// The <see cref="ResampleOption"/> to use.
+    /// </param>
+    public void ReSample(Period period, AggregationType aggregationType, ResampleOption opt)
     {
       if (this.Frequency == period)
       {
@@ -190,9 +193,20 @@ namespace Thinksharp.TimeFlow
       this.Frequency = period;
       foreach (var ts in this.timeSeries.ToList())
       {
-        this[ts.Name] = ts.TimeSeries.ReSample(period, aggregationType);        
-      }      
+        this[ts.Name] = ts.TimeSeries.ReSample(period, aggregationType, opt);
+      }
     }
+
+    /// <summary>
+    /// Resamples all time series within the frame to the specified period.
+    /// </summary>
+    /// <param name="period">
+    /// The period.
+    /// </param>
+    /// <param name="aggregationType">
+    /// The aggregation type used for all time series.
+    /// </param>
+    public void ReSample(Period period, AggregationType aggregationType) => this.ReSample(period, aggregationType, null);
 
     /// <summary>
     /// Resamples all time series within the frame to the specified period using the specified aggregation types.    
@@ -203,7 +217,10 @@ namespace Thinksharp.TimeFlow
     /// <param name="aggregationTypes">
     /// A dictionary containing one aggregation type for each time series name.
     /// </param>
-    public void ReSample(Period period, Dictionary<string, AggregationType> aggregationTypes)
+    /// <param name="opt">
+    /// The <see cref="ResampleOption"/> to use.
+    /// </param>
+    public void ReSample(Period period, Dictionary<string, AggregationType> aggregationTypes, ResampleOption opt)
     {
       if (this.Frequency == period)
       {
@@ -219,7 +236,7 @@ namespace Thinksharp.TimeFlow
         {
           throw new ArgumentException($"Unable to re-sample time series '{ts.Name}' because the aggregation type is not specified.");
         }
-        tsResampled[ts.Name] = ts.TimeSeries.ReSample(period, aggregationType);
+        tsResampled[ts.Name] = ts.TimeSeries.ReSample(period, aggregationType, opt);
       }
 
       this.Frequency = period;
@@ -229,6 +246,17 @@ namespace Thinksharp.TimeFlow
       }
     }
 
+    /// <summary>
+    /// Resamples all time series within the frame to the specified period using the specified aggregation types.    
+    /// </summary>
+    /// <param name="period">
+    /// The period.
+    /// </param>
+    /// <param name="aggregationTypes">
+    /// A dictionary containing one aggregation type for each time series name.
+    /// </param>
+    public void ReSample(Period period, Dictionary<string, AggregationType> aggregationTypes) => this.ReSample(period,aggregationTypes, null);
+
     public TimeFrame Slice(DateTime day)
     {
       return new TimeFrame(this.Select(ts => new NameTimeSeriesPair(ts.Key, ts.Value.Slice(day))), this.Frequency, this.TimeZone);
@@ -237,17 +265,14 @@ namespace Thinksharp.TimeFlow
     {
       return new TimeFrame(this.Select(ts => new NameTimeSeriesPair(ts.Key, ts.Value.Slice(start, end))), this.Frequency, this.TimeZone);
     }
-
     public TimeFrame Slice(DateTimeOffset start, Period period)
     {
       return new TimeFrame(this.Select(ts => new NameTimeSeriesPair(ts.Key, ts.Value.Slice(start, period))), this.Frequency, this.TimeZone);
     }
-
     public TimeFrame Slice(DateTime start, Period period)
     {
       return new TimeFrame(this.Select(ts => new NameTimeSeriesPair(ts.Key, ts.Value.Slice(start, period))), this.Frequency, this.TimeZone);
     }
-
     public TimeFrame Slice(DateTime start, DateTime end)
     {
       return Slice(new DateTimeOffset(start), new DateTimeOffset(end));

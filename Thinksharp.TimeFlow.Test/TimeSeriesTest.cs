@@ -1,6 +1,7 @@
 ﻿namespace Thinksharp.TimeFlow
 {
   using System;
+  using System.Collections.Generic;
   using System.Globalization;
   using System.Linq;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -981,6 +982,64 @@
 05.01.2021 00:00:00 +01:00	5";
 
       Assert.AreEqual(expected, ts.ToTsv(new CultureInfo("de-DE")));
+    }
+
+    [TestMethod]
+    public void TestFromDictionary_Simple()
+    {
+      var timePoints = Period.Hour.GenerateTimePointSequence(new DateTime(2021, 1, 1)).Take(5).ToDictionary(x => new DateTimeOffset(x.DateTime), x => (decimal?)x.Hour);
+      var ts = TimeSeries.Factory.FromDictionary(timePoints, Period.Hour);
+      Assert.AreEqual(5, ts.Count);
+      Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 1, 1)), ts[0].Key);
+      Assert.AreEqual(0M, ts[0].Value);
+      Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 1, 1).AddHours(4)), ts[4].Key);
+      Assert.AreEqual(4M, ts[4].Value);
+
+      Assert.AreEqual(Period.Hour, ts.Frequency);
+    }
+
+    [TestMethod]
+    public void TestFromDictionary_SimpleWithGaps()
+    {
+      var dictionary = new Dictionary<DateTimeOffset, decimal?>();
+      Period.Day.GenerateTimePointSequence(new DateTime(2021, 1, 1)).Take(5).ToList().ForEach(i => dictionary.Add(i, i.Date.Day));
+      Period.Day.GenerateTimePointSequence(new DateTime(2021, 2, 1)).Take(4).ToList().ForEach(i => dictionary.Add(i, i.Date.Day));
+      
+      var ts = TimeSeries.Factory.FromDictionary(dictionary, Period.Day);
+      Assert.AreEqual(35, ts.Count);
+
+      for (int i = 0; i < 31; i++)
+      {
+        Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 1, i+1)), ts[i].Key);
+        if (i < 5)
+          Assert.AreEqual((decimal)i+1, ts[i].Value);
+        else
+          Assert.AreEqual((decimal?)null, ts[i].Value);
+      }
+      for (int i = 0; i < 4; i++)
+      {
+        Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 2, i+1)), ts[31+i].Key);
+        Assert.AreEqual((decimal)i+1, ts[31 + i].Value);
+      }
+
+      Assert.AreEqual(Period.Day, ts.Frequency);
+    }
+
+    [TestMethod]
+    public void TestFromDictionary_WithDates()
+    {
+      var timePoints = Period.Day.GenerateTimePointSequence(new DateTime(2021, 1, 5)).Take(5).ToDictionary(x => new DateTimeOffset(x.DateTime), x => (decimal?)x.Day);
+      var ts = TimeSeries.Factory.FromDictionary(timePoints, new DateTime(2021, 1, 1), new DateTime(2021, 1, 31), Period.Day);
+      for (int i = 0; i < 31; i++)
+      {
+        Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 1, i + 1)), ts[i].Key);
+        if (i >= 4 && i <= 8)
+          Assert.AreEqual((decimal)i+1, ts[i].Value);
+        else
+          Assert.AreEqual((decimal?)null, ts[i].Value);
+      }
+
+      Assert.AreEqual(Period.Day, ts.Frequency);
     }
   }
 }
