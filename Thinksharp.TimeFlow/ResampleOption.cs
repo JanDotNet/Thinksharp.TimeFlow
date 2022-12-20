@@ -14,6 +14,6 @@ namespace Thinksharp.TimeFlow
     /// <summary>
     /// Gets or sets the behavior for single values within an list of values that are resampled.
     /// </summary>
-    public SingleValueNullBehavior SingleValueIsNull { get; set; } = SingleValueNullBehavior.AggregationValueBecomesZero;
+    public SingleValueNullBehavior SingleValueIsNull { get; set; } = SingleValueNullBehavior.SingleValueBecomesZero;
   } 
 }

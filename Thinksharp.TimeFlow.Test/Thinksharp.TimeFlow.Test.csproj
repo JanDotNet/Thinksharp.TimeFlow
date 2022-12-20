@@ -87,13 +87,13 @@
     <Compile Include="TimeSeriesTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Thinksharp.TimeFlow\Thinksharp.TimeFlow.csproj">
       <Project>{daea5afb-86e7-4465-be7b-9138690f039f}</Project>
       <Name>Thinksharp.TimeFlow</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

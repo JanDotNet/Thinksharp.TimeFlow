@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+	
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <Authors>Jan-Niklas Schäfer</Authors>
     <Company>ThinkSharp</Company>
     <Description>TimeFlow is a lightweight extendable library for working with time series with support for time zones and daylight saving.</Description>
@@ -19,8 +19,10 @@
 			0.24.0 Improved API for TimeSeries and TimeFrame
 			0.24.0 Improved API for TimeSeries and TimeFrame
 			1.1.0 Improved resampling options; added Shift functionality; Little breaking change in resample logic: Upsampled time series starts with the first time point of the period, not the first time point of the original time series.
+      1.1.1 Added Method TimeFrame.FromDictionary
+      1.2.0 Set default value to SingleValueNullBehavior.SingleValueBecomesZero
 		</PackageReleaseNotes>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Product>ThinkSharp.TimeFlow</Product>

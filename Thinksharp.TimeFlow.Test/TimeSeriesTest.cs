@@ -4,6 +4,7 @@
   using System.Collections.Generic;
   using System.Globalization;
   using System.Linq;
+  using DocumentFormat.OpenXml.Drawing.Charts;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
 
   [TestClass]
@@ -493,6 +494,23 @@
 
       Assert.AreEqual(1M, ts_month_mean[0].Value);
       Assert.AreEqual((decimal)31 * 24 * 4 - 4, ts_month_sum[0].Value);
+    }
+
+    [TestMethod]
+    public void TestDownSample_15min_to_year()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+      var end = new DateTimeOffset(new DateTime(2022, 01, 01)) - Period.QuarterHour;
+
+      var ts = TimeSeries.Factory.FromValue(1M, start, end, Period.QuarterHour);
+      var ts_month_mean = ts.ReSample(Period.Month, AggregationType.Mean);
+      var ts_month_sum = ts.ReSample(Period.Month, AggregationType.Sum);
+
+      Assert.AreEqual(12, ts_month_mean.Count);
+      Assert.AreEqual(12, ts_month_sum.Count);
+
+      Assert.AreEqual(1M, ts_month_mean[0].Value);
+      Assert.AreEqual((decimal)31 * 24 * 4, ts_month_sum[0].Value);
     }
 
     [TestMethod]
@@ -1025,6 +1043,32 @@
       Assert.AreEqual(Period.Day, ts.Frequency);
     }
 
+    public void TestFromDictionary_SimpleWithGaps_decimal()
+    {
+      var dictionary = new Dictionary<DateTimeOffset, decimal>();
+      Period.Day.GenerateTimePointSequence(new DateTime(2021, 1, 1)).Take(5).ToList().ForEach(i => dictionary.Add(i, i.Date.Day));
+      Period.Day.GenerateTimePointSequence(new DateTime(2021, 2, 1)).Take(4).ToList().ForEach(i => dictionary.Add(i, i.Date.Day));
+
+      var ts = TimeSeries.Factory.FromDictionary(dictionary, Period.Day);
+      Assert.AreEqual(35, ts.Count);
+
+      for (int i = 0; i < 31; i++)
+      {
+        Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 1, i + 1)), ts[i].Key);
+        if (i < 5)
+          Assert.AreEqual((decimal)i + 1, ts[i].Value);
+        else
+          Assert.AreEqual((decimal?)null, ts[i].Value);
+      }
+      for (int i = 0; i < 4; i++)
+      {
+        Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 2, i + 1)), ts[31 + i].Key);
+        Assert.AreEqual((decimal)i + 1, ts[31 + i].Value);
+      }
+
+      Assert.AreEqual(Period.Day, ts.Frequency);
+    }
+
     [TestMethod]
     public void TestFromDictionary_WithDates()
     {
@@ -1035,6 +1079,23 @@
         Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 1, i + 1)), ts[i].Key);
         if (i >= 4 && i <= 8)
           Assert.AreEqual((decimal)i+1, ts[i].Value);
+        else
+          Assert.AreEqual((decimal?)null, ts[i].Value);
+      }
+
+      Assert.AreEqual(Period.Day, ts.Frequency);
+    }
+
+    [TestMethod]
+    public void TestFromDictionary_WithDates_NotNullable()
+    {
+      var timePoints = Period.Day.GenerateTimePointSequence(new DateTime(2021, 1, 5)).Take(5).ToDictionary(x => new DateTimeOffset(x.DateTime), x => (decimal)x.Day);
+      var ts = TimeSeries.Factory.FromDictionary(timePoints, new DateTime(2021, 1, 1), new DateTime(2021, 1, 31), Period.Day);
+      for (int i = 0; i < 31; i++)
+      {
+        Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 1, i + 1)), ts[i].Key);
+        if (i >= 4 && i <= 8)
+          Assert.AreEqual((decimal)i + 1, ts[i].Value);
         else
           Assert.AreEqual((decimal?)null, ts[i].Value);
       }
