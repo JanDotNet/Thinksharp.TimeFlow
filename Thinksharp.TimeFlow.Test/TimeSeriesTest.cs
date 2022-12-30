@@ -1102,5 +1102,72 @@
 
       Assert.AreEqual(Period.Day, ts.Frequency);
     }
+
+    [TestMethod]
+    public void TestToIntervall()
+    {
+      var timeSeries = TimeSeries.Factory.FromValues(new decimal?[] { 1, 2, 3, 4, 5 }, new DateTime(2023, 01, 01), Period.Day);
+      var ti = timeSeries.ToIntervalls().ToArray();
+
+      Assert.AreEqual(5, ti.Length);
+      AssertTimeSeriesIntervall(new DateTime(2023,01,01), new DateTime(2023, 01, 02), 1, ti[0]);
+      AssertTimeSeriesIntervall(new DateTime(2023,01,02), new DateTime(2023, 01, 03), 2, ti[1]);
+      AssertTimeSeriesIntervall(new DateTime(2023,01,03), new DateTime(2023, 01, 04), 3, ti[2]);
+      AssertTimeSeriesIntervall(new DateTime(2023,01,04), new DateTime(2023, 01, 05), 4, ti[3]);
+      AssertTimeSeriesIntervall(new DateTime(2023,01,05), new DateTime(2023, 01, 06), 5, ti[4]);
+
+      timeSeries = TimeSeries.Factory.FromValues(new decimal?[] { 1, 1, 2, 2}, new DateTime(2023, 01, 01), Period.Day);
+      ti = timeSeries.ToIntervalls().ToArray();
+
+      Assert.AreEqual(2, ti.Length);
+      AssertTimeSeriesIntervall(new DateTime(2023, 01, 01), new DateTime(2023, 01, 03), 1, ti[0]);
+      AssertTimeSeriesIntervall(new DateTime(2023, 01, 03), new DateTime(2023, 01, 05), 2, ti[1]);
+
+      timeSeries = TimeSeries.Factory.FromValues(new decimal?[] { 1,1,1,1,1 }, new DateTime(2023, 01, 01), Period.Day);
+      ti = timeSeries.ToIntervalls().ToArray();
+
+      Assert.AreEqual(1, ti.Length);
+      AssertTimeSeriesIntervall(new DateTime(2023, 01, 01), new DateTime(2023, 01, 06), 1, ti[0]);
+
+      timeSeries = TimeSeries.Factory.FromValues(new decimal?[] { 1, 1, null, 2, 2 }, new DateTime(2023, 01, 01), Period.Day);
+      ti = timeSeries.ToIntervalls().ToArray();
+
+      Assert.AreEqual(3, ti.Length);
+      AssertTimeSeriesIntervall(new DateTime(2023, 01, 01), new DateTime(2023, 01, 03), 1, ti[0]);
+      AssertTimeSeriesIntervall(new DateTime(2023, 01, 03), new DateTime(2023, 01, 04), null, ti[1]);
+      AssertTimeSeriesIntervall(new DateTime(2023, 01, 04), new DateTime(2023, 01, 06), 2, ti[2]);
+
+      timeSeries = TimeSeries.Factory.FromValues(new decimal?[] { null, 1, null }, new DateTime(2023, 01, 01), Period.Day);
+      ti = timeSeries.ToIntervalls().ToArray();
+
+      Assert.AreEqual(3, ti.Length);
+      AssertTimeSeriesIntervall(new DateTime(2023, 01, 01), new DateTime(2023, 01, 02), null, ti[0]);
+      AssertTimeSeriesIntervall(new DateTime(2023, 01, 02), new DateTime(2023, 01, 03), 1, ti[1]);
+      AssertTimeSeriesIntervall(new DateTime(2023, 01, 03), new DateTime(2023, 01, 04), null, ti[2]);
+
+      timeSeries = TimeSeries.Factory.FromValues(new decimal?[] { null }, new DateTime(2023, 01, 01), Period.Day);
+      ti = timeSeries.ToIntervalls().ToArray();
+
+      Assert.AreEqual(1, ti.Length);
+      AssertTimeSeriesIntervall(new DateTime(2023, 01, 01), new DateTime(2023, 01, 02), null, ti[0]);
+
+      timeSeries = TimeSeries.Factory.FromValues(new decimal?[] { 1 }, new DateTime(2023, 01, 01), Period.Day);
+      ti = timeSeries.ToIntervalls().ToArray();
+
+      Assert.AreEqual(1, ti.Length);
+      AssertTimeSeriesIntervall(new DateTime(2023, 01, 01), new DateTime(2023, 01, 02), 1, ti[0]);
+
+      timeSeries = TimeSeries.Factory.Empty();
+      ti = timeSeries.ToIntervalls().ToArray();
+
+      Assert.AreEqual(0, ti.Length);
+    }
+
+    private void AssertTimeSeriesIntervall(DateTime start, DateTime end, decimal? value, TimeSeriesIntervall intervall)
+    {
+      Assert.AreEqual(start, intervall.Start);
+      Assert.AreEqual(end, intervall.End);
+      Assert.AreEqual(value, intervall.Value);
+    }
   }
 }

@@ -669,6 +669,35 @@
       return TimeSeries.Factory.FromGenerator(startShifted, endShifted, this.Frequency, tp => this[tp + shiftPeriod]);
     }
 
+    public IEnumerable<TimeSeriesIntervall> ToIntervalls()
+    {
+      var list = new List<TimeSeriesIntervall>();
+      if (this.IsEmpty)
+      {
+        return list;
+      }
+
+      var currentValue = (decimal?)null;
+      var start = this.Start;
+
+      foreach (var tp in this)
+      {
+        if (tp.Value != currentValue)
+        {
+          if (tp.Key != start)
+          {
+            list.Add(new TimeSeriesIntervall(currentValue, start, tp.Key));
+          }
+          currentValue = tp.Value;
+          start = tp.Key;
+        }
+      }
+
+      list.Add(new TimeSeriesIntervall(currentValue, start,this.AddPeriodTo(this.End)));
+
+      return list;
+    }
+
     public string ToTsv(IFormatProvider formatProvider = null)
     { 
       var sb = new StringBuilder();
