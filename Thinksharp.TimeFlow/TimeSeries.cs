@@ -129,6 +129,39 @@
     /// <param name="dateTimeSeries">
     ///   The time series to join.
     /// </param>
+    /// <param name="agg">
+    ///   The aggregation function to combine values from 2 equal time points.
+    ///   1. value: Timestamp of the time point to aggregate
+    ///   2. value: Value of the first time series.
+    ///   3. value: Value of the second time series.
+    /// </param>
+    /// <returns>
+    ///   A new time series with the same time points as this one but with values produced by the join.
+    /// </returns>
+    public TimeSeries JoinLeft(TimeSeries dateTimeSeries, Func<DateTimeOffset, decimal?, decimal?, decimal?> agg)
+    {
+      var freq = EnsureFrequenciesAreCompatible(dateTimeSeries);
+      var tz = EnsureTimeZonesAreCompatible(dateTimeSeries);
+
+      var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
+      foreach (var sortedValue in this.sortedValues)
+      {
+        var leftValue = sortedValue.Value;
+        var rightValue = dateTimeSeries[sortedValue.Key];
+
+        result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(sortedValue.Key, agg(sortedValue.Key, leftValue, rightValue)));
+      }
+
+      return new TimeSeries(result, freq, tz);
+    }
+
+    /// <summary>
+    ///   Joins the specified time series to the this time series using the specified aggregation function to combine the
+    ///   values.
+    /// </summary>
+    /// <param name="dateTimeSeries">
+    ///   The time series to join.
+    /// </param>
     /// <param name="op">
     ///   The join operation to use.
     /// </param>
@@ -155,6 +188,41 @@
     ///   A new time series with the same time points as this one but with values produced by the join.
     /// </returns>
     public TimeSeries JoinFull(TimeSeries dateTimeSeries, Func<decimal?, decimal?, decimal?> agg)
+    {
+      var freq = EnsureFrequenciesAreCompatible(dateTimeSeries);
+      var tz = EnsureTimeZonesAreCompatible(dateTimeSeries);
+
+      if (this.Start <= dateTimeSeries.Start && this.End >= dateTimeSeries.End)
+      {
+        return this.JoinLeft(dateTimeSeries, agg);
+      }
+
+      var ts = TimeSeries.Factory.FromValue(null,
+        DateHelper.Min(this.Start, dateTimeSeries.Start),
+        DateHelper.Max(this.End, dateTimeSeries.End),
+        freq,
+        tz);
+
+      return ts.JoinLeft(this, (l, r) => r).JoinLeft(dateTimeSeries, agg);
+    }
+
+    /// <summary>
+    ///   Joins the specified time series to the this time series using the specified aggregation function to combine the
+    ///   values.
+    /// </summary>
+    /// <param name="dateTimeSeries">
+    ///   The time series to join.
+    /// </param>
+    /// <param name="agg">
+    ///   The aggregation function to combine values from 2 equal time points.
+    ///   1. value: Timestamp of the time point to aggregate
+    ///   2. value: Value of the first time series.
+    ///   3. value: Value of the second time series.
+    /// </param>
+    /// <returns>
+    ///   A new time series with the same time points as this one but with values produced by the join.
+    /// </returns>
+    public TimeSeries JoinFull(TimeSeries dateTimeSeries, Func<DateTimeOffset, decimal?, decimal?, decimal?> agg)
     {
       var freq = EnsureFrequenciesAreCompatible(dateTimeSeries);
       var tz = EnsureTimeZonesAreCompatible(dateTimeSeries);
@@ -224,6 +292,49 @@
     /// <param name="ts2">
     ///   The second time series to join.
     /// </param>
+    /// <param name="agg">
+    ///   The aggregation function to combine values from 2 equal time points.
+    ///   1. value: Timestamp of the time point to aggregate
+    ///   2. value: Value of the first time series.
+    ///   3. value: Value of the second time series.
+    ///   4. value: Value of the third time series.
+    /// </param>
+    /// <returns>
+    ///   A new time series with the same time points as this one but with values produced by the join.
+    /// </returns>
+    public TimeSeries JoinFull(TimeSeries ts1, TimeSeries ts2, Func<DateTimeOffset, decimal?, decimal?, decimal?, decimal?> agg)
+    {
+      var freq = EnsureFrequenciesAreCompatible(ts1, ts2);
+      var tz = EnsureTimeZonesAreCompatible(ts1, ts2);
+
+      var current = DateHelper.Min(this.Start, ts1.Start, ts2.Start);
+      var end = DateHelper.Max(this.End, ts1.End, ts2.End);
+
+      var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
+      while (current <= end)
+      {
+        var v1 = this[current];
+        var v2 = ts1[current];
+        var v3 = ts2[current];
+
+        result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(current, agg(current, v1, v2, v3)));
+
+        current = freq.AddPeriod(current, tz);
+      }
+
+      return new TimeSeries(result, freq, tz);
+    }
+
+    /// <summary>
+    ///   Joins the specified time series to the this time series using the specified aggregation function to combine the
+    ///   values.
+    /// </summary>
+    /// <param name="ts1">
+    ///   The first time series to join.
+    /// </param>
+    /// <param name="ts2">
+    ///   The second time series to join.
+    /// </param>
     /// <param name="ts3">
     ///   The third time series to join.
     /// </param>
@@ -252,6 +363,54 @@
         var v4 = ts3[current];
 
         result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(current, agg(v1, v2, v3, v4)));
+
+        current = freq.AddPeriod(current, tz);
+      }
+
+      return new TimeSeries(result, freq, tz);
+    }
+
+    /// <summary>
+    ///   Joins the specified time series to the this time series using the specified aggregation function to combine the
+    ///   values.
+    /// </summary>
+    /// <param name="ts1">
+    ///   The first time series to join.
+    /// </param>
+    /// <param name="ts2">
+    ///   The second time series to join.
+    /// </param>
+    /// <param name="ts3">
+    ///   The third time series to join.
+    /// </param>
+    /// <param name="agg">
+    ///   The aggregation function to combine values from 2 equal time points.
+    ///   1. value: Timestamp of the time point to aggregate
+    ///   2. value: Value of the first time series.
+    ///   3. value: Value of the second time series.
+    ///   4. value: Value of the third time series.
+    ///   5. value: Value of the 4th time series.
+    /// </param>
+    /// <returns>
+    ///   A new time series with the same time points as this one but with values produced by the join.
+    /// </returns>
+    public TimeSeries JoinFull(TimeSeries ts1, TimeSeries ts2, TimeSeries ts3, Func<DateTimeOffset, decimal?, decimal?, decimal?, decimal?, decimal?> agg)
+    {
+      var freq = EnsureFrequenciesAreCompatible(ts1, ts2);
+      var tz = EnsureTimeZonesAreCompatible(ts1, ts2);
+
+      var current = DateHelper.Min(this.Start, ts1.Start, ts2.Start, ts3.Start);
+      var end = DateHelper.Max(this.End, ts1.End, ts2.End, ts3.End);
+
+      var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
+      while (current <= end)
+      {
+        var v1 = this[current];
+        var v2 = ts1[current];
+        var v3 = ts2[current];
+        var v4 = ts3[current];
+
+        result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(current, agg(current, v1, v2, v3, v4)));
 
         current = freq.AddPeriod(current, tz);
       }

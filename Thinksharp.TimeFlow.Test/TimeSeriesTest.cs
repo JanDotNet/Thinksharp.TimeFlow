@@ -834,6 +834,48 @@
     }
 
     [TestMethod]
+    public void Test_JoinFull_2_WithDateTime()
+    {
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), 10, Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 01, 01), 10, Period.Day);
+      var ts3 = TimeSeries.Factory.FromValue(3, new DateTime(2021, 01, 01), 10, Period.Day);
+
+      var ts_expected =
+        TimeSeries.Factory.FromValue(6, new DateTime(2021, 01, 01), 5, Period.Day) +
+        TimeSeries.Factory.FromValue(5, new DateTime(2021, 01, 06), 5, Period.Day);
+      var ts_actual = ts1.JoinFull(ts2, ts3, (tp, x1, x2, x3) => tp.Date.Day > 5 ? 5 : x1 + x2 + x3);
+
+      Assert.IsTrue(ts_actual == ts_expected);
+    }
+
+    [TestMethod]
+    public void Test_JoinLeft()
+    {
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), 10, Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 01, 02), 10, Period.Day);
+
+      var ts_expected =
+        TimeSeries.Factory.FromValues(new decimal?[] { 1, 3, 3, 3, 3, 3, 3, 3, 3, 3 }, new DateTime(2021, 01, 01), Period.Day);
+      var ts_actual = ts1.JoinLeft(ts2, (x1, x2) => (x1 ?? 0) + (x2 ?? 0));
+
+      Assert.IsTrue(ts_actual == ts_expected);
+    }
+
+    [TestMethod]
+    public void Test_JoinLeft_WithDateTime()
+    {
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), 10, Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 01, 02), 10, Period.Day);
+
+      var ts_expected =
+        TimeSeries.Factory.FromValues(new decimal?[] {1, 3, 3, 3, 3}, new DateTime(2021, 01, 01), Period.Day) +
+        TimeSeries.Factory.FromValue(5, new DateTime(2021, 01, 06), 5, Period.Day);
+      var ts_actual = ts1.JoinLeft(ts2, (tp, x1, x2) => tp.Date.Day > 5 ? 5 : (x1 ?? 0) + (x2 ?? 0));
+
+      Assert.IsTrue(ts_actual == ts_expected);
+    }
+
+    [TestMethod]
     public void Test_Join_Empty()
     {
       var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), 10, Period.Year);
@@ -906,6 +948,22 @@
 
       var ts_expected = TimeSeries.Factory.FromValue(10, new DateTime(2021, 01, 01), 10, Period.Day);
       var ts_actual = ts1.JoinFull(ts2, ts3, ts4, (x1, x2, x3, x4) => x1 + x2 + x3 + x4);
+
+      Assert.IsTrue(ts_actual == ts_expected);
+    }
+
+    [TestMethod]
+    public void Test_Join_3_WithDateTime()
+    {
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2021, 01, 01), 10, Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(2, new DateTime(2021, 01, 01), 10, Period.Day);
+      var ts3 = TimeSeries.Factory.FromValue(3, new DateTime(2021, 01, 01), 10, Period.Day);
+      var ts4 = TimeSeries.Factory.FromValue(4, new DateTime(2021, 01, 01), 10, Period.Day);
+
+      var ts_expected =
+        TimeSeries.Factory.FromValue(10, new DateTime(2021, 01, 01), 5, Period.Day) +
+        TimeSeries.Factory.FromValue(5, new DateTime(2021, 01, 06), 5, Period.Day);
+      var ts_actual = ts1.JoinFull(ts2, ts3, ts4, (tp, x1, x2, x3, x4) => tp.Date.Day > 5 ? 5 : x1 + x2 + x3 + x4);
 
       Assert.IsTrue(ts_actual == ts_expected);
     }
