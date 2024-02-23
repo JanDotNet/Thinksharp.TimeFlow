@@ -20,9 +20,16 @@
 
     public int Value { get; }
     public PeriodUnit Unit { get; }
+    
+    [Obsolete("Use Millisecond instead.")]
     public static Period Milliseconds { get; } = new Period(1, PeriodUnit.Millisecond);
+    [Obsolete("Use Second instead.")]
     public static Period Seconds { get; } = new Period(1, PeriodUnit.Second);
+    [Obsolete("Use Minute instead.")]
     public static Period Minutes { get; } = new Period(1, PeriodUnit.Minute);
+    public static Period Millisecond { get; } = new Period(1, PeriodUnit.Millisecond);
+    public static Period Second { get; } = new Period(1, PeriodUnit.Second);
+    public static Period Minute { get; } = new Period(1, PeriodUnit.Minute);
     public static Period QuarterHour { get; } = new Period(15, PeriodUnit.Minute);
     public static Period Hour { get; } = new Period(1, PeriodUnit.Hour);
     public static Period Day { get; } = new Period(1, PeriodUnit.Day);

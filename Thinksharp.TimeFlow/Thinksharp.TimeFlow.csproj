@@ -2,7 +2,7 @@
 	
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-    <Version>1.1.4</Version>
+    <Version>1.1.5</Version>
     <Authors>Jan-Niklas Schäfer</Authors>
     <Company>ThinkSharp</Company>
     <Description>TimeFlow is a lightweight extendable library for working with time series with support for time zones and daylight saving.</Description>
@@ -11,17 +11,20 @@
     <PackageProjectUrl>https://github.com/JanDotNet/Thinksharp.TimeFlow</PackageProjectUrl>
     <RepositoryUrl>https://github.com/JanDotNet/Thinksharp.TimeFlow</RepositoryUrl>
     <PackageTags>time series</PackageTags>
-    <PackageReleaseNotes>0.9.0 Initial Version
-0.10.0 Changed type Frequency to Period
-0.11.0 Added support for period serialization
-0.21.0 Some improvements and bugfixes
-0.24.0 Improved API for TimeSeries and TimeFrame
-0.24.0 Improved API for TimeSeries and TimeFrame
-1.1.0 Improved resampling options; added Shift functionality; Little breaking change in resample logic: Upsampled time series starts with the first time point of the period, not the first time point of the original time series.
-1.1.1 Added Method TimeFrame.FromDictionary
-1.1.2 Set default value to SingleValueNullBehavior.SingleValueBecomesZero
-1.1.3 Added Method ToTimeSeriesIntervalls
-1.1.4 Added overloads for JoinLeft/JoinFull that contains the time stamp in aggregation function		</PackageReleaseNotes>
+    <PackageReleaseNotes>
+			0.9.0 Initial Version
+			0.10.0 Changed type Frequency to Period
+			0.11.0 Added support for period serialization
+			0.21.0 Some improvements and bugfixes
+			0.24.0 Improved API for TimeSeries and TimeFrame
+			0.24.0 Improved API for TimeSeries and TimeFrame
+			1.1.0 Improved resampling options; added Shift functionality; Little breaking change in resample logic: Upsampled time series starts with the first time point of the period, not the first time point of the original time series.
+			1.1.1 Added Method TimeFrame.FromDictionary
+			1.1.2 Set default value to SingleValueNullBehavior.SingleValueBecomesZero
+			1.1.3 Added Method ToTimeSeriesIntervalls
+			1.1.4 Added overloads for JoinLeft/JoinFull that contains the time stamp in aggregation function
+			1.1.5 Extended support for downsampling from minutes
+		</PackageReleaseNotes>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>

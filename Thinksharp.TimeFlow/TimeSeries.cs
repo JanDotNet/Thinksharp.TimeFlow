@@ -469,22 +469,23 @@
       // down-sampling (Absolut)
       if (this.Frequency < frequency && opt.ResampleType == ResampleType.Absolut)
       {
-        if (frequency == Period.Hour)
+        if (frequency.Unit == PeriodUnit.Minute && 60 % frequency.Value == 0)
+        { 
+          return this.DownSampleAbsolut(x => new DateTimeOffset(x.Year, x.Month, x.Day, x.Hour, (x.Minute / frequency.Value) * frequency.Value, 0, x.Offset), aggregator, frequency, opt);
+        }
+
+        if (frequency.Unit == PeriodUnit.Hour && 24 % frequency.Value == 0)
         {
-          return this.DownSampleAbsolut(x => new DateTimeOffset(x.Year, x.Month, x.Day, x.Hour, 0, 0, x.Offset), aggregator, frequency, opt);
+          return this.DownSampleAbsolut(x => new DateTimeOffset(x.Year, x.Month, x.Day, (x.Hour / frequency.Value) * frequency.Value, 0, 0, x.Offset), aggregator, frequency, opt);
         }
 
         if (frequency == Period.Day)
         {
           return this.DownSampleAbsolut(x => new DateTimeOffset(x.Date), aggregator, frequency, opt);
         }
-        if (frequency == Period.Month)
+        if (frequency.Unit == PeriodUnit.Month && 12 % frequency.Value == 0)
         {
-          return this.DownSampleAbsolut(x => new DateTimeOffset(new DateTime(x.Year, x.Month, 1)), aggregator, frequency, opt);
-        }
-        if (frequency == Period.QuarterYear)
-        {
-          return this.DownSampleAbsolut(x => new DateTimeOffset(new DateTime(x.Year, (x.GetQuarterYear()-1)*3+1, 1)), aggregator, frequency, opt);
+          return this.DownSampleAbsolut(x => new DateTimeOffset(new DateTime(x.Year, ((x.Month + (frequency.Value-1)) / frequency.Value) * frequency.Value - (frequency.Value - 1), 1)), aggregator, frequency, opt);
         }
         if (frequency == Period.Year)
         {

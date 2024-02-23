@@ -4,6 +4,7 @@
   using System.Collections.Generic;
   using System.Globalization;
   using System.Linq;
+  using DocumentFormat.OpenXml.Bibliography;
   using DocumentFormat.OpenXml.Drawing.Charts;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -512,6 +513,178 @@
       Assert.AreEqual(1M, ts_month_mean[0].Value);
       Assert.AreEqual((decimal)31 * 24 * 4, ts_month_sum[0].Value);
     }
+
+    [TestMethod]
+    public void TestDownSample_1min_to_30Min()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+      var end = new DateTimeOffset(new DateTime(2022, 01, 01)) - Period.Minute;
+
+      var ts = TimeSeries.Factory.FromValue(1M, start, end, Period.Minute);
+      var ts_month_mean = ts.ReSample(new Period(30, PeriodUnit.Minute), AggregationType.Mean);
+      var ts_month_sum = ts.ReSample(new Period(30, PeriodUnit.Minute), AggregationType.Sum);
+
+      Assert.AreEqual(24 * 365 * 2, ts_month_mean.Count);
+      Assert.AreEqual(24 * 365 * 2, ts_month_sum.Count);
+
+      ts_month_mean.Values.ToList().ForEach(v => Assert.AreEqual(1M, v));
+      ts_month_sum.Values.ToList().ForEach(v => Assert.AreEqual(30M, v));
+    }
+
+    [TestMethod]
+    public void TestDownSample_1min_to_5Min()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+      var end = new DateTimeOffset(new DateTime(2022, 01, 01)) - Period.Minute;
+
+      var ts = TimeSeries.Factory.FromValue(1M, start, end, Period.Minute);
+      var ts_month_mean = ts.ReSample(new Period(5, PeriodUnit.Minute), AggregationType.Mean);
+      var ts_month_sum = ts.ReSample(new Period(5, PeriodUnit.Minute), AggregationType.Sum);
+
+      Assert.AreEqual(24 * 365 * 12, ts_month_mean.Count);
+      Assert.AreEqual(24 * 365 * 12, ts_month_sum.Count);
+
+      ts_month_mean.Values.ToList().ForEach(v => Assert.AreEqual(1M, v));
+      ts_month_sum.Values.ToList().ForEach(v => Assert.AreEqual(5M, v));
+    }
+
+    [TestMethod]
+    public void TestDownSample_1min_to_2Min()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+      var end = new DateTimeOffset(new DateTime(2022, 01, 01)) - Period.Minute;
+
+      var ts = TimeSeries.Factory.FromValue(1M, start, end, Period.Minute);
+      var ts_month_mean = ts.ReSample(new Period(2, PeriodUnit.Minute), AggregationType.Mean);
+      var ts_month_sum = ts.ReSample(new Period(2, PeriodUnit.Minute), AggregationType.Sum);
+
+      Assert.AreEqual(24 * 365 * 30, ts_month_mean.Count);
+      Assert.AreEqual(24 * 365 * 30, ts_month_sum.Count);
+
+      ts_month_mean.Values.ToList().ForEach(v => Assert.AreEqual(1M, v));
+      ts_month_sum.Values.ToList().ForEach(v => Assert.AreEqual(2M, v));
+    }
+
+    [TestMethod]
+    public void TestDownSample_1min_to_20Min()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+      var end = new DateTimeOffset(new DateTime(2022, 01, 01)) - Period.Minute;
+
+      var ts = TimeSeries.Factory.FromValue(1M, start, end, Period.Minute);
+      var ts_month_mean = ts.ReSample(new Period(20, PeriodUnit.Minute), AggregationType.Mean);
+      var ts_month_sum = ts.ReSample(new Period(20, PeriodUnit.Minute), AggregationType.Sum);
+
+      Assert.AreEqual(24 * 365 * 3, ts_month_mean.Count);
+      Assert.AreEqual(24 * 365 * 3, ts_month_sum.Count);
+
+      ts_month_mean.Values.ToList().ForEach(v => Assert.AreEqual(1M, v));
+      ts_month_sum.Values.ToList().ForEach(v => Assert.AreEqual(20M, v));
+    }
+
+    [TestMethod]
+    public void TestDownSample_1min_to_15Min()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+      var end = new DateTimeOffset(new DateTime(2022, 01, 01)) - Period.Minute;
+
+      var ts = TimeSeries.Factory.FromValue(1M, start, end, Period.Minute);
+      var ts_month_mean = ts.ReSample(Period.QuarterHour, AggregationType.Mean);
+      var ts_month_sum = ts.ReSample(Period.QuarterHour, AggregationType.Sum);
+
+      Assert.AreEqual(24 * 365 * 4, ts_month_mean.Count);
+      Assert.AreEqual(24 * 365 * 4, ts_month_sum.Count);
+
+      ts_month_mean.Values.ToList().ForEach(v => Assert.AreEqual(1M, v));
+      ts_month_sum.Values.ToList().ForEach(v => Assert.AreEqual(15M, v));
+    }
+
+    [TestMethod]
+    public void TestDownSample_10Sec_to_15Min()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+      var end = new DateTimeOffset(new DateTime(2022, 01, 01)) - new Period(10, PeriodUnit.Second);
+
+      var ts = TimeSeries.Factory.FromValue(1M, start, end, new Period(10, PeriodUnit.Second));
+      var ts_month_mean = ts.ReSample(Period.QuarterHour, AggregationType.Mean);
+      var ts_month_sum = ts.ReSample(Period.QuarterHour, AggregationType.Sum);
+
+      Assert.AreEqual(365 * 24 * 4, ts_month_mean.Count);
+      Assert.AreEqual(365 * 24 * 4, ts_month_sum.Count);
+
+      ts_month_mean.Values.ToList().ForEach(v => Assert.AreEqual(1M, v));
+      ts_month_sum.Values.ToList().ForEach(v => Assert.AreEqual(15M * 6, v));
+    }
+
+    [TestMethod]
+    public void TestDownSample_15Min_to_2Hours()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+      var end = new DateTimeOffset(new DateTime(2022, 01, 01)) - Period.QuarterHour;
+
+      var ts = TimeSeries.Factory.FromValue(1M, start, end, Period.QuarterHour);
+      var ts_month_mean = ts.ReSample(new Period(2, PeriodUnit.Hour), AggregationType.Mean);
+      var ts_month_sum = ts.ReSample(new Period(2, PeriodUnit.Hour), AggregationType.Sum);
+
+      Assert.AreEqual(365 * 12 + 1, ts_month_mean.Count);
+      Assert.AreEqual(365 * 12 + 1, ts_month_sum.Count);
+
+      ts_month_mean.Values.ToList().ForEach(v => Assert.AreEqual(1M, v));
+      //ts_month_sum.Values.ToList().ForEach(v => Assert.AreEqual(8, v));
+    }
+
+    [TestMethod]
+    public void TestDownSample_1h_to_1Month()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+      var end = new DateTimeOffset(new DateTime(2022, 01, 01)) - Period.Hour;
+
+      var ts = TimeSeries.Factory.FromValue(1M, start, end, Period.Hour);
+      var ts_month_mean = ts.ReSample(new Period(1, PeriodUnit.Month), AggregationType.Mean);
+      var ts_month_sum = ts.ReSample(new Period(1, PeriodUnit.Month), AggregationType.Sum);
+
+      Assert.AreEqual(12, ts_month_mean.Count);
+      Assert.AreEqual(12, ts_month_sum.Count);
+
+      ts_month_mean.Values.ToList().ForEach(v => Assert.AreEqual(1M, v));
+      for (var month = 1;  month <= 12;  month++)
+      {
+        Assert.AreEqual(24 * DateTime.DaysInMonth(2021, month) + (month == 10 ? 1 : 0) - (month == 3 ? 1 : 0), ts_month_sum.Values.ToArray()[month-1]);
+      }
+    }
+
+    [TestMethod]
+    public void TestDownSample_1h_to_Month()
+    {
+      var months = new int[] { 1, 2, 3, 6 };
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+      var end = new DateTimeOffset(new DateTime(2022, 01, 01)) - Period.Hour;
+
+      var ts = TimeSeries.Factory.FromValue(1M, start, end, Period.Hour);
+
+      foreach (var month in months)
+      {
+        var ts_month_mean = ts.ReSample(new Period(month, PeriodUnit.Month), AggregationType.Mean);
+        var ts_month_sum = ts.ReSample(new Period(month, PeriodUnit.Month), AggregationType.Sum);
+
+        Assert.AreEqual(12 / month, ts_month_mean.Count);
+        Assert.AreEqual(12 / month, ts_month_sum.Count);
+
+        ts_month_mean.Values.ToList().ForEach(v => Assert.AreEqual(1M, v));
+        var idx = 0;
+        for (var m = 0; m < 12; m += month)
+        {
+          var days = 0;
+          foreach (int m0 in Enumerable.Range(1, month))
+          {
+            var mc = m + m0;
+            days += 24 * DateTime.DaysInMonth(2021, mc) + (mc == 10 ? 1 : 0) - (mc == 3 ? 1 : 0);
+          }          
+          Assert.AreEqual(days, ts_month_sum.Values.ToArray()[idx++], "Failed for for months: " + month);
+        }
+      }
+    }
+
 
     [TestMethod]
     public void TestUpSample_from_year_to_quarteryear()
