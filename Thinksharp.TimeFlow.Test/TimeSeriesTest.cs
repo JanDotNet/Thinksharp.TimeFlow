@@ -1400,5 +1400,22 @@
       Assert.AreEqual(end, intervall.End);
       Assert.AreEqual(value, intervall.Value);
     }
+
+    [TestMethod]
+    public void TestBugfix_ProcessMultipleTimeSeries()
+    {
+      var ts1 = TimeSeries.Factory.FromValue(1, new DateTime(2024, 01, 01), 10, Period.Day);
+      var ts2 = TimeSeries.Factory.FromValue(0, new DateTime(2024, 01, 01), 10, Period.Day);
+      var ts3 = TimeSeries.Factory.FromValue(0, new DateTime(2024, 01, 01), 10, Period.Day);
+
+      foreach (var tp in ts1)
+      {
+        tp.Value = 2;
+      }
+
+      var tsR = ts1 - ts2 - ts3;
+
+      Assert.AreEqual(ts1, tsR);
+    }
   }
 }
