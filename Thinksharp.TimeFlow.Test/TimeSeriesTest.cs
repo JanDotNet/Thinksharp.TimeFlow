@@ -11,6 +11,8 @@
   [TestClass]
   public class TimeSeriesTest
   {
+
+
     [TestMethod]
     public void TestConst_1_start_count()
     {
@@ -1416,6 +1418,152 @@
       var tsR = ts1 - ts2 - ts3;
 
       Assert.AreEqual(ts1, tsR);
+    }
+    [TestMethod]
+    public void Test_DownSample_15min_to_hours_MaxMin()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+
+      // Werte: 1, 2, 3, 4, ... 96
+      var values = Enumerable.Range(1, 96).Select(x => (decimal?)x).ToArray();
+      var ts = TimeSeries.Factory.FromValues(values, start, Period.QuarterHour);
+
+      var ts_max = ts.ReSample(Period.Hour, AggregationType.Max);
+      var ts_min = ts.ReSample(Period.Hour, AggregationType.Min);
+
+      Assert.AreEqual(24, ts_max.Count);
+      Assert.AreEqual(24, ts_min.Count);
+
+      for (int i = 0; i < 24; i++)
+      {
+        Assert.AreEqual((i + 1) * 4, ts_max[i].Value);      // Maximalwert jeder Stunde
+        Assert.AreEqual(i * 4 + 1, ts_min[i].Value);        // Minimalwert jeder Stunde
+      }
+    }
+
+    [TestMethod]
+    public void Test_DownSample_15min_to_hours_MaxMin_Null_SingleValueWillBeIgnoredForAggregation()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+      // Werte: null, 2, null, 4, null, 6, ...
+      var values = Enumerable.Range(1, 96).Select(x => x % 2 == 0 ? (decimal?)x : null).ToArray();
+      var ts = TimeSeries.Factory.FromValues(values, start, Period.QuarterHour);
+
+      var resampleOptions = new ResampleOption
+      {
+        ResampleType = ResampleType.Relative,
+        SingleValueIsNull = SingleValueNullBehavior.SingleValueWillBeIgnoredForAggregation
+      };
+      var ts_max = ts.ReSample(Period.Hour, AggregationType.Max, resampleOptions);
+      var ts_min = ts.ReSample(Period.Hour, AggregationType.Min, resampleOptions);
+
+      Assert.AreEqual(24, ts_max.Count);
+      Assert.AreEqual(24, ts_min.Count);
+
+      for (int i = 0; i < 24; i++)
+      {
+        Assert.AreEqual((i + 1) * 4, ts_max[i].Value);      // Maximalwert jeder Stunde
+        Assert.AreEqual(i * 4 + 2, ts_min[i].Value);        // Minimalwert jeder Stunde
+      }
+    }
+
+    [TestMethod]
+    public void Test_DownSample_15min_to_hours_MaxMin_Null_SingleValueBecomesZero()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+      // Werte: null, 2, null, 4, null, 6, ...
+      var values = Enumerable.Range(1, 96).Select(x => x % 2 == 0 ? (decimal?)x : null).ToArray();
+      var ts = TimeSeries.Factory.FromValues(values, start, Period.QuarterHour);
+
+      var resampleOptions = new ResampleOption
+      {
+        ResampleType = ResampleType.Relative,
+        SingleValueIsNull = SingleValueNullBehavior.SingleValueBecomesZero
+      };
+      var ts_max = ts.ReSample(Period.Hour, AggregationType.Max, resampleOptions);
+      var ts_min = ts.ReSample(Period.Hour, AggregationType.Min, resampleOptions);
+
+      Assert.AreEqual(24, ts_max.Count);
+      Assert.AreEqual(24, ts_min.Count);
+
+      for (int i = 0; i < 24; i++)
+      {
+        // In jeder Stunde gibt es zwei Werte: (i*4+2) und (i*4+4)
+        Assert.AreEqual((i + 1) * 4, ts_max[i].Value);
+        Assert.AreEqual(0, ts_min[i].Value);
+      }
+    }
+
+    [TestMethod]
+    public void Test_DownSample_15min_to_hours_MaxMin_Null_AggregationValueBecomesZero()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+      // Werte: null, 2, null, 4, null, 6, ...
+      var values = Enumerable.Range(1, 96).Select(x => x % 2 == 0 ? (decimal?)x : null).ToArray();
+      var ts = TimeSeries.Factory.FromValues(values, start, Period.QuarterHour);
+
+      var resampleOptions = new ResampleOption
+      {
+        ResampleType = ResampleType.Relative,
+        SingleValueIsNull = SingleValueNullBehavior.AggregationValueBecomesZero
+      };
+      var ts_max = ts.ReSample(Period.Hour, AggregationType.Max, resampleOptions);
+      var ts_min = ts.ReSample(Period.Hour, AggregationType.Min, resampleOptions);
+
+      Assert.AreEqual(24, ts_max.Count);
+      Assert.AreEqual(24, ts_min.Count);
+
+      for (int i = 0; i < 24; i++)
+      {
+        // In jeder Stunde gibt es zwei Werte: (i*4+2) und (i*4+4)
+        Assert.AreEqual(0, ts_max[i].Value);
+        Assert.AreEqual(0, ts_min[i].Value);
+      }
+    }
+
+    [TestMethod]
+    public void Test_DownSample_15min_to_hours_MaxMin_Null_AggregationValueBecomesNull()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+      // Werte: null, 2, null, 4, null, 6, ...
+      var values = Enumerable.Range(1, 96).Select(x => x % 2 == 0 ? (decimal?)x : null).ToArray();
+      var ts = TimeSeries.Factory.FromValues(values, start, Period.QuarterHour);
+
+      var resampleOptions = new ResampleOption
+      {
+        ResampleType = ResampleType.Relative,
+        SingleValueIsNull = SingleValueNullBehavior.AggregationValueBecomesNull
+      };
+      var ts_max = ts.ReSample(Period.Hour, AggregationType.Max, resampleOptions);
+      var ts_min = ts.ReSample(Period.Hour, AggregationType.Min, resampleOptions);
+
+      Assert.AreEqual(24, ts_max.Count);
+      Assert.AreEqual(24, ts_min.Count);
+
+      for (int i = 0; i < 24; i++)
+      {
+        // In jeder Stunde gibt es zwei Werte: (i*4+2) und (i*4+4)
+        Assert.AreEqual(null, ts_max[i].Value);
+        Assert.AreEqual(null, ts_min[i].Value);
+      }
+    }
+
+
+    [TestMethod]
+    public void Test_DownSample_15min_to_hours_MaxMin_AllNull()
+    {
+      var start = new DateTimeOffset(new DateTime(2021, 01, 01));
+      var values = Enumerable.Repeat((decimal?)null, 96).ToArray();
+      var ts = TimeSeries.Factory.FromValues(values, start, Period.QuarterHour);
+
+      var ts_max = ts.ReSample(Period.Hour, AggregationType.Max);
+      var ts_min = ts.ReSample(Period.Hour, AggregationType.Min);
+
+      Assert.AreEqual(24, ts_max.Count);
+      Assert.AreEqual(24, ts_min.Count);
+
+      Assert.IsTrue(ts_max.All(x => x.Value == null));
+      Assert.IsTrue(ts_min.All(x => x.Value == null));
     }
   }
 }

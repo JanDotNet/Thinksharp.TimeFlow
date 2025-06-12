@@ -457,8 +457,10 @@
 
       var aggregator =
           aggregationType == AggregationType.Sum ? new Func<IEnumerable<decimal>, decimal>(x => x.Sum())
-        : aggregationType == AggregationType.Mean ? x => x.Average()
+        : aggregationType == AggregationType.Mean ? new Func<IEnumerable<decimal>, decimal>(x => x.Average())
         : aggregationType == AggregationType.Cumulate ? new Func<IEnumerable<decimal>, decimal>(vals => vals.Aggregate(0M, (agg, val) => agg + val))
+        : aggregationType == AggregationType.Max ? new Func<IEnumerable<decimal>, decimal>(x => x.Max())
+        : aggregationType == AggregationType.Min ? new Func<IEnumerable<decimal>, decimal>(x => x.Min())
         : throw new NotSupportedException($"Aggregation Type '{aggregationType}' is nto supported.");
 
       if (this.IsEmpty || frequency == this.Frequency)
@@ -666,6 +668,7 @@
           case SingleValueNullBehavior.AggregationValueBecomesZero:
             aggValueBecomesZero = true;
             break;
+          case SingleValueNullBehavior.SingleValueWillBeIgnoredForAggregation:
           case SingleValueNullBehavior.SingleValueBecomesWillBeIgnoredForAggregartion:
             break;
           case SingleValueNullBehavior.SingleValueBecomesZero:

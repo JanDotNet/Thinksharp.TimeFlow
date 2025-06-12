@@ -1,4 +1,7 @@
-﻿namespace Thinksharp.TimeFlow
+﻿using System;
+using System.Diagnostics;
+
+namespace Thinksharp.TimeFlow
 {
   public enum SingleValueNullBehavior
   {
@@ -13,13 +16,16 @@
     AggregationValueBecomesZero,
 
     /// <summary>
-    /// If one value is null, the single value becomes zero (0) and will be considered for aggregation (only relevant for average).
+    /// If one value is null, the single value becomes zero (0) and will be considered for aggregation (only relevant for average, min, max).
     /// </summary>
     SingleValueBecomesZero,
 
-    /// <summary>
-    /// If one value is null, the single value will be ignored for aggregation (only relevant for average).
-    /// </summary>
+    [Obsolete("Use SingleValueWillBeIgnoredForAggregartion instead.")]
     SingleValueBecomesWillBeIgnoredForAggregartion,
+
+    /// <summary>
+    /// If one value is null, the single value will be ignored for aggregation (only relevant for average, min, max).
+    /// </summary>
+    SingleValueWillBeIgnoredForAggregation
   }
 }

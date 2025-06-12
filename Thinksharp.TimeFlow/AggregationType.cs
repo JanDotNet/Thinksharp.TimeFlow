@@ -5,5 +5,7 @@
     Sum,
     Mean,
     Cumulate,
+    Max, 
+    Min
   }
 }

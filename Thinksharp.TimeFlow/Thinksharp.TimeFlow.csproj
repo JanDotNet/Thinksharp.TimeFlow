@@ -2,7 +2,7 @@
 	
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-    <Version>1.1.5</Version>
+    <Version>1.1.6</Version>
     <Authors>Jan-Niklas Schäfer</Authors>
     <Company>ThinkSharp</Company>
     <Description>TimeFlow is a lightweight extendable library for working with time series with support for time zones and daylight saving.</Description>
@@ -24,13 +24,14 @@
 			1.1.3 Added Method ToTimeSeriesIntervalls
 			1.1.4 Added overloads for JoinLeft/JoinFull that contains the time stamp in aggregation function
 			1.1.5 Extended support for downsampling from minutes
+			1.1.6 Added support for Min/Max resample aggregations
 		</PackageReleaseNotes>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Product>ThinkSharp.TimeFlow</Product>
-    <AssemblyVersion>1.1.4.0</AssemblyVersion>
-    <FileVersion>1.1.4.0</FileVersion>
+    <AssemblyVersion>1.1.6.0</AssemblyVersion>
+    <FileVersion>1.1.6.0</FileVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
