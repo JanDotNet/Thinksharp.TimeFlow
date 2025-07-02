@@ -4,6 +4,31 @@
         <name>Thinksharp.TimeFlow</name>
     </assembly>
     <members>
+        <member name="M:Thinksharp.TimeFlow.IndexedSeries`2.EnableMutation">
+            <summary>
+            Enables mutation for in-place operations. Should only be used by derived classes during controlled mutations.
+            </summary>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.IndexedSeries`2.DisableMutation">
+            <summary>
+            Disables mutation after in-place operations complete.
+            </summary>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.IndexedSeries`2.UpdateInPlace(System.Collections.Generic.IEnumerable{Thinksharp.TimeFlow.IndexedSeriesItem{`0,`1}})">
+            <summary>
+            Updates the internal data structures during in-place operations.
+            </summary>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.IndexedSeries`2.UpdateSortedValues">
+            <summary>
+            Updates the sorted values from the dictionary during in-place operations.
+            </summary>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.IndexedSeries`2.UpdateProperties">
+            <summary>
+            Updates Start, End, and IsEmpty properties.
+            </summary>
+        </member>
         <member name="P:Thinksharp.TimeFlow.JoinOperation.AddNullResultsInNull">
             <summary>
               Adds the right to the left value. Null values results in null.
@@ -363,6 +388,21 @@
               A new date time series where all values are mapped using the specified mapping function.
             </returns>
         </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.Apply(System.Func{System.Nullable{System.Decimal},System.Nullable{System.Decimal}},System.Boolean)">
+            <summary>
+              Maps all values using the specified mapping function.
+            </summary>
+            <param name="func">
+              The mapping function to use.
+            </param>
+            <param name="inPlace">
+              If true, modifies this time series instance instead of creating a new one. Default is false.
+            </param>
+            <returns>
+              A time series where all values are mapped using the specified mapping function.
+              If inPlace is true, returns this instance; otherwise returns a new instance.
+            </returns>
+        </member>
         <member name="M:Thinksharp.TimeFlow.TimeSeries.ApplyValues(System.Func{System.Decimal,System.Decimal})">
             <summary>
               Returns a new date time series where all values are mapped using the specified mapping function whereas null values
@@ -374,6 +414,21 @@
             <returns>
               A new date time series where all values are mapped using the specified mapping function whereas null values
               remain as null values.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.ApplyValues(System.Func{System.Decimal,System.Decimal},System.Boolean)">
+            <summary>
+              Maps all values using the specified mapping function whereas null values remain as null values.
+            </summary>
+            <param name="func">
+              The mapping function to use for mapping non-nullable values.
+            </param>
+            <param name="inPlace">
+              If true, modifies this time series instance instead of creating a new one. Default is false.
+            </param>
+            <returns>
+              A time series where all values are mapped using the specified mapping function whereas null values
+              remain as null values. If inPlace is true, returns this instance; otherwise returns a new instance.
             </returns>
         </member>
         <member name="M:Thinksharp.TimeFlow.TimeSeries.JoinLeft(Thinksharp.TimeFlow.TimeSeries,System.Func{System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal}})">

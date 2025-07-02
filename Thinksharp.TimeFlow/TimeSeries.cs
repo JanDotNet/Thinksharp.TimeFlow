@@ -72,7 +72,42 @@
     /// </returns>
     public TimeSeries Apply(Func<decimal?, decimal?> func)
     {
-      return new TimeSeries(this.sortedValues.Select(x => new IndexedSeriesItem<DateTimeOffset, decimal?>(x.Key, func(x.Value))), this.Frequency, this.TimeZone);
+      return Apply(func, inPlace: false);
+    }
+
+    /// <summary>
+    ///   Maps all values using the specified mapping function.
+    /// </summary>
+    /// <param name="func">
+    ///   The mapping function to use.
+    /// </param>
+    /// <param name="inPlace">
+    ///   If true, modifies this time series instance instead of creating a new one. Default is false.
+    /// </param>
+    /// <returns>
+    ///   A time series where all values are mapped using the specified mapping function.
+    ///   If inPlace is true, returns this instance; otherwise returns a new instance.
+    /// </returns>
+    public TimeSeries Apply(Func<decimal?, decimal?> func, bool inPlace = false)
+    {
+      if (inPlace)
+      {
+        this.EnableMutation();
+        try
+        {
+          var newSortedSeries = this.sortedValues.Select(x => new IndexedSeriesItem<DateTimeOffset, decimal?>(x.Key, func(x.Value))).ToList();
+          this.UpdateInPlace(newSortedSeries);
+          return this;
+        }
+        finally
+        {
+          this.DisableMutation();
+        }
+      }
+      else
+      {
+        return new TimeSeries(this.sortedValues.Select(x => new IndexedSeriesItem<DateTimeOffset, decimal?>(x.Key, func(x.Value))), this.Frequency, this.TimeZone);
+      }
     }
 
     /// <summary>
@@ -88,7 +123,42 @@
     /// </returns>
     public TimeSeries ApplyValues(Func<decimal, decimal> func)
     {
-      return new TimeSeries(this.sortedValues.Select(x => new IndexedSeriesItem<DateTimeOffset, decimal?>(x.Key, x.Value.HasValue ? (decimal?)func(x.Value.Value) : null)), this.Frequency, this.TimeZone);
+      return ApplyValues(func, inPlace: false);
+    }
+
+    /// <summary>
+    ///   Maps all values using the specified mapping function whereas null values remain as null values.
+    /// </summary>
+    /// <param name="func">
+    ///   The mapping function to use for mapping non-nullable values.
+    /// </param>
+    /// <param name="inPlace">
+    ///   If true, modifies this time series instance instead of creating a new one. Default is false.
+    /// </param>
+    /// <returns>
+    ///   A time series where all values are mapped using the specified mapping function whereas null values
+    ///   remain as null values. If inPlace is true, returns this instance; otherwise returns a new instance.
+    /// </returns>
+    public TimeSeries ApplyValues(Func<decimal, decimal> func, bool inPlace = false)
+    {
+      if (inPlace)
+      {
+        this.EnableMutation();
+        try
+        {
+          var newSortedSeries = this.sortedValues.Select(x => new IndexedSeriesItem<DateTimeOffset, decimal?>(x.Key, x.Value.HasValue ? (decimal?)func(x.Value.Value) : null)).ToList();
+          this.UpdateInPlace(newSortedSeries);
+          return this;
+        }
+        finally
+        {
+          this.DisableMutation();
+        }
+      }
+      else
+      {
+        return new TimeSeries(this.sortedValues.Select(x => new IndexedSeriesItem<DateTimeOffset, decimal?>(x.Key, x.Value.HasValue ? (decimal?)func(x.Value.Value) : null)), this.Frequency, this.TimeZone);
+      }
     }
 
     /// <summary>
