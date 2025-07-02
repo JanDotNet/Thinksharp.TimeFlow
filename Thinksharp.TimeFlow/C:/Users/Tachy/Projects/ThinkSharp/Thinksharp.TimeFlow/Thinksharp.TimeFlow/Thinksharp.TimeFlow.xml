@@ -447,6 +447,26 @@
               A new time series with the same time points as this one but with values produced by the join.
             </returns>
         </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.JoinLeft(Thinksharp.TimeFlow.TimeSeries,System.Func{System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal}},System.Boolean)">
+            <summary>
+              Joins the specified time series to this time series using the specified aggregation function to combine the
+              values.
+            </summary>
+            <param name="dateTimeSeries">
+              The time series to join.
+            </param>
+            <param name="agg">
+              The aggregation function to combine values from 2 equal time points.
+              The first value of the aggregation function is from this time series, the second value from the passed one.
+            </param>
+            <param name="inPlace">
+              If true, modifies this time series instance instead of creating a new one. Default is false.
+            </param>
+            <returns>
+              A time series with the same time points as this one but with values produced by the join.
+              If inPlace is true, returns this instance; otherwise returns a new instance.
+            </returns>
+        </member>
         <member name="M:Thinksharp.TimeFlow.TimeSeries.JoinLeft(Thinksharp.TimeFlow.TimeSeries,System.Func{System.DateTimeOffset,System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal}})">
             <summary>
               Joins the specified time series to the this time series using the specified aggregation function to combine the
@@ -465,6 +485,28 @@
               A new time series with the same time points as this one but with values produced by the join.
             </returns>
         </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.JoinLeft(Thinksharp.TimeFlow.TimeSeries,System.Func{System.DateTimeOffset,System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal}},System.Boolean)">
+            <summary>
+              Joins the specified time series to this time series using the specified aggregation function to combine the
+              values.
+            </summary>
+            <param name="dateTimeSeries">
+              The time series to join.
+            </param>
+            <param name="agg">
+              The aggregation function to combine values from 2 equal time points.
+              1. value: Timestamp of the time point to aggregate
+              2. value: Value of the first time series.
+              3. value: Value of the second time series.
+            </param>
+            <param name="inPlace">
+              If true, modifies this time series instance instead of creating a new one. Default is false.
+            </param>
+            <returns>
+              A time series with the same time points as this one but with values produced by the join.
+              If inPlace is true, returns this instance; otherwise returns a new instance.
+            </returns>
+        </member>
         <member name="M:Thinksharp.TimeFlow.TimeSeries.JoinLeft(Thinksharp.TimeFlow.TimeSeries,Thinksharp.TimeFlow.JoinOperation)">
             <summary>
               Joins the specified time series to the this time series using the specified aggregation function to combine the
@@ -478,6 +520,25 @@
             </param>
             <returns>
               A new time series with the same time points as this one but with values produced by the join.
+            </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.JoinLeft(Thinksharp.TimeFlow.TimeSeries,Thinksharp.TimeFlow.JoinOperation,System.Boolean)">
+            <summary>
+              Joins the specified time series to this time series using the specified aggregation function to combine the
+              values.
+            </summary>
+            <param name="dateTimeSeries">
+              The time series to join.
+            </param>
+            <param name="op">
+              The join operation to use.
+            </param>
+            <param name="inPlace">
+              If true, modifies this time series instance instead of creating a new one. Default is false.
+            </param>
+            <returns>
+              A time series with the same time points as this one but with values produced by the join.
+              If inPlace is true, returns this instance; otherwise returns a new instance.
             </returns>
         </member>
         <member name="M:Thinksharp.TimeFlow.TimeSeries.JoinFull(Thinksharp.TimeFlow.TimeSeries,System.Func{System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal}})">
@@ -692,6 +753,24 @@
               A new time series that contains only time points for the specified range.
             </returns>
         </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.Slice(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+              Creates a time series that contains only time points for the specified range.
+            </summary>
+            <param name="startIndex">
+              The zero based start index.
+            </param>
+            <param name="count">
+              The number of time points to get.
+            </param>
+            <param name="inPlace">
+              If true, modifies this time series instance instead of creating a new one. Default is false.
+            </param>
+            <returns>
+              A time series that contains only time points for the specified range.
+              If inPlace is true, returns this instance; otherwise returns a new instance.
+            </returns>
+        </member>
         <member name="M:Thinksharp.TimeFlow.TimeSeries.Trim(System.Boolean,System.Boolean,System.Nullable{System.Decimal}[])">
             <summary>
               Creates a new time series where leading and trailing time points with specified values are dropped.
@@ -728,6 +807,62 @@
             <returns>
             A new time series that's time points has been shifted by the specified period.
             </returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.AddInPlace(System.Decimal)">
+            <summary>
+            Adds a scalar value to all elements in place.
+            </summary>
+            <param name="value">The value to add.</param>
+            <returns>This TimeSeries instance for method chaining.</returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.SubtractInPlace(System.Decimal)">
+            <summary>
+            Subtracts a scalar value from all elements in place.
+            </summary>
+            <param name="value">The value to subtract.</param>
+            <returns>This TimeSeries instance for method chaining.</returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.MultiplyInPlace(System.Decimal)">
+            <summary>
+            Multiplies all elements by a scalar value in place.
+            </summary>
+            <param name="value">The value to multiply by.</param>
+            <returns>This TimeSeries instance for method chaining.</returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.DivideInPlace(System.Decimal)">
+            <summary>
+            Divides all elements by a scalar value in place.
+            </summary>
+            <param name="value">The value to divide by.</param>
+            <returns>This TimeSeries instance for method chaining.</returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.AddInPlace(Thinksharp.TimeFlow.TimeSeries)">
+            <summary>
+            Adds another time series to this one in place using JoinLeft.
+            </summary>
+            <param name="other">The time series to add.</param>
+            <returns>This TimeSeries instance for method chaining.</returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.SubtractInPlace(Thinksharp.TimeFlow.TimeSeries)">
+            <summary>
+            Subtracts another time series from this one in place using JoinLeft.
+            </summary>
+            <param name="other">The time series to subtract.</param>
+            <returns>This TimeSeries instance for method chaining.</returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.MultiplyInPlace(Thinksharp.TimeFlow.TimeSeries)">
+            <summary>
+            Multiplies this time series by another one in place using JoinLeft.
+            </summary>
+            <param name="other">The time series to multiply by.</param>
+            <returns>This TimeSeries instance for method chaining.</returns>
+        </member>
+        <member name="M:Thinksharp.TimeFlow.TimeSeries.DivideInPlace(Thinksharp.TimeFlow.TimeSeries)">
+            <summary>
+            Divides this time series by another one in place using JoinLeft.
+            </summary>
+            <param name="other">The time series to divide by.</param>
+            <returns>This TimeSeries instance for method chaining.</returns>
         </member>
         <member name="M:Thinksharp.TimeFlow.TimeSeriesFactoryExtensions.Empty(Thinksharp.TimeFlow.ITimeSeriesFactory)">
             <summary>

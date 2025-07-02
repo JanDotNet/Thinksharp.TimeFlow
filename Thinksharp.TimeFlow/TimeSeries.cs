@@ -177,19 +177,67 @@
     /// </returns>
     public TimeSeries JoinLeft(TimeSeries dateTimeSeries, Func<decimal?, decimal?, decimal?> agg)
     {
+      return JoinLeft(dateTimeSeries, agg, inPlace: false);
+    }
+
+    /// <summary>
+    ///   Joins the specified time series to this time series using the specified aggregation function to combine the
+    ///   values.
+    /// </summary>
+    /// <param name="dateTimeSeries">
+    ///   The time series to join.
+    /// </param>
+    /// <param name="agg">
+    ///   The aggregation function to combine values from 2 equal time points.
+    ///   The first value of the aggregation function is from this time series, the second value from the passed one.
+    /// </param>
+    /// <param name="inPlace">
+    ///   If true, modifies this time series instance instead of creating a new one. Default is false.
+    /// </param>
+    /// <returns>
+    ///   A time series with the same time points as this one but with values produced by the join.
+    ///   If inPlace is true, returns this instance; otherwise returns a new instance.
+    /// </returns>
+    public TimeSeries JoinLeft(TimeSeries dateTimeSeries, Func<decimal?, decimal?, decimal?> agg, bool inPlace = false)
+    {
       var freq = EnsureFrequenciesAreCompatible(dateTimeSeries);
       var tz = EnsureTimeZonesAreCompatible(dateTimeSeries);
 
-      var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
-      foreach (var sortedValue in this.sortedValues)
+      if (inPlace)
       {
-        var leftValue = sortedValue.Value;
-        var rightValue = dateTimeSeries[sortedValue.Key];
+        this.EnableMutation();
+        try
+        {
+          var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
+          foreach (var sortedValue in this.sortedValues)
+          {
+            var leftValue = sortedValue.Value;
+            var rightValue = dateTimeSeries[sortedValue.Key];
 
-        result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(sortedValue.Key, agg(leftValue, rightValue)));
+            result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(sortedValue.Key, agg(leftValue, rightValue)));
+          }
+          
+          this.UpdateInPlace(result);
+          return this;
+        }
+        finally
+        {
+          this.DisableMutation();
+        }
       }
+      else
+      {
+        var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
+        foreach (var sortedValue in this.sortedValues)
+        {
+          var leftValue = sortedValue.Value;
+          var rightValue = dateTimeSeries[sortedValue.Key];
 
-      return new TimeSeries(result, freq, tz);
+          result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(sortedValue.Key, agg(leftValue, rightValue)));
+        }
+
+        return new TimeSeries(result, freq, tz);
+      }
     }
 
     /// <summary>
@@ -210,19 +258,69 @@
     /// </returns>
     public TimeSeries JoinLeft(TimeSeries dateTimeSeries, Func<DateTimeOffset, decimal?, decimal?, decimal?> agg)
     {
+      return JoinLeft(dateTimeSeries, agg, inPlace: false);
+    }
+
+    /// <summary>
+    ///   Joins the specified time series to this time series using the specified aggregation function to combine the
+    ///   values.
+    /// </summary>
+    /// <param name="dateTimeSeries">
+    ///   The time series to join.
+    /// </param>
+    /// <param name="agg">
+    ///   The aggregation function to combine values from 2 equal time points.
+    ///   1. value: Timestamp of the time point to aggregate
+    ///   2. value: Value of the first time series.
+    ///   3. value: Value of the second time series.
+    /// </param>
+    /// <param name="inPlace">
+    ///   If true, modifies this time series instance instead of creating a new one. Default is false.
+    /// </param>
+    /// <returns>
+    ///   A time series with the same time points as this one but with values produced by the join.
+    ///   If inPlace is true, returns this instance; otherwise returns a new instance.
+    /// </returns>
+    public TimeSeries JoinLeft(TimeSeries dateTimeSeries, Func<DateTimeOffset, decimal?, decimal?, decimal?> agg, bool inPlace = false)
+    {
       var freq = EnsureFrequenciesAreCompatible(dateTimeSeries);
       var tz = EnsureTimeZonesAreCompatible(dateTimeSeries);
 
-      var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
-      foreach (var sortedValue in this.sortedValues)
+      if (inPlace)
       {
-        var leftValue = sortedValue.Value;
-        var rightValue = dateTimeSeries[sortedValue.Key];
+        this.EnableMutation();
+        try
+        {
+          var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
+          foreach (var sortedValue in this.sortedValues)
+          {
+            var leftValue = sortedValue.Value;
+            var rightValue = dateTimeSeries[sortedValue.Key];
 
-        result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(sortedValue.Key, agg(sortedValue.Key, leftValue, rightValue)));
+            result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(sortedValue.Key, agg(sortedValue.Key, leftValue, rightValue)));
+          }
+          
+          this.UpdateInPlace(result);
+          return this;
+        }
+        finally
+        {
+          this.DisableMutation();
+        }
       }
+      else
+      {
+        var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
+        foreach (var sortedValue in this.sortedValues)
+        {
+          var leftValue = sortedValue.Value;
+          var rightValue = dateTimeSeries[sortedValue.Key];
 
-      return new TimeSeries(result, freq, tz);
+          result.Add(new IndexedSeriesItem<DateTimeOffset, decimal?>(sortedValue.Key, agg(sortedValue.Key, leftValue, rightValue)));
+        }
+
+        return new TimeSeries(result, freq, tz);
+      }
     }
 
     /// <summary>
@@ -240,7 +338,29 @@
     /// </returns>
     public TimeSeries JoinLeft(TimeSeries dateTimeSeries, JoinOperation op)
     {
-      return this.JoinLeft(dateTimeSeries, op.Apply);
+      return JoinLeft(dateTimeSeries, op, inPlace: false);
+    }
+
+    /// <summary>
+    ///   Joins the specified time series to this time series using the specified aggregation function to combine the
+    ///   values.
+    /// </summary>
+    /// <param name="dateTimeSeries">
+    ///   The time series to join.
+    /// </param>
+    /// <param name="op">
+    ///   The join operation to use.
+    /// </param>
+    /// <param name="inPlace">
+    ///   If true, modifies this time series instance instead of creating a new one. Default is false.
+    /// </param>
+    /// <returns>
+    ///   A time series with the same time points as this one but with values produced by the join.
+    ///   If inPlace is true, returns this instance; otherwise returns a new instance.
+    /// </returns>
+    public TimeSeries JoinLeft(TimeSeries dateTimeSeries, JoinOperation op, bool inPlace = false)
+    {
+      return this.JoinLeft(dateTimeSeries, op.Apply, inPlace);
     }
 
     /// <summary>
@@ -814,7 +934,45 @@
     /// </returns>
     public TimeSeries Slice(int startIndex, int count)
     {
-      return new TimeSeries(this.sortedValues.Skip(startIndex).Take(count), this.Frequency, this.TimeZone);
+      return Slice(startIndex, count, inPlace: false);
+    }
+
+    /// <summary>
+    ///   Creates a time series that contains only time points for the specified range.
+    /// </summary>
+    /// <param name="startIndex">
+    ///   The zero based start index.
+    /// </param>
+    /// <param name="count">
+    ///   The number of time points to get.
+    /// </param>
+    /// <param name="inPlace">
+    ///   If true, modifies this time series instance instead of creating a new one. Default is false.
+    /// </param>
+    /// <returns>
+    ///   A time series that contains only time points for the specified range.
+    ///   If inPlace is true, returns this instance; otherwise returns a new instance.
+    /// </returns>
+    public TimeSeries Slice(int startIndex, int count, bool inPlace = false)
+    {
+      if (inPlace)
+      {
+        this.EnableMutation();
+        try
+        {
+          var slicedData = this.sortedValues.Skip(startIndex).Take(count).ToList();
+          this.UpdateInPlace(slicedData);
+          return this;
+        }
+        finally
+        {
+          this.DisableMutation();
+        }
+      }
+      else
+      {
+        return new TimeSeries(this.sortedValues.Skip(startIndex).Take(count), this.Frequency, this.TimeZone);
+      }
     }
 
     /// <summary>
@@ -1009,6 +1167,90 @@
 
       return allNonEmpty.FirstOrDefault()?.TimeZone ?? this.TimeZone;
     }
+
+    #region InPlace Convenience Methods
+
+    /// <summary>
+    /// Adds a scalar value to all elements in place.
+    /// </summary>
+    /// <param name="value">The value to add.</param>
+    /// <returns>This TimeSeries instance for method chaining.</returns>
+    public TimeSeries AddInPlace(decimal value)
+    {
+      return this.Apply(x => x + value, inPlace: true);
+    }
+
+    /// <summary>
+    /// Subtracts a scalar value from all elements in place.
+    /// </summary>
+    /// <param name="value">The value to subtract.</param>
+    /// <returns>This TimeSeries instance for method chaining.</returns>
+    public TimeSeries SubtractInPlace(decimal value)
+    {
+      return this.Apply(x => x - value, inPlace: true);
+    }
+
+    /// <summary>
+    /// Multiplies all elements by a scalar value in place.
+    /// </summary>
+    /// <param name="value">The value to multiply by.</param>
+    /// <returns>This TimeSeries instance for method chaining.</returns>
+    public TimeSeries MultiplyInPlace(decimal value)
+    {
+      return this.Apply(x => x * value, inPlace: true);
+    }
+
+    /// <summary>
+    /// Divides all elements by a scalar value in place.
+    /// </summary>
+    /// <param name="value">The value to divide by.</param>
+    /// <returns>This TimeSeries instance for method chaining.</returns>
+    public TimeSeries DivideInPlace(decimal value)
+    {
+      return this.Apply(x => x / value, inPlace: true);
+    }
+
+    /// <summary>
+    /// Adds another time series to this one in place using JoinLeft.
+    /// </summary>
+    /// <param name="other">The time series to add.</param>
+    /// <returns>This TimeSeries instance for method chaining.</returns>
+    public TimeSeries AddInPlace(TimeSeries other)
+    {
+      return this.JoinLeft(other, JoinOperation.Add, inPlace: true);
+    }
+
+    /// <summary>
+    /// Subtracts another time series from this one in place using JoinLeft.
+    /// </summary>
+    /// <param name="other">The time series to subtract.</param>
+    /// <returns>This TimeSeries instance for method chaining.</returns>
+    public TimeSeries SubtractInPlace(TimeSeries other)
+    {
+      return this.JoinLeft(other, JoinOperation.Subtract, inPlace: true);
+    }
+
+    /// <summary>
+    /// Multiplies this time series by another one in place using JoinLeft.
+    /// </summary>
+    /// <param name="other">The time series to multiply by.</param>
+    /// <returns>This TimeSeries instance for method chaining.</returns>
+    public TimeSeries MultiplyInPlace(TimeSeries other)
+    {
+      return this.JoinLeft(other, JoinOperation.Multiply, inPlace: true);
+    }
+
+    /// <summary>
+    /// Divides this time series by another one in place using JoinLeft.
+    /// </summary>
+    /// <param name="other">The time series to divide by.</param>
+    /// <returns>This TimeSeries instance for method chaining.</returns>
+    public TimeSeries DivideInPlace(TimeSeries other)
+    {
+      return this.JoinLeft(other, JoinOperation.Divide, inPlace: true);
+    }
+
+    #endregion
 
     #region Operators
 
