@@ -4,8 +4,6 @@
   using System.Collections.Generic;
   using System.Globalization;
   using System.Linq;
-  using DocumentFormat.OpenXml.Bibliography;
-  using DocumentFormat.OpenXml.Drawing.Charts;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
 
   [TestClass]
@@ -124,6 +122,13 @@
     }
 
     [TestMethod]
+    public void TestApply_Empty()
+    {
+      var ts = TimeSeries.Factory.Empty();
+      Assert.AreEqual(ts, ts.ApplyValues(x => x * 2));
+    }
+
+    [TestMethod]
     public void TestSlice_days()
     {
       var start = new DateTimeOffset(new DateTime(2021, 01, 01));
@@ -146,6 +151,15 @@
       Assert.AreEqual(24, ts.Slice(start, Period.Day).Count);
       Assert.AreEqual(31 * 24, ts.Slice(start, Period.Month).Count);
       Assert.AreEqual(31 * 24 + 28 * 24 + 31 * 24 -1, ts.Slice(start, new Period(3, PeriodUnit.Month)).Count);
+    }
+
+    [TestMethod]
+    public void TestSlice_Empty()
+    {
+      var ts = TimeSeries.Factory.Empty();
+      Assert.AreEqual(ts, ts.Slice(new DateTime(2023, 01, 01)));
+      Assert.AreEqual(ts, ts.Slice(new DateTime(2023, 01, 01), Period.Day));
+      Assert.AreEqual(ts, ts.Slice(new DateTimeOffset(new DateTime(2023, 01, 01)), new DateTimeOffset(new DateTime(2024,10,10))));
     }
 
     [TestMethod]
@@ -358,7 +372,31 @@
       Assert.IsTrue(part2.All(x => x.Value == null));
       Assert.IsTrue(part3.All(x => x.Value == 2));
     }
-      
+
+    [TestMethod]
+    public void Test_JoinFull_Empty()
+    {
+      var ts = TimeSeries.Factory.Empty();
+
+      Assert.AreEqual(ts, ts.JoinFull(ts, (x1, x2) => x1 + x2));
+      Assert.AreEqual(ts, ts.JoinFull(ts, ts, (x1, x2, x3) => x1 + x2 + x3));
+      Assert.AreEqual(ts, ts.JoinFull(ts, ts, ts, (x1, x2, x3, x4) => x1 + x2 + x3 + x4));
+
+      Assert.AreEqual(ts, ts.JoinFull(ts, (os, x1, x2) => x1 + x2));
+      Assert.AreEqual(ts, ts.JoinFull(ts, ts, (os, x1, x2, x3) => x1 + x2 + x3));
+      Assert.AreEqual(ts, ts.JoinFull(ts, ts, ts, (os, x1, x2, x3, x4) => x1 + x2 + x3 + x4));
+    }
+
+    [TestMethod]
+    public void Test_JoinLeft_Empty()
+    {
+      var ts = TimeSeries.Factory.Empty();
+
+      Assert.AreEqual(ts, ts.JoinLeft(ts, (x1, x2) => x1 + x2));
+      Assert.AreEqual(ts, ts.JoinLeft(ts, (os, x1, x2) => x1 + x2));
+      Assert.AreEqual(ts, ts.JoinLeft(ts, JoinOperation.Add));
+    }
+
     [TestMethod]
     public void Test_DownSample_15min_to_hours()
     {

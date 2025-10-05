@@ -53,14 +53,28 @@
       return date;
     }
 
-    public static DateTimeOffset Min(params DateTimeOffset[] values)
+    public static DateTimeOffset? Min(params DateTimeOffset[] values)
     {
-      return values.Where(v => v != default(DateTimeOffset)).Min();
+      values = values.Where(v => v != default(DateTimeOffset)).ToArray();
+
+      if (values.Length == 0)
+      {
+        return null;
+      }
+
+      return values.Min();
     }
 
-    public static DateTimeOffset Max(params DateTimeOffset[] values)
+    public static DateTimeOffset? Max(params DateTimeOffset[] values)
     {
-      return values.Where(v => v != default(DateTimeOffset)).Max();
+      values = values.Where(v => v != default(DateTimeOffset)).ToArray();
+
+      if (values.Length == 0)
+      {
+        return null;
+      }
+
+      return values.Max();
     }
   }
 }

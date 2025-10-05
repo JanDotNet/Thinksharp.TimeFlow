@@ -197,11 +197,15 @@
         return this.JoinLeft(dateTimeSeries, agg);
       }
 
-      var ts = TimeSeries.Factory.FromValue(null,
-        DateHelper.Min(this.Start, dateTimeSeries.Start),
-        DateHelper.Max(this.End, dateTimeSeries.End),
-        freq,
-        tz);
+      var min = DateHelper.Min(this.Start, dateTimeSeries.Start);
+      var max = DateHelper.Max(this.End, dateTimeSeries.End);
+
+      if (min == null || max == null)
+      {
+        return TimeSeries.Factory.Empty();
+      }
+
+      var ts = TimeSeries.Factory.FromValue(null, min.Value, max.Value, freq, tz);
 
       return ts.JoinLeft(this, (l, r) => r).JoinLeft(dateTimeSeries, agg);
     }
@@ -232,11 +236,15 @@
         return this.JoinLeft(dateTimeSeries, agg);
       }
 
-      var ts = TimeSeries.Factory.FromValue(null,
-        DateHelper.Min(this.Start, dateTimeSeries.Start),
-        DateHelper.Max(this.End, dateTimeSeries.End),
-        freq,
-        tz);
+      var min = DateHelper.Min(this.Start, dateTimeSeries.Start);
+      var max = DateHelper.Max(this.End, dateTimeSeries.End);
+
+      if (min == null || max == null)
+      {
+        return TimeSeries.Factory.Empty();
+      }
+
+      var ts = TimeSeries.Factory.FromValue(null, min.Value, max.Value, freq, tz);
 
       return ts.JoinLeft(this, (l, r) => r).JoinLeft(dateTimeSeries, agg);
     }
@@ -264,8 +272,16 @@
       var freq = EnsureFrequenciesAreCompatible(ts1, ts2);
       var tz = EnsureTimeZonesAreCompatible(ts1, ts2);
 
-      var current = DateHelper.Min(this.Start, ts1.Start, ts2.Start);
-      var end = DateHelper.Max(this.End, ts1.End, ts2.End);
+      var min = DateHelper.Min(this.Start, ts1.Start, ts2.Start);
+      var max = DateHelper.Max(this.End, ts1.End, ts2.End);
+
+      if (min == null || max == null)
+      {
+        return TimeSeries.Factory.Empty();
+      }
+
+      var current = min.Value;
+      var end = max.Value;
 
       var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
       while (current <= end)
@@ -307,8 +323,16 @@
       var freq = EnsureFrequenciesAreCompatible(ts1, ts2);
       var tz = EnsureTimeZonesAreCompatible(ts1, ts2);
 
-      var current = DateHelper.Min(this.Start, ts1.Start, ts2.Start);
-      var end = DateHelper.Max(this.End, ts1.End, ts2.End);
+      var min = DateHelper.Min(this.Start, ts1.Start, ts2.Start);
+      var max = DateHelper.Max(this.End, ts1.End, ts2.End);
+
+      if (min == null || max == null)
+      {
+        return TimeSeries.Factory.Empty();
+      }
+
+      var current = min.Value;
+      var end = max.Value;
 
       var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
       while (current <= end)
@@ -351,8 +375,16 @@
       var freq = EnsureFrequenciesAreCompatible(ts1, ts2);
       var tz = EnsureTimeZonesAreCompatible(ts1, ts2);
 
-      var current = DateHelper.Min(this.Start, ts1.Start, ts2.Start, ts3.Start);
-      var end = DateHelper.Max(this.End, ts1.End, ts2.End, ts3.End);
+      var min = DateHelper.Min(this.Start, ts1.Start, ts2.Start, ts3.Start);
+      var max = DateHelper.Max(this.End, ts1.End, ts2.End, ts3.End);
+
+      if (min == null || max == null)
+      {
+        return TimeSeries.Factory.Empty();
+      }
+
+      var current = min.Value;
+      var end = max.Value;
 
       var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
       while (current <= end)
@@ -399,8 +431,16 @@
       var freq = EnsureFrequenciesAreCompatible(ts1, ts2);
       var tz = EnsureTimeZonesAreCompatible(ts1, ts2);
 
-      var current = DateHelper.Min(this.Start, ts1.Start, ts2.Start, ts3.Start);
-      var end = DateHelper.Max(this.End, ts1.End, ts2.End, ts3.End);
+      var min = DateHelper.Min(this.Start, ts1.Start, ts2.Start, ts3.Start);
+      var max = DateHelper.Max(this.End, ts1.End, ts2.End, ts3.End);
+
+      if (min == null || max == null)
+      {
+        return TimeSeries.Factory.Empty();
+      }
+
+      var current = min.Value;
+      var end = max.Value;
 
       var result = new List<IndexedSeriesItem<DateTimeOffset, decimal?>>();
       while (current <= end)
