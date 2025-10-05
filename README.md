@@ -30,15 +30,19 @@ Time series can be created using the available methods of the static TimeSeries.
 
 #### TimeSeries.Factory.FromValue
 
-    // FromValue creates a time series with a defined value for each time point:
-    var ts = TimeSeries.Factory.FromValue(10,
-        new DateTime(2021, 01, 01), // start
-        new DateTime(2021, 01, 05), // end
-        Period.Day);
-     
-    ts
+```csharp
+// FromValue creates a time series with a defined value for each time point:
+var ts = TimeSeries.Factory.FromValue(10,
+	new DateTime(2021, 01, 01), // start
+	new DateTime(2021, 01, 05), // end
+	Period.Day);
+ 
+ts
+```
 
-
+<details>
+<summary>👉 Click here to show code output</summary>
+	
 |time	|value|
 | ------------- |:-------------:| 
 |2021-01-01 00:00:00Z|	10
@@ -47,16 +51,23 @@ Time series can be created using the available methods of the static TimeSeries.
 |2021-01-04 00:00:00Z|	10
 |2021-01-05 00:00:00Z|	10
 
+</details>
+
 #### TimeSeries.Factory.FromValues
 
-    // FromValues creates a time series from an enumerable of values:
-    var values = new decimal?[] {1, 2, 3, 4, 5, 6, 7, 8, 9};
-    var ts = TimeSeries.Factory.FromValues(values,
-        new DateTime(2021, 01, 01), // start
-        Period.Day);
+```csharp
+// FromValues creates a time series from an enumerable of values:
+var values = new decimal?[] {1, 2, 3, 4, 5, 6, 7, 8, 9};
+var ts = TimeSeries.Factory.FromValues(values,
+	new DateTime(2021, 01, 01), // start
+	Period.Day);
 
-    ts
+ts
+```
 
+<details>
+<summary>👉 Click here to show code output</summary>
+	
 |time|	value|
 | ------------- |:-------------:| 
 |2021-01-01 00:00:00Z|  1
@@ -69,16 +80,23 @@ Time series can be created using the available methods of the static TimeSeries.
 |2021-01-08 00:00:00Z|  8
 |2021-01-09 00:00:00Z|  9
 
+</details>
+
 #### TimeSeries.Factory.FromGenerator
 
-    // FromGenerator creates a time series with a value created as function of the time point:
-    var ts = TimeSeries.Factory.FromGenerator(
-        new DateTime(2021, 01, 01), // start
-        new DateTime(2021, 01, 05), // end
-        Period.Day,
-        tp => tp.Day); // tp: time point as DateTimeOffset
+```csharp
+// FromGenerator creates a time series with a value created as function of the time point:
+var ts = TimeSeries.Factory.FromGenerator(
+	new DateTime(2021, 01, 01), // start
+	new DateTime(2021, 01, 05), // end
+	Period.Day,
+	tp => tp.Day); // tp: time point as DateTimeOffset
 
-    ts
+ts
+```
+
+<details>
+<summary>👉 Click here to show code output</summary>
 
 |time|	value|
 | ------------- | ------------- |
@@ -88,32 +106,39 @@ Time series can be created using the available methods of the static TimeSeries.
 |04/01/2021 00:00:00 +01:00|4|
 |05/01/2021 00:00:00 +01:00|5|
 
+</details>
+
 ## Time Series Transformation
 
 Combining Time Series via Operators
 
-    // time series can be combined using default operators:
-    var a = TimeSeries.Factory.FromValue(10,
-        new DateTime(2021, 01, 01), // start
-        new DateTime(2021, 01, 05), // end
-        Period.Day);
+```csharp
+// time series can be combined using default operators:
+var a = TimeSeries.Factory.FromValue(10,
+	new DateTime(2021, 01, 01), // start
+	new DateTime(2021, 01, 05), // end
+	Period.Day);
 
-    var b = TimeSeries.Factory.FromGenerator(
-        new DateTime(2021, 01, 01), // start   
-        new DateTime(2021, 01, 05), // end 
-        Period.Day,
-        tp => tp.Day);
+var b = TimeSeries.Factory.FromGenerator(
+	new DateTime(2021, 01, 01), // start   
+	new DateTime(2021, 01, 05), // end 
+	Period.Day,
+	tp => tp.Day);
 
-    var tf = new TimeFrame();
-    tf["a"] = a;
-    tf["b"] = b;
-    tf["a + b"] = a + b;
-    tf["a - b"] = a - b;
-    tf["a * b"] = a * b;
-    tf["a / b"] = a / b;
-    tf["a * 12"] = a * 12;
-    tf
+var tf = new TimeFrame();
+tf["a"] = a;
+tf["b"] = b;
+tf["a + b"] = a + b;
+tf["a - b"] = a - b;
+tf["a * b"] = a * b;
+tf["a / b"] = a / b;
+tf["a * 12"] = a * 12;
+tf
+```
 
+<details>
+<summary>👉 Click here to show code output</summary>
+	
 |Date|a|b|a + b|a - b|a * b|a / b|a * 12|
 | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- |
 |01/01/2021 00:00:00 +01:00|10|1|11|9|10|10|120|
@@ -122,42 +147,48 @@ Combining Time Series via Operators
 |04/01/2021 00:00:00 +01:00|10|4|14|6|40|2,5|120|
 |05/01/2021 00:00:00 +01:00|10|5|15|5|50|2|120|
 
+</details>
 
 Combining Time Series via Methods
 
-	var a = TimeSeries.Factory.FromValue(1,
-		new DateTime(2021, 01, 01), // start
-		new DateTime(2021, 01, 05), // end
-		Period.Day);
+```csharp
+var a = TimeSeries.Factory.FromValue(1,
+	new DateTime(2021, 01, 01), // start
+	new DateTime(2021, 01, 05), // end
+	Period.Day);
 
-	var b = TimeSeries.Factory.FromValue(2,
-	  new DateTime(2021, 01, 03), // start
-	  new DateTime(2021, 01, 07), // end
-	  Period.Day);
+var b = TimeSeries.Factory.FromValue(2,
+  new DateTime(2021, 01, 03), // start
+  new DateTime(2021, 01, 07), // end
+  Period.Day);
 
-	var tf = new TimeFrame();
-	tf["a"] = a;
-	tf["b"] = b;
-	tf["apply * 2"] = a.Apply(value => value * 2);
+var tf = new TimeFrame();
+tf["a"] = a;
+tf["b"] = b;
+tf["apply * 2"] = a.Apply(value => value * 2);
 
-	// join left produces a time series with the same time points as the left time series.
-	// note that nulls will be evaluated to null
-	tf["JoinLeft r + l"] = a.JoinLeft(b, (l, r) => l + r);
+// join left produces a time series with the same time points as the left time series.
+// note that nulls will be evaluated to null
+tf["JoinLeft r + l"] = a.JoinLeft(b, (l, r) => l + r);
 
-	// Use pre defined JoinOperation to ignore nulls
-	tf["JoinLeft JoinOperation.Add"] = a.JoinLeft(b, JoinOperation.Add);
+// Use pre defined JoinOperation to ignore nulls
+tf["JoinLeft JoinOperation.Add"] = a.JoinLeft(b, JoinOperation.Add);
 
-	// join full combines both time series
-	// note that nulls will be evaluated to null
-	tf["JoinFull r + l"] = a.JoinFull(b, (left, right) => left + right);
+// join full combines both time series
+// note that nulls will be evaluated to null
+tf["JoinFull r + l"] = a.JoinFull(b, (left, right) => left + right);
 
-	// Use pre defined JoinOperation to ignore nulls
-	tf["JoinFull JoinOperation.Add"] = a.JoinFull(b, JoinOperation.Add);
+// Use pre defined JoinOperation to ignore nulls
+tf["JoinFull JoinOperation.Add"] = a.JoinFull(b, JoinOperation.Add);
 
-	// operators behave like full join with JoinOperations to ignore nulls.
-	tf["a+b"] = a + b;
+// operators behave like full join with JoinOperations to ignore nulls.
+tf["a+b"] = a + b;
 
-    tf
+tf
+```
+
+<details>
+<summary>👉 Click here to show code output</summary>
 
 |Date|a|b|apply * 2|JoinLeft r + l|JoinLeft JoinOperation.Add|JoinFull r + l|JoinFull JoinOperation.Add|a+b|
 | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- |
@@ -169,23 +200,30 @@ Combining Time Series via Methods
 |06/01/2021 00:00:00 +01:00||2|||||2|2|
 |07/01/2021 00:00:00 +01:00||2|||||2|2|
     
+</details>
+
 ### Slicing
 
-    var ts = TimeSeries.Factory.FromGenerator(
-        new DateTime(2021, 01, 01), // start
-        new DateTime(2021, 01, 05), // end
-        Period.Day,
-        tp => tp.Day); // 1, 2, 3, 4, 5
+```csharp
+var ts = TimeSeries.Factory.FromGenerator(
+	new DateTime(2021, 01, 01), // start
+	new DateTime(2021, 01, 05), // end
+	Period.Day,
+	tp => tp.Day); // 1, 2, 3, 4, 5
 
-    var tf = new TimeFrame();
-    // sliceing by index / count
-    tf["ts"] = ts;
-    // slicing by index / count
-    tf["Slice(0, 2)"] = ts.Slice(0, 2);
-    // slicing by time range
-    tf["Slice(2.1, 4.1)"] = ts.Slice(new DateTime(2021, 01, 02), new DateTime(2021, 01, 04));
+var tf = new TimeFrame();
+// sliceing by index / count
+tf["ts"] = ts;
+// slicing by index / count
+tf["Slice(0, 2)"] = ts.Slice(0, 2);
+// slicing by time range
+tf["Slice(2.1, 4.1)"] = ts.Slice(new DateTime(2021, 01, 02), new DateTime(2021, 01, 04));
 
-    tf
+tf
+```
+
+<details>
+<summary>👉 Click here to show code output</summary>
 
 |Date|ts|Slice(0, 2)|Slice(2.1, 4.1)|
 | ------------- | ------------- | ------------- | ------------- |
@@ -194,20 +232,26 @@ Combining Time Series via Methods
 |03/01/2021 00:00:00 +01:00|3||3|
 |04/01/2021 00:00:00 +01:00|4||4|
 |05/01/2021 00:00:00 +01:00|5|||
-	
+
+</details>
 
 ### Re-sampling
 
-    var ts = TimeSeries.Factory.FromValue(1,
-        new DateTime(2021, 01, 01), // start
-        new DateTime(2021, 12, 31), // end
-        Period.Day);
+```csharp
+var ts = TimeSeries.Factory.FromValue(1,
+	new DateTime(2021, 01, 01), // start
+	new DateTime(2021, 12, 31), // end
+	Period.Day);
 
-    // down sampling
-    var tf = new TimeFrame();
-    tf["Resample Sum"] = ts.ReSample(Period.Month, AggregationType.Sum);
-    tf["Resample Mean"] = ts.ReSample(Period.Month, AggregationType.Mean); 
-    tf
+// down sampling
+var tf = new TimeFrame();
+tf["Resample Sum"] = ts.ReSample(Period.Month, AggregationType.Sum);
+tf["Resample Mean"] = ts.ReSample(Period.Month, AggregationType.Mean); 
+tf
+```
+
+<details>
+<summary>👉 Click here to show code output</summary>
 
 |Date|Resample Sum|Resample Mean|
 | ------------- | ------------- | ------------- |
@@ -224,11 +268,18 @@ Combining Time Series via Methods
 |01/11/2021 00:00:00 +01:00|30|1|
 |01/12/2021 00:00:00 +01:00|31|1|
 
-    // up-sampling
-    var tf = new TimeFrame();
-    tf["Resample Hour Sum"] = ts.ReSample(Period.Hour, AggregationType.Sum);
-    tf["Resample Hour Mean"] = ts.ReSample(Period.Hour, AggregationType.Mean);
-    tf
+</details>
+
+```csharp
+// up-sampling
+var tf = new TimeFrame();
+tf["Resample Hour Sum"] = ts.ReSample(Period.Hour, AggregationType.Sum);
+tf["Resample Hour Mean"] = ts.ReSample(Period.Hour, AggregationType.Mean);
+tf
+```
+
+<details>
+<summary>👉 Click here to show code output</summary>
 
 |Date|Resample Hour Sum|Resample Hour Mean|
 | ------------- | ------------- | ------------- |
@@ -353,6 +404,7 @@ Combining Time Series via Methods
 |05/01/2021 22:00:00 +01:00|0,2083333333333333333333333333|5|
 |05/01/2021 23:00:00 +01:00|0,2083333333333333333333333333|5|
 
+</details>
 
 ## Usage in LINQPad
 
